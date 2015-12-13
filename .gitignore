@@ -1,4 +1,5 @@
 *~
 *.pyc
 .metadata
+trace.txt
 docs/build
