@@ -1,0 +1,26 @@
+Breakpoint 1 at 0x804849c: file mmcpy.c, line 8.
+Starting program: /home/yangke/workspace/BugTracker/a.out 
+
+Breakpoint 1, main () at mmcpy.c:8
+8	{
+10		char b[100]="12345600000000000000000000000000000000000000000000000000000000000";
+12		char a[2]="1";
+13		cpy_it(buffer,b,100);
+cpy_it (dst=0xbfffe828 "@\350\377\277^\202\004\b8\371\377\267", 
+    src=0xbfffe7c4 "123456", '0' <repeats 59 times>, len=100) at mmcpy.c:5
+5		memcpy(dst,src,len);
+6	}
+main () at mmcpy.c:14
+14		cpy_it(a,buffer,1000);
+cpy_it (dst=0xbfffe7c2 "1", src=0xbfffe828 "123456", '0' <repeats 59 times>, 
+    len=1000) at mmcpy.c:5
+5		memcpy(dst,src,len);
+
+Program received signal SIGSEGV, Segmentation fault.
+__GI_getenv (name=0xb7f7843b "BC_FATAL_STDERR_") at getenv.c:85
+85	getenv.c: No such file or directory.
+A debugging session is active.
+
+	Inferior 1 [process 31352] will be killed.
+
+Quit anyway? (y or n) 

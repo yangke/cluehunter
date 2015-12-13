@@ -1,0 +1,54 @@
+#!/usr/bin/expect -f
+
+
+set force_conservative 0  ;# set to 1 to force conservative mode even if
+			  ;# script wasn't run conservatively originally
+if {$force_conservative} {
+	set send_slow {1 .1}
+	proc send {ignore arg} {
+		sleep .1
+		exp_send -s -- $arg
+	}
+}
+
+set timeout -1
+spawn gdb --args swfdump -D swfdump0.9.2log/exploit_0_0
+match_max 100000
+match_max 100000
+expect "*GNU*"
+send -- "\rset logging file ./gdb.txt\r"
+send -- "set logging on\r"
+send -- "\rb main\r"
+expect "b main*"
+send -- "r\r"
+expect  "r\r*\r*\r*\r*\r
+(gdb) "
+send -- "n\r"
+set jump 0
+set memop "memcpy|memset|memmove|memcmp|malloc|calloc|alloca|realloc"
+set fileop "fopen|fclose|fwprintf|fprintf|vfprintf|fscanf|fread|fwrite|fgetc|fgets|fstat"
+set stdop "open|close|read|write|scanf|printf|stat|getc|gets"
+set strop "atoi|strlen|strcat|strncat|strtol|strtok|strcmp|strncmp|strcpy|strncpy|strstr|strrchr|strchr|sprintf|snprintf|vsprintf|vsnprintf|sscanf"
+set syscall "gettimeofday|fork|syscall"
+set other "log|error|buildin|fstat"
+set esc "\(\(.*\[^A-Za-z0-9_\]\($memop|$fileop|$stdop|$strop|$syscall\)\)|\(.*$other\)\)"
+#puts $esc
+set former "\(n|s\)\r\n"
+set latter "\\(gdb\\) "
+set suffix "\[^A-Za-z0-9_\].*\r\n"
+expect {
+	-re ".*Program received signal.*$latter" { send -- "set logging off\r";}
+	-re ".*The program no longer exists.*$latter" { send -- "set logging off\r";}
+	-re ".*\r\n.*The program is not being run.*$latter" { exit }
+	-re "$former$esc$suffix$latter" {send -- "n\r";exp_continue -continue_timer}
+	-re "$former.*\(?!The program|$esc\).*\r\n$latter" {send -- "s\r";exp_continue -continue_timer}
+}
+send -- "q\r"
+expect -exact "q\r
+A debugging session is active.\r
+\r
+	Inferior 1 \[process 32213\] will be killed.\r
+\r
+Quit anyway? (y or n) "
+send -- "y\r"
+expect eof

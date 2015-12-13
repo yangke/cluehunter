@@ -1,0 +1,766 @@
+Already logging to ./gdb.txt.
+Breakpoint 1 at 0x8048bc6: file sndfile-info.c, line 65.
+Starting program: /home/yangke/Program/Fabian-Yamaguchi/evdata/libsndfile/libsndfile-1.0.25/bin/bin/sndfile-info sndfile-infolog/exploit_0_0> output 2>&1
+
+Breakpoint 1, main (argc=2, argv=0xbfffe874) at sndfile-info.c:65
+65		print_version () ;
+67		if (argc < 2 || strcmp (argv [1], "--help") == 0 || strcmp (argv [1], "-h") == 0)
+72		if (strcmp (argv [1], "-i") == 0)
+80		if (strcmp (argv [1], "-b") == 0)
+88		if (strcmp (argv [1], "-c") == 0)
+96		for (k = 1 ; k < argc ; k++)
+97			info_dump (argv [k]) ;
+info_dump (filename=0xbfffeb1d "sndfile-infolog/exploit_0_0")
+    at sndfile-info.c:238
+238		memset (&sfinfo, 0, sizeof (sfinfo)) ;
+240		if ((file = sf_open (filename, SFM_READ, &sfinfo)) == NULL)
+sf_open (path=0xbfffeb1d "sndfile-infolog/exploit_0_0", mode=16, 
+    sfinfo=0xbfffe784) at sndfile.c:314
+314		if ((psf = calloc (1, sizeof (SF_PRIVATE))) == NULL)
+319		memset (psf, 0, sizeof (SF_PRIVATE)) ;
+320		psf_init_files (psf) ;
+psf_init_files (psf=0x80ea008) at file_io.c:512
+512	{	psf->file.filedes = -1 ;
+513		psf->rsrc.filedes = -1 ;
+514		psf->file.savedes = -1 ;
+515	} /* psf_init_files */
+sf_open (path=0xbfffeb1d "sndfile-infolog/exploit_0_0", mode=16, 
+    sfinfo=0xbfffe784) at sndfile.c:322
+322		psf_log_printf (psf, "File : %s\n", path) ;
+324		copy_filename (psf, path) ;
+copy_filename (psf=0x80ea008, path=0xbfffeb1d "sndfile-infolog/exploit_0_0")
+    at sndfile.c:2492
+2492		snprintf (psf->file.path.c, sizeof (psf->file.path.c), "%s", path) ;
+2493		if ((ccptr = strrchr (path, '/')) || (ccptr = strrchr (path, '\\')))
+2494			ccptr ++ ;
+2498		snprintf (psf->file.name.c, sizeof (psf->file.name.c), "%s", ccptr) ;
+2501		snprintf (psf->file.dir.c, sizeof (psf->file.dir.c), "%s", path) ;
+2502		if ((cptr = strrchr (psf->file.dir.c, '/')) || (cptr = strrchr (psf->file.dir.c, '\\')))
+2503			cptr [1] = 0 ;
+2507		return ;
+2508	} /* copy_filename */
+sf_open (path=0xbfffeb1d "sndfile-infolog/exploit_0_0", mode=16, 
+    sfinfo=0xbfffe784) at sndfile.c:326
+326		psf->file.mode = mode ;
+327		if (strcmp (path, "-") == 0)
+330			psf->error = psf_fopen (psf) ;
+psf_fopen (psf=0x80ea008) at file_io.c:82
+82		psf->error = 0 ;
+83		psf->file.filedes = psf_open_fd (&psf->file) ;
+psf_open_fd (pfile=0x80ee018) at file_io.c:547
+547		switch (pfile->mode)
+549					oflag = O_RDONLY | O_BINARY ;
+550					mode = 0 ;
+551					break ;
+568		if (mode == 0)
+569			fd = open (pfile->path.c, oflag) ;
+573		return fd ;
+574	} /* psf_open_fd */
+psf_fopen (psf=0x80ea008) at file_io.c:85
+85		if (psf->file.filedes == - SFE_BAD_OPEN_MODE)
+91		if (psf->file.filedes == -1)
+94		return psf->error ;
+95	} /* psf_fopen */
+sf_open (path=0xbfffeb1d "sndfile-infolog/exploit_0_0", mode=16, 
+    sfinfo=0xbfffe784) at sndfile.c:332
+332		return psf_open_file (psf, sfinfo) ;
+psf_open_file (psf=0x80ea008, sfinfo=0xbfffe784) at sndfile.c:2567
+2567		sf_errno = error = 0 ;
+2568		sf_logbuffer [0] = 0 ;
+2570		if (psf->error)
+2575		if (psf->file.mode != SFM_READ && psf->file.mode != SFM_WRITE && psf->file.mode != SFM_RDWR)
+2580		if (sfinfo == NULL)
+2586		sfinfo->frames = 0 ;
+2587		sfinfo->sections = 0 ;
+2588		sfinfo->seekable = 0 ;
+2590		if (psf->file.mode == SFM_READ)
+2591		{	if ((SF_CONTAINER (sfinfo->format)) == SF_FORMAT_RAW)
+2598				memset (sfinfo, 0, sizeof (SF_INFO)) ;
+2601		memcpy (&(psf->sf), sfinfo, sizeof (SF_INFO)) ;
+2603		psf->Magick 		= SNDFILE_MAGICK ;
+2604		psf->norm_float 	= SF_TRUE ;
+2605		psf->norm_double	= SF_TRUE ;
+2606		psf->dataoffset		= -1 ;
+2607		psf->datalength		= -1 ;
+2608		psf->read_current	= -1 ;
+2609		psf->write_current	= -1 ;
+2610		psf->auto_header 	= SF_FALSE ;
+2611		psf->rwf_endian		= SF_ENDIAN_LITTLE ;
+2612		psf->seek			= psf_default_seek ;
+2613		psf->float_int_mult = 0 ;
+2614		psf->float_max		= -1.0 ;
+2617		psf->unique_id		= psf_rand_int32 () ;
+psf_rand_int32 () at common.c:1299
+1299		if (value == -1)
+1303			gettimeofday (&tv, NULL) ;
+1304			value = tv.tv_sec + tv.tv_usec ;
+1310		count = 4 + (value & 7) ;
+1311		for (k = 0 ; k < count ; k++)
+1312			value = 11117 * value + 211231 ;
+1311		for (k = 0 ; k < count ; k++)
+1312			value = 11117 * value + 211231 ;
+1311		for (k = 0 ; k < count ; k++)
+1312			value = 11117 * value + 211231 ;
+1311		for (k = 0 ; k < count ; k++)
+1312			value = 11117 * value + 211231 ;
+1311		for (k = 0 ; k < count ; k++)
+1312			value = 11117 * value + 211231 ;
+1311		for (k = 0 ; k < count ; k++)
+1312			value = 11117 * value + 211231 ;
+1311		for (k = 0 ; k < count ; k++)
+1312			value = 11117 * value + 211231 ;
+1311		for (k = 0 ; k < count ; k++)
+1314		return value ;
+1315	} /* psf_rand_int32 */
+psf_open_file (psf=0x80ea008, sfinfo=0xbfffe784) at sndfile.c:2619
+2619		psf->sf.sections = 1 ;
+2621		psf->is_pipe = psf_is_pipe (psf) ;
+psf_is_pipe (psf=0x80ea008) at file_io.c:459
+459		if (psf->virtual_io)
+462		if (fstat (psf->file.filedes, &statbuf) == -1)
+468		if (S_ISFIFO (statbuf.st_mode) || S_ISSOCK (statbuf.st_mode))
+471		return SF_FALSE ;
+472	} /* psf_is_pipe */
+psf_open_file (psf=0x80ea008, sfinfo=0xbfffe784) at sndfile.c:2623
+2623		if (psf->is_pipe)
+2628		{	psf->sf.seekable = SF_TRUE ;
+2631			psf->filelength = psf_get_filelen (psf) ;
+psf_get_filelen (psf=0x80ea008) at file_io.c:174
+174		if (psf->virtual_io)
+177		filelen = psf_get_filelen_fd (psf->file.filedes) ;
+psf_get_filelen_fd (fd=3) at file_io.c:485
+485		if (fstat (fd, &statbuf) == -1)
+488		return statbuf.st_size ;
+489	} /* psf_get_filelen_fd */
+psf_get_filelen (psf=0x80ea008) at file_io.c:179
+179		if (filelen == -1)
+184		if (filelen == -SFE_BAD_STAT_SIZE)
+189		switch (psf->file.mode)
+195				if (psf->fileoffset > 0 && psf->filelength > 0)
+197				break ;
+212		return filelen ;
+213	} /* psf_get_filelen */
+psf_open_file (psf=0x80ea008, sfinfo=0xbfffe784) at sndfile.c:2634
+2634		if (psf->fileoffset > 0)
+2658		if (psf->filelength == SF_COUNT_MAX)
+2661			psf_log_printf (psf, "Length : %D\n", psf->filelength) ;
+2663		if (psf->file.mode == SFM_WRITE || (psf->file.mode == SFM_RDWR && psf->filelength == 0))
+2681		else if ((SF_CONTAINER (psf->sf.format)) != SF_FORMAT_RAW)
+2683			psf->sf.format = guess_file_type (psf) ;
+guess_file_type (psf=0x80ea008) at sndfile.c:2324
+2324		if (psf_binheader_readf (psf, "b", &buffer, SIGNED_SIZEOF (buffer)) != SIGNED_SIZEOF (buffer))
+psf_binheader_readf (psf=0x80ea008, format=0xb7fbe5d5 "b") at common.c:908
+908	{	va_list			argptr ;
+917		int				byte_count = 0, count ;
+919		if (! format)
+922		va_start (argptr, format) ;
+924		while ((c = *format++))
+925		{	switch (c)
+1036						charptr = va_arg (argptr, char*) ;
+1037						count = va_arg (argptr, size_t) ;
+1038						if (count > 0)
+1039							byte_count += header_read (psf, charptr, count) ;
+header_read (psf=0x80ea008, ptr=0xbfffe694, bytes=12) at common.c:795
+795	{	int count = 0 ;
+797		if (psf->headindex >= SIGNED_SIZEOF (psf->header))
+805		if (psf->headindex + bytes > SIGNED_SIZEOF (psf->header))
+816		if (psf->headindex + bytes > psf->headend)
+817		{	count = psf_fread (psf->header + psf->headend, 1, bytes - (psf->headend - psf->headindex), psf) ;
+psf_fread (ptr=0x80f3338, bytes=1, items=12, psf=0x80ea008) at file_io.c:317
+317	{	sf_count_t total = 0 ;
+320		if (psf->virtual_io)
+323		items *= bytes ;
+326		if (items <= 0)
+329		while (items > 0)
+331			count = (items > SENSIBLE_SIZE) ? SENSIBLE_SIZE : (ssize_t) items ;
+333			count = read (psf->file.filedes, ((char*) ptr) + total, (size_t) count) ;
+335			if (count == -1)
+343			if (count == 0)
+346			total += count ;
+347			items -= count ;
+329		while (items > 0)
+350		if (psf->is_pipe)
+353		return total / bytes ;
+354	} /* psf_fread */
+header_read (psf=0x80ea008, ptr=0xbfffe694, bytes=12) at common.c:818
+818			if (count != bytes - (int) (psf->headend - psf->headindex))
+822			psf->headend += count ;
+825		memcpy (ptr, psf->header + psf->headindex, bytes) ;
+826		psf->headindex += bytes ;
+828		return bytes ;
+829	} /* header_read */
+psf_binheader_readf (psf=0x80ea008, format=0xb7fbe5d6 "") at common.c:1040
+1040						break ;
+924		while ((c = *format++))
+1084		return byte_count ;
+1085	} /* psf_binheader_readf */
+guess_file_type (psf=0x80ea008) at sndfile.c:2329
+2329		if ((buffer [0] == MAKE_MARKER ('R', 'I', 'F', 'F') || buffer [0] == MAKE_MARKER ('R', 'I', 'F', 'X'))
+2330				&& buffer [2] == MAKE_MARKER ('W', 'A', 'V', 'E'))
+2331			return SF_FORMAT_WAV ;
+2443	} /* guess_file_type */
+psf_open_file (psf=0x80ea008, sfinfo=0xbfffe784) at sndfile.c:2685
+2685			if (psf->sf.format == 0)
+2690		psf->last_op = psf->file.mode ;
+2693		switch (SF_CODEC (psf->sf.format))
+2722		switch (SF_CONTAINER (psf->sf.format))
+2725					error = wav_open (psf) ;
+wav_open (psf=0x80ea008) at wav.c:180
+180		int	format, subformat, error, blockalign = 0, framesperblock = 0 ;
+182		if ((wpriv = calloc (1, sizeof (WAV_PRIVATE))) == NULL)
+184		psf->container_data = wpriv ;
+186		wpriv->wavex_ambisonic = SF_AMBISONIC_NONE ;
+187		psf->str_flags = SF_STR_ALLOW_START | SF_STR_ALLOW_END ;
+189		if (psf->file.mode == SFM_READ || (psf->file.mode == SFM_RDWR && psf->filelength > 0))
+190		{	if ((error = wav_read_header (psf, &blockalign, &framesperblock)))
+wav_read_header (psf=0x80ea008, blockalign=0xbfffe698, 
+    framesperblock=0xbfffe69c) at wav.c:302
+302		unsigned	dword = 0, marker, RIFFsize = 0, done = 0 ;
+303		int			parsestage = 0, error, format = 0 ;
+306		if (psf->filelength > SF_PLATFORM_S64 (0xffffffff))
+309		if ((wpriv = psf->container_data) == NULL)
+311		wav_fmt = &wpriv->wav_fmt ;
+314		psf_binheader_readf (psf, "p", 0) ;
+psf_binheader_readf (psf=0x80ea008, format=0xb7fc2fc8 "p") at common.c:908
+908	{	va_list			argptr ;
+917		int				byte_count = 0, count ;
+919		if (! format)
+922		va_start (argptr, format) ;
+924		while ((c = *format++))
+925		{	switch (c)
+1063						count = va_arg (argptr, size_t) ;
+1064						header_seek (psf, count, SEEK_SET) ;
+header_seek (psf=0x80ea008, position=0, whence=0) at common.c:835
+835		switch (whence)
+837				if (position > SIGNED_SIZEOF (psf->header))
+842				if (position > psf->headend)
+844				psf->headindex = position ;
+845				break ;
+878		return ;
+879	} /* header_seek */
+psf_binheader_readf (psf=0x80ea008, format=0xb7fc2fc9 "") at common.c:1065
+1065						byte_count = count ;
+1066						break ;
+924		while ((c = *format++))
+1084		return byte_count ;
+1085	} /* psf_binheader_readf */
+wav_read_header (psf=0x80ea008, blockalign=0xbfffe698, 
+    framesperblock=0xbfffe69c) at wav.c:316
+316		while (! done)
+317		{	psf_binheader_readf (psf, "m", &marker) ;
+psf_binheader_readf (psf=0x80ea008, format=0xb7fc2fca "m") at common.c:908
+908	{	va_list			argptr ;
+917		int				byte_count = 0, count ;
+919		if (! format)
+922		va_start (argptr, format) ;
+924		while ((c = *format++))
+925		{	switch (c)
+935						intptr = va_arg (argptr, unsigned int*) ;
+936						ucptr = (unsigned char*) intptr ;
+937						byte_count += header_read (psf, ucptr, sizeof (int)) ;
+header_read (psf=0x80ea008, ptr=0xbfffe61c, bytes=4) at common.c:795
+795	{	int count = 0 ;
+797		if (psf->headindex >= SIGNED_SIZEOF (psf->header))
+805		if (psf->headindex + bytes > SIGNED_SIZEOF (psf->header))
+816		if (psf->headindex + bytes > psf->headend)
+825		memcpy (ptr, psf->header + psf->headindex, bytes) ;
+826		psf->headindex += bytes ;
+828		return bytes ;
+829	} /* header_read */
+psf_binheader_readf (psf=0x80ea008, format=0xb7fc2fcb "") at common.c:938
+938						*intptr = GET_MARKER (ucptr) ;
+939						break ;
+924		while ((c = *format++))
+1084		return byte_count ;
+1085	} /* psf_binheader_readf */
+wav_read_header (psf=0x80ea008, blockalign=0xbfffe698, 
+    framesperblock=0xbfffe69c) at wav.c:319
+319			switch (marker)
+322						if (parsestage)
+325						parsestage |= HAVE_RIFF ;
+331						if (marker == RIFF_MARKER)
+332							psf->rwf_endian = SF_ENDIAN_LITTLE ;
+336						psf_binheader_readf (psf, "4", &RIFFsize) ;
+psf_binheader_readf (psf=0x80ea008, format=0xb7fc2fcc "4") at common.c:908
+908	{	va_list			argptr ;
+917		int				byte_count = 0, count ;
+919		if (! format)
+922		va_start (argptr, format) ;
+924		while ((c = *format++))
+925		{	switch (c)
+981						intptr = va_arg (argptr, unsigned int*) ;
+982						*intptr = 0 ;
+983						ucptr = (unsigned char*) intptr ;
+984						byte_count += header_read (psf, ucptr, sizeof (int)) ;
+header_read (psf=0x80ea008, ptr=0xbfffe620, bytes=4) at common.c:795
+795	{	int count = 0 ;
+797		if (psf->headindex >= SIGNED_SIZEOF (psf->header))
+805		if (psf->headindex + bytes > SIGNED_SIZEOF (psf->header))
+816		if (psf->headindex + bytes > psf->headend)
+825		memcpy (ptr, psf->header + psf->headindex, bytes) ;
+826		psf->headindex += bytes ;
+828		return bytes ;
+829	} /* header_read */
+psf_binheader_readf (psf=0x80ea008, format=0xb7fc2fcd "") at common.c:985
+985						if (psf->rwf_endian == SF_ENDIAN_BIG)
+988							*intptr = GET_LE_INT (ucptr) ;
+989						break ;
+924		while ((c = *format++))
+1084		return byte_count ;
+1085	} /* psf_binheader_readf */
+wav_read_header (psf=0x80ea008, blockalign=0xbfffe698, 
+    framesperblock=0xbfffe69c) at wav.c:338
+338						if (psf->fileoffset > 0 && psf->filelength > RIFFsize + 8)
+346						else if (psf->filelength < RIFFsize + 2 * SIGNED_SIZEOF (dword))
+355						{	if (marker == RIFF_MARKER)
+356								psf_log_printf (psf, "RIFF : %u\n", RIFFsize) ;
+627			if (! psf->sf.seekable && (parsestage & HAVE_data))
+630			if (psf_ftell (psf) >= psf->filelength - SIGNED_SIZEOF (dword))
+psf_ftell (psf=0x80ea008) at file_io.c:401
+401		if (psf->virtual_io)
+404		if (psf->is_pipe)
+407		pos = lseek (psf->file.filedes, 0, SEEK_CUR) ;
+__llseek (fd=3, offset=0, whence=1) at ../sysdeps/unix/sysv/linux/llseek.c:30
+30	../sysdeps/unix/sysv/linux/llseek.c: No such file or directory.
+33	in ../sysdeps/unix/sysv/linux/llseek.c
+30	in ../sysdeps/unix/sysv/linux/llseek.c
+__x86.get_pc_thunk.bx () at ../sysdeps/i386/i686/multiarch/strcat.S:55
+55	../sysdeps/i386/i686/multiarch/strcat.S: No such file or directory.
+__llseek (fd=3, offset=0, whence=1) at ../sysdeps/unix/sysv/linux/llseek.c:33
+33	../sysdeps/unix/sysv/linux/llseek.c: No such file or directory.
+36	in ../sysdeps/unix/sysv/linux/llseek.c
+psf_ftell (psf=0x80ea008) at file_io.c:409
+409		if (pos == ((sf_count_t) -1))
+414		return pos - psf->fileoffset ;
+415	} /* psf_ftell */
+wav_read_header (psf=0x80ea008, blockalign=0xbfffe698, 
+    framesperblock=0xbfffe69c) at wav.c:316
+316		while (! done)
+317		{	psf_binheader_readf (psf, "m", &marker) ;
+psf_binheader_readf (psf=0x80ea008, format=0xb7fc2fca "m") at common.c:908
+908	{	va_list			argptr ;
+917		int				byte_count = 0, count ;
+919		if (! format)
+922		va_start (argptr, format) ;
+924		while ((c = *format++))
+925		{	switch (c)
+935						intptr = va_arg (argptr, unsigned int*) ;
+936						ucptr = (unsigned char*) intptr ;
+937						byte_count += header_read (psf, ucptr, sizeof (int)) ;
+header_read (psf=0x80ea008, ptr=0xbfffe61c, bytes=4) at common.c:795
+795	{	int count = 0 ;
+797		if (psf->headindex >= SIGNED_SIZEOF (psf->header))
+805		if (psf->headindex + bytes > SIGNED_SIZEOF (psf->header))
+816		if (psf->headindex + bytes > psf->headend)
+825		memcpy (ptr, psf->header + psf->headindex, bytes) ;
+826		psf->headindex += bytes ;
+828		return bytes ;
+829	} /* header_read */
+psf_binheader_readf (psf=0x80ea008, format=0xb7fc2fcb "") at common.c:938
+938						*intptr = GET_MARKER (ucptr) ;
+939						break ;
+924		while ((c = *format++))
+1084		return byte_count ;
+1085	} /* psf_binheader_readf */
+wav_read_header (psf=0x80ea008, blockalign=0xbfffe698, 
+    framesperblock=0xbfffe69c) at wav.c:319
+319			switch (marker)
+363						if ((parsestage & HAVE_RIFF) != HAVE_RIFF)
+365						parsestage |= HAVE_WAVE ;
+367						psf_log_printf (psf, "WAVE\n") ;
+368						break ;
+627			if (! psf->sf.seekable && (parsestage & HAVE_data))
+630			if (psf_ftell (psf) >= psf->filelength - SIGNED_SIZEOF (dword))
+psf_ftell (psf=0x80ea008) at file_io.c:401
+401		if (psf->virtual_io)
+404		if (psf->is_pipe)
+407		pos = lseek (psf->file.filedes, 0, SEEK_CUR) ;
+__llseek (fd=3, offset=0, whence=1) at ../sysdeps/unix/sysv/linux/llseek.c:30
+30	../sysdeps/unix/sysv/linux/llseek.c: No such file or directory.
+33	in ../sysdeps/unix/sysv/linux/llseek.c
+30	in ../sysdeps/unix/sysv/linux/llseek.c
+__x86.get_pc_thunk.bx () at ../sysdeps/i386/i686/multiarch/strcat.S:55
+55	../sysdeps/i386/i686/multiarch/strcat.S: No such file or directory.
+__llseek (fd=3, offset=0, whence=1) at ../sysdeps/unix/sysv/linux/llseek.c:33
+33	../sysdeps/unix/sysv/linux/llseek.c: No such file or directory.
+36	in ../sysdeps/unix/sysv/linux/llseek.c
+psf_ftell (psf=0x80ea008) at file_io.c:409
+409		if (pos == ((sf_count_t) -1))
+414		return pos - psf->fileoffset ;
+415	} /* psf_ftell */
+wav_read_header (psf=0x80ea008, blockalign=0xbfffe698, 
+    framesperblock=0xbfffe69c) at wav.c:316
+316		while (! done)
+317		{	psf_binheader_readf (psf, "m", &marker) ;
+psf_binheader_readf (psf=0x80ea008, format=0xb7fc2fca "m") at common.c:908
+908	{	va_list			argptr ;
+917		int				byte_count = 0, count ;
+919		if (! format)
+922		va_start (argptr, format) ;
+924		while ((c = *format++))
+925		{	switch (c)
+935						intptr = va_arg (argptr, unsigned int*) ;
+936						ucptr = (unsigned char*) intptr ;
+937						byte_count += header_read (psf, ucptr, sizeof (int)) ;
+header_read (psf=0x80ea008, ptr=0xbfffe61c, bytes=4) at common.c:795
+795	{	int count = 0 ;
+797		if (psf->headindex >= SIGNED_SIZEOF (psf->header))
+805		if (psf->headindex + bytes > SIGNED_SIZEOF (psf->header))
+816		if (psf->headindex + bytes > psf->headend)
+817		{	count = psf_fread (psf->header + psf->headend, 1, bytes - (psf->headend - psf->headindex), psf) ;
+psf_fread (ptr=0x80f3344, bytes=1, items=4, psf=0x80ea008) at file_io.c:317
+317	{	sf_count_t total = 0 ;
+320		if (psf->virtual_io)
+323		items *= bytes ;
+326		if (items <= 0)
+329		while (items > 0)
+331			count = (items > SENSIBLE_SIZE) ? SENSIBLE_SIZE : (ssize_t) items ;
+333			count = read (psf->file.filedes, ((char*) ptr) + total, (size_t) count) ;
+335			if (count == -1)
+343			if (count == 0)
+346			total += count ;
+347			items -= count ;
+329		while (items > 0)
+350		if (psf->is_pipe)
+353		return total / bytes ;
+354	} /* psf_fread */
+header_read (psf=0x80ea008, ptr=0xbfffe61c, bytes=4) at common.c:818
+818			if (count != bytes - (int) (psf->headend - psf->headindex))
+822			psf->headend += count ;
+825		memcpy (ptr, psf->header + psf->headindex, bytes) ;
+826		psf->headindex += bytes ;
+828		return bytes ;
+829	} /* header_read */
+psf_binheader_readf (psf=0x80ea008, format=0xb7fc2fcb "") at common.c:938
+938						*intptr = GET_MARKER (ucptr) ;
+939						break ;
+924		while ((c = *format++))
+1084		return byte_count ;
+1085	} /* psf_binheader_readf */
+wav_read_header (psf=0x80ea008, blockalign=0xbfffe698, 
+    framesperblock=0xbfffe69c) at wav.c:319
+319			switch (marker)
+371						if ((parsestage & (HAVE_RIFF | HAVE_WAVE)) != (HAVE_RIFF | HAVE_WAVE))
+375						if (parsestage & HAVE_fmt)
+378						parsestage |= HAVE_fmt ;
+380						psf_binheader_readf (psf, "4", &dword) ;
+psf_binheader_readf (psf=0x80ea008, format=0xb7fc2fcc "4") at common.c:908
+908	{	va_list			argptr ;
+917		int				byte_count = 0, count ;
+919		if (! format)
+922		va_start (argptr, format) ;
+924		while ((c = *format++))
+925		{	switch (c)
+981						intptr = va_arg (argptr, unsigned int*) ;
+982						*intptr = 0 ;
+983						ucptr = (unsigned char*) intptr ;
+984						byte_count += header_read (psf, ucptr, sizeof (int)) ;
+header_read (psf=0x80ea008, ptr=0xbfffe618, bytes=4) at common.c:795
+795	{	int count = 0 ;
+797		if (psf->headindex >= SIGNED_SIZEOF (psf->header))
+805		if (psf->headindex + bytes > SIGNED_SIZEOF (psf->header))
+816		if (psf->headindex + bytes > psf->headend)
+817		{	count = psf_fread (psf->header + psf->headend, 1, bytes - (psf->headend - psf->headindex), psf) ;
+psf_fread (ptr=0x80f3348, bytes=1, items=4, psf=0x80ea008) at file_io.c:317
+317	{	sf_count_t total = 0 ;
+320		if (psf->virtual_io)
+323		items *= bytes ;
+326		if (items <= 0)
+329		while (items > 0)
+331			count = (items > SENSIBLE_SIZE) ? SENSIBLE_SIZE : (ssize_t) items ;
+333			count = read (psf->file.filedes, ((char*) ptr) + total, (size_t) count) ;
+335			if (count == -1)
+343			if (count == 0)
+346			total += count ;
+347			items -= count ;
+329		while (items > 0)
+350		if (psf->is_pipe)
+353		return total / bytes ;
+354	} /* psf_fread */
+header_read (psf=0x80ea008, ptr=0xbfffe618, bytes=4) at common.c:818
+818			if (count != bytes - (int) (psf->headend - psf->headindex))
+822			psf->headend += count ;
+825		memcpy (ptr, psf->header + psf->headindex, bytes) ;
+826		psf->headindex += bytes ;
+828		return bytes ;
+829	} /* header_read */
+psf_binheader_readf (psf=0x80ea008, format=0xb7fc2fcd "") at common.c:985
+985						if (psf->rwf_endian == SF_ENDIAN_BIG)
+988							*intptr = GET_LE_INT (ucptr) ;
+989						break ;
+924		while ((c = *format++))
+1084		return byte_count ;
+1085	} /* psf_binheader_readf */
+wav_read_header (psf=0x80ea008, blockalign=0xbfffe698, 
+    framesperblock=0xbfffe69c) at wav.c:381
+381						psf_log_printf (psf, "fmt  : %d\n", dword) ;
+383						if ((error = wav_w64_read_fmt_chunk (psf, dword)))
+wav_w64_read_fmt_chunk (psf=0x80ea008, fmtsize=16) at wav_w64.c:116
+116		int	bytesread, k, bytespersec = 0 ;
+118		if ((wpriv = psf->container_data) == NULL)
+120		wav_fmt = &wpriv->wav_fmt ;
+122		memset (wav_fmt, 0, sizeof (WAV_FMT)) ;
+124		if (fmtsize < 16)
+130		bytesread = psf_binheader_readf (psf, "224422", &(wav_fmt->format), &(wav_fmt->min.channels), &(wav_fmt->min.samplerate), &(wav_fmt->min.bytespersec), &(wav_fmt->min.blockalign), &(wav_fmt->min.bitwidth)) ;
+psf_binheader_readf (psf=0x80ea008, format=0xb7fc1d42 "224422") at common.c:908
+908	{	va_list			argptr ;
+917		int				byte_count = 0, count ;
+919		if (! format)
+922		va_start (argptr, format) ;
+924		while ((c = *format++))
+925		{	switch (c)
+960						shortptr = va_arg (argptr, unsigned short*) ;
+961						*shortptr = 0 ;
+962						ucptr = (unsigned char*) shortptr ;
+963						byte_count += header_read (psf, ucptr, sizeof (short)) ;
+header_read (psf=0x80ea008, ptr=0x80f862c, bytes=2) at common.c:795
+795	{	int count = 0 ;
+797		if (psf->headindex >= SIGNED_SIZEOF (psf->header))
+805		if (psf->headindex + bytes > SIGNED_SIZEOF (psf->header))
+816		if (psf->headindex + bytes > psf->headend)
+817		{	count = psf_fread (psf->header + psf->headend, 1, bytes - (psf->headend - psf->headindex), psf) ;
+psf_fread (ptr=0x80f334c, bytes=1, items=2, psf=0x80ea008) at file_io.c:317
+317	{	sf_count_t total = 0 ;
+320		if (psf->virtual_io)
+323		items *= bytes ;
+326		if (items <= 0)
+329		while (items > 0)
+331			count = (items > SENSIBLE_SIZE) ? SENSIBLE_SIZE : (ssize_t) items ;
+333			count = read (psf->file.filedes, ((char*) ptr) + total, (size_t) count) ;
+335			if (count == -1)
+343			if (count == 0)
+346			total += count ;
+347			items -= count ;
+329		while (items > 0)
+350		if (psf->is_pipe)
+353		return total / bytes ;
+354	} /* psf_fread */
+header_read (psf=0x80ea008, ptr=0x80f862c, bytes=2) at common.c:818
+818			if (count != bytes - (int) (psf->headend - psf->headindex))
+822			psf->headend += count ;
+825		memcpy (ptr, psf->header + psf->headindex, bytes) ;
+826		psf->headindex += bytes ;
+828		return bytes ;
+829	} /* header_read */
+psf_binheader_readf (psf=0x80ea008, format=0xb7fc1d43 "24422") at common.c:964
+964						if (psf->rwf_endian == SF_ENDIAN_BIG)
+967							*shortptr = GET_LE_SHORT (ucptr) ;
+968						break ;
+924		while ((c = *format++))
+925		{	switch (c)
+960						shortptr = va_arg (argptr, unsigned short*) ;
+961						*shortptr = 0 ;
+962						ucptr = (unsigned char*) shortptr ;
+963						byte_count += header_read (psf, ucptr, sizeof (short)) ;
+header_read (psf=0x80ea008, ptr=0x80f862e, bytes=2) at common.c:795
+795	{	int count = 0 ;
+797		if (psf->headindex >= SIGNED_SIZEOF (psf->header))
+805		if (psf->headindex + bytes > SIGNED_SIZEOF (psf->header))
+816		if (psf->headindex + bytes > psf->headend)
+817		{	count = psf_fread (psf->header + psf->headend, 1, bytes - (psf->headend - psf->headindex), psf) ;
+psf_fread (ptr=0x80f334e, bytes=1, items=2, psf=0x80ea008) at file_io.c:317
+317	{	sf_count_t total = 0 ;
+320		if (psf->virtual_io)
+323		items *= bytes ;
+326		if (items <= 0)
+329		while (items > 0)
+331			count = (items > SENSIBLE_SIZE) ? SENSIBLE_SIZE : (ssize_t) items ;
+333			count = read (psf->file.filedes, ((char*) ptr) + total, (size_t) count) ;
+335			if (count == -1)
+343			if (count == 0)
+346			total += count ;
+347			items -= count ;
+329		while (items > 0)
+350		if (psf->is_pipe)
+353		return total / bytes ;
+354	} /* psf_fread */
+header_read (psf=0x80ea008, ptr=0x80f862e, bytes=2) at common.c:818
+818			if (count != bytes - (int) (psf->headend - psf->headindex))
+822			psf->headend += count ;
+825		memcpy (ptr, psf->header + psf->headindex, bytes) ;
+826		psf->headindex += bytes ;
+828		return bytes ;
+829	} /* header_read */
+psf_binheader_readf (psf=0x80ea008, format=0xb7fc1d44 "4422") at common.c:964
+964						if (psf->rwf_endian == SF_ENDIAN_BIG)
+967							*shortptr = GET_LE_SHORT (ucptr) ;
+968						break ;
+924		while ((c = *format++))
+925		{	switch (c)
+981						intptr = va_arg (argptr, unsigned int*) ;
+982						*intptr = 0 ;
+983						ucptr = (unsigned char*) intptr ;
+984						byte_count += header_read (psf, ucptr, sizeof (int)) ;
+header_read (psf=0x80ea008, ptr=0x80f8630, bytes=4) at common.c:795
+795	{	int count = 0 ;
+797		if (psf->headindex >= SIGNED_SIZEOF (psf->header))
+805		if (psf->headindex + bytes > SIGNED_SIZEOF (psf->header))
+816		if (psf->headindex + bytes > psf->headend)
+817		{	count = psf_fread (psf->header + psf->headend, 1, bytes - (psf->headend - psf->headindex), psf) ;
+psf_fread (ptr=0x80f3350, bytes=1, items=4, psf=0x80ea008) at file_io.c:317
+317	{	sf_count_t total = 0 ;
+320		if (psf->virtual_io)
+323		items *= bytes ;
+326		if (items <= 0)
+329		while (items > 0)
+331			count = (items > SENSIBLE_SIZE) ? SENSIBLE_SIZE : (ssize_t) items ;
+333			count = read (psf->file.filedes, ((char*) ptr) + total, (size_t) count) ;
+335			if (count == -1)
+343			if (count == 0)
+346			total += count ;
+347			items -= count ;
+329		while (items > 0)
+350		if (psf->is_pipe)
+353		return total / bytes ;
+354	} /* psf_fread */
+header_read (psf=0x80ea008, ptr=0x80f8630, bytes=4) at common.c:818
+818			if (count != bytes - (int) (psf->headend - psf->headindex))
+822			psf->headend += count ;
+825		memcpy (ptr, psf->header + psf->headindex, bytes) ;
+826		psf->headindex += bytes ;
+828		return bytes ;
+829	} /* header_read */
+psf_binheader_readf (psf=0x80ea008, format=0xb7fc1d45 "422") at common.c:985
+985						if (psf->rwf_endian == SF_ENDIAN_BIG)
+988							*intptr = GET_LE_INT (ucptr) ;
+989						break ;
+924		while ((c = *format++))
+925		{	switch (c)
+981						intptr = va_arg (argptr, unsigned int*) ;
+982						*intptr = 0 ;
+983						ucptr = (unsigned char*) intptr ;
+984						byte_count += header_read (psf, ucptr, sizeof (int)) ;
+header_read (psf=0x80ea008, ptr=0x80f8634, bytes=4) at common.c:795
+795	{	int count = 0 ;
+797		if (psf->headindex >= SIGNED_SIZEOF (psf->header))
+805		if (psf->headindex + bytes > SIGNED_SIZEOF (psf->header))
+816		if (psf->headindex + bytes > psf->headend)
+817		{	count = psf_fread (psf->header + psf->headend, 1, bytes - (psf->headend - psf->headindex), psf) ;
+psf_fread (ptr=0x80f3354, bytes=1, items=4, psf=0x80ea008) at file_io.c:317
+317	{	sf_count_t total = 0 ;
+320		if (psf->virtual_io)
+323		items *= bytes ;
+326		if (items <= 0)
+329		while (items > 0)
+331			count = (items > SENSIBLE_SIZE) ? SENSIBLE_SIZE : (ssize_t) items ;
+333			count = read (psf->file.filedes, ((char*) ptr) + total, (size_t) count) ;
+335			if (count == -1)
+343			if (count == 0)
+346			total += count ;
+347			items -= count ;
+329		while (items > 0)
+350		if (psf->is_pipe)
+353		return total / bytes ;
+354	} /* psf_fread */
+header_read (psf=0x80ea008, ptr=0x80f8634, bytes=4) at common.c:818
+818			if (count != bytes - (int) (psf->headend - psf->headindex))
+822			psf->headend += count ;
+825		memcpy (ptr, psf->header + psf->headindex, bytes) ;
+826		psf->headindex += bytes ;
+828		return bytes ;
+829	} /* header_read */
+psf_binheader_readf (psf=0x80ea008, format=0xb7fc1d46 "22") at common.c:985
+985						if (psf->rwf_endian == SF_ENDIAN_BIG)
+988							*intptr = GET_LE_INT (ucptr) ;
+989						break ;
+924		while ((c = *format++))
+925		{	switch (c)
+960						shortptr = va_arg (argptr, unsigned short*) ;
+961						*shortptr = 0 ;
+962						ucptr = (unsigned char*) shortptr ;
+963						byte_count += header_read (psf, ucptr, sizeof (short)) ;
+header_read (psf=0x80ea008, ptr=0x80f8638, bytes=2) at common.c:795
+795	{	int count = 0 ;
+797		if (psf->headindex >= SIGNED_SIZEOF (psf->header))
+805		if (psf->headindex + bytes > SIGNED_SIZEOF (psf->header))
+816		if (psf->headindex + bytes > psf->headend)
+817		{	count = psf_fread (psf->header + psf->headend, 1, bytes - (psf->headend - psf->headindex), psf) ;
+psf_fread (ptr=0x80f3358, bytes=1, items=2, psf=0x80ea008) at file_io.c:317
+317	{	sf_count_t total = 0 ;
+320		if (psf->virtual_io)
+323		items *= bytes ;
+326		if (items <= 0)
+329		while (items > 0)
+331			count = (items > SENSIBLE_SIZE) ? SENSIBLE_SIZE : (ssize_t) items ;
+333			count = read (psf->file.filedes, ((char*) ptr) + total, (size_t) count) ;
+335			if (count == -1)
+343			if (count == 0)
+346			total += count ;
+347			items -= count ;
+329		while (items > 0)
+350		if (psf->is_pipe)
+353		return total / bytes ;
+354	} /* psf_fread */
+header_read (psf=0x80ea008, ptr=0x80f8638, bytes=2) at common.c:818
+818			if (count != bytes - (int) (psf->headend - psf->headindex))
+822			psf->headend += count ;
+825		memcpy (ptr, psf->header + psf->headindex, bytes) ;
+826		psf->headindex += bytes ;
+828		return bytes ;
+829	} /* header_read */
+psf_binheader_readf (psf=0x80ea008, format=0xb7fc1d47 "2") at common.c:964
+964						if (psf->rwf_endian == SF_ENDIAN_BIG)
+967							*shortptr = GET_LE_SHORT (ucptr) ;
+968						break ;
+924		while ((c = *format++))
+925		{	switch (c)
+960						shortptr = va_arg (argptr, unsigned short*) ;
+961						*shortptr = 0 ;
+962						ucptr = (unsigned char*) shortptr ;
+963						byte_count += header_read (psf, ucptr, sizeof (short)) ;
+header_read (psf=0x80ea008, ptr=0x80f863a, bytes=2) at common.c:795
+795	{	int count = 0 ;
+797		if (psf->headindex >= SIGNED_SIZEOF (psf->header))
+805		if (psf->headindex + bytes > SIGNED_SIZEOF (psf->header))
+816		if (psf->headindex + bytes > psf->headend)
+817		{	count = psf_fread (psf->header + psf->headend, 1, bytes - (psf->headend - psf->headindex), psf) ;
+psf_fread (ptr=0x80f335a, bytes=1, items=2, psf=0x80ea008) at file_io.c:317
+317	{	sf_count_t total = 0 ;
+320		if (psf->virtual_io)
+323		items *= bytes ;
+326		if (items <= 0)
+329		while (items > 0)
+331			count = (items > SENSIBLE_SIZE) ? SENSIBLE_SIZE : (ssize_t) items ;
+333			count = read (psf->file.filedes, ((char*) ptr) + total, (size_t) count) ;
+335			if (count == -1)
+343			if (count == 0)
+346			total += count ;
+347			items -= count ;
+329		while (items > 0)
+350		if (psf->is_pipe)
+353		return total / bytes ;
+354	} /* psf_fread */
+header_read (psf=0x80ea008, ptr=0x80f863a, bytes=2) at common.c:818
+818			if (count != bytes - (int) (psf->headend - psf->headindex))
+822			psf->headend += count ;
+825		memcpy (ptr, psf->header + psf->headindex, bytes) ;
+826		psf->headindex += bytes ;
+828		return bytes ;
+829	} /* header_read */
+psf_binheader_readf (psf=0x80ea008, format=0xb7fc1d48 "") at common.c:964
+964						if (psf->rwf_endian == SF_ENDIAN_BIG)
+967							*shortptr = GET_LE_SHORT (ucptr) ;
+968						break ;
+924		while ((c = *format++))
+1084		return byte_count ;
+1085	} /* psf_binheader_readf */
+wav_w64_read_fmt_chunk (psf=0x80ea008, fmtsize=16) at wav_w64.c:135
+135		psf_log_printf (psf, "  Format        : 0x%X => %s\n", wav_fmt->format, wav_w64_format_str (wav_fmt->format)) ;
+136		psf_log_printf (psf, "  Channels      : %d\n", wav_fmt->min.channels) ;
+137		psf_log_printf (psf, "  Sample Rate   : %d\n", wav_fmt->min.samplerate) ;
+139		if (wav_fmt->format == WAVE_FORMAT_PCM && wav_fmt->min.blockalign == 0
+146			psf_log_printf (psf, "  Block Align   : %d\n", wav_fmt->min.blockalign) ;
+148		if (wav_fmt->format == WAVE_FORMAT_PCM && wav_fmt->min.bitwidth == 24 &&
+161		else if (wav_fmt->min.bitwidth == 0)
+162		{	switch (wav_fmt->format)
+168						psf_log_printf (psf, "  Bit Width     : %d (should not be 0)\n", wav_fmt->min.bitwidth) ;
+182		psf->sf.samplerate	= wav_fmt->min.samplerate ;
+183		psf->sf.frames 		= 0 ;					/* Correct this when reading data chunk. */
+184		psf->sf.channels	= wav_fmt->min.channels ;
+186		switch (wav_fmt->format)
+200					if (wav_fmt->min.bytespersec / wav_fmt->min.blockalign != wav_fmt->min.samplerate)
+
+Program received signal SIGFPE, Arithmetic exception.
+0xb7f85668 in wav_w64_read_fmt_chunk (psf=0x80ea008, fmtsize=16)
+    at wav_w64.c:200
+200					if (wav_fmt->min.bytespersec / wav_fmt->min.blockalign != wav_fmt->min.samplerate)

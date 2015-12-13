@@ -1,0 +1,36 @@
+digraph tiantgraph{
+"64#130		if( (size = input.load( in_fp, &ctx, filesize )) != 0 ) \\{";
+"65#SWF::File::load (this=this@entry=0xbfffe718, fp=fp@entry=0x83bdd70, _ctx=_ctx@entry=0xbfffe724, filesize=filesize@entry=505) at SWFFile.cpp:34"[shape="record"];
+"0#main (argc=3, argv=0xbfffe894) at swfmill.cpp:419"[shape="record"];
+"71#50		length = fgetc(fp);";
+"72#51		length += fgetc(fp)<<8;";
+"73#52		length += fgetc(fp)<<16;";
+"74#53		length += fgetc(fp)<<24;";
+"11#429		for( ; i<argc && command==NULL; i++ ) \\{";
+"76#57		length -= 8;";
+"18#490			return swfmill_swf2xml( argc-i, &argv[i] );";
+"80#70		data = new unsigned char[ length ];";
+"50#98		infile = argv[0];";
+"19#swfmill_swf2xml (argc=argc@entry=1, argv=argv@entry=0xbfffe89c) at swfmill.cpp:81"[shape="record"];
+"54#104		in_fp = std_in ? stdin : fopen( infile, \\"rb\\" );";
+"10#428		int i=1;";
+edge [fontname = "Verdana", fontsize = 10, color="crimson", style="solid"];
+"64#130		if( (size = input.load( in_fp, &ctx, filesize )) != 0 ) \\{"->"54#104		in_fp = std_in ? stdin : fopen( infile, \\"rb\\" );"[label="in_fp"];
+"71#50		length = fgetc(fp);"->"65#SWF::File::load (this=this@entry=0xbfffe718, fp=fp@entry=0x83bdd70, _ctx=_ctx@entry=0xbfffe724, filesize=filesize@entry=505) at SWFFile.cpp:34"[label="fp"];
+"72#51		length += fgetc(fp)<<8;"->"65#SWF::File::load (this=this@entry=0xbfffe718, fp=fp@entry=0x83bdd70, _ctx=_ctx@entry=0xbfffe724, filesize=filesize@entry=505) at SWFFile.cpp:34"[label="fp"];
+"72#51		length += fgetc(fp)<<8;"->"71#50		length = fgetc(fp);"[label="length"];
+"73#52		length += fgetc(fp)<<16;"->"65#SWF::File::load (this=this@entry=0xbfffe718, fp=fp@entry=0x83bdd70, _ctx=_ctx@entry=0xbfffe724, filesize=filesize@entry=505) at SWFFile.cpp:34"[label="fp"];
+"73#52		length += fgetc(fp)<<16;"->"72#51		length += fgetc(fp)<<8;"[label="length"];
+"74#53		length += fgetc(fp)<<24;"->"73#52		length += fgetc(fp)<<16;"[label="length"];
+"74#53		length += fgetc(fp)<<24;"->"65#SWF::File::load (this=this@entry=0xbfffe718, fp=fp@entry=0x83bdd70, _ctx=_ctx@entry=0xbfffe724, filesize=filesize@entry=505) at SWFFile.cpp:34"[label="fp"];
+"11#429		for( ; i<argc && command==NULL; i++ ) \\{"->"10#428		int i=1;"[label="i"];
+"11#429		for( ; i<argc && command==NULL; i++ ) \\{"->"0#main (argc=3, argv=0xbfffe894) at swfmill.cpp:419"[label="argc"];
+"76#57		length -= 8;"->"74#53		length += fgetc(fp)<<24;"[label="length"];
+"18#490			return swfmill_swf2xml( argc-i, &argv[i] );"->"11#429		for( ; i<argc && command==NULL; i++ ) \\{"[label="i"];
+"18#490			return swfmill_swf2xml( argc-i, &argv[i] );"->"0#main (argc=3, argv=0xbfffe894) at swfmill.cpp:419"[label="argv"];
+"80#70		data = new unsigned char[ length ];"->"76#57		length -= 8;"[label="length"];
+"50#98		infile = argv[0];"->"19#swfmill_swf2xml (argc=argc@entry=1, argv=argv@entry=0xbfffe89c) at swfmill.cpp:81"[label="argv"];
+"54#104		in_fp = std_in ? stdin : fopen( infile, \\"rb\\" );"->"50#98		infile = argv[0];"[label="infile"];
+"65#SWF::File::load (this=this@entry=0xbfffe718, fp=fp@entry=0x83bdd70, _ctx=_ctx@entry=0xbfffe724, filesize=filesize@entry=505) at SWFFile.cpp:34"->"64#130		if( (size = input.load( in_fp, &ctx, filesize )) != 0 ) \\{"[label="in_fp,0",style="dashed", color="forestgreen"];
+"19#swfmill_swf2xml (argc=argc@entry=1, argv=argv@entry=0xbfffe89c) at swfmill.cpp:81"->"18#490			return swfmill_swf2xml( argc-i, &argv[i] );"[label="&argv[i],1",style="dashed", color="forestgreen"];
+}
