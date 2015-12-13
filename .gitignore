@@ -1,5 +1,4 @@
 *~
 *.pyc
 .metadata
-test/testoutput/*
 docs/build
