@@ -65,7 +65,7 @@ class Filter:
         return vars
     @staticmethod
     def isFuncName(symbol,linestr):
-        if re.search(r"(^|(\s+))"+symbol.strip()+r"\s*\(",linestr):
+        if re.search(r"(?!<[_A-Za-z0-9])"+symbol.strip()+r"\s*\(",linestr):
             return True
         return False
     @staticmethod
