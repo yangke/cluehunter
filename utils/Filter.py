@@ -51,11 +51,25 @@ class Filter:
     def expression2symbols(e):
         if "SIZE" in e:
             print "OH NO!"
-        clean="".join(e.split())
-        cleaner=clean.replace("->", "@")
-        words=set(re.split(r"[^A-Za-z0-9_\.@]",cleaner))-set([''])
+        clean = Filter.removeStrings(e)
+        cleaner = "".join(clean.split())
+        cleanest=cleaner.replace("->", "@")
+        words=set(re.split(r"[^A-Za-z0-9_\.@]",cleanest))-set([''])
         symbols=[w.replace("@","->") for w in words]
         return symbols
+    @staticmethod
+    def removeStrings(e):
+        stack=[]
+        i=0
+        result=""
+        in_string = False
+        while i<len(e):
+            if e[i]=='"':
+                in_string = not in_string
+            elif in_string==False:
+                result+=e[i]
+            i+=1
+        return result
     @staticmethod
     def expression2vars(e):
         identifiers=Filter.expression2symbols(e)
