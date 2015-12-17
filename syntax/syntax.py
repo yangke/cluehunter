@@ -14,8 +14,9 @@ from model.TaintJob import TaintJob
 from model.TaintVar import TaintVar
 from utils.Filter import Filter
 class Syntax(object):
-    NORMAL_ASSIGN=64
-    OP_ASSIGN=32
+    NORMAL_ASSIGN=128
+    OP_ASSIGN=64
+    REF_ASSIGN=32
     INC=16
     RAW_DEF=8
     SYS_LIB_DEF=4
@@ -38,11 +39,25 @@ class Syntax(object):
             return True
         else:return False
     @staticmethod
-    def left_ref_propagate_pattern(pstr):
-        return Syntax.lt+Syntax.variable+Syntax.water+r"="+Syntax.water+r"&?"+Syntax.water+pstr+Syntax.water+r";"
+    def left_ref_propagate_pattern(v):
+        pstr=v.pointerStr()
+        astr=v.accessStr()
+        if pstr:
+            pat=r"(&"+Syntax.water+astr+"|"+pstr+")"
+        elif astr:
+            pat=r"&"+Syntax.water+astr
+        else:
+            print "Fatal Error! v.accessStr() return None"
+            x=1/0
+            return None
+        return Syntax.lt+Syntax.variable+Syntax.water+r"="+Syntax.water+pat+Syntax.water+r";"
     @staticmethod
-    def right_ref_propagate_pattern(pstr):
-        return Syntax.lt+pstr+Syntax.water+r"="+Syntax.water+r"[&\*]?"+Syntax.water+Syntax.variable+Syntax.water+r";"
+    def right_ref_propagate_pattern(v):
+        pstr=v.pointerStr()
+        if pstr:
+            return Syntax.lt+pstr+Syntax.water+r"="+Syntax.water+r"[&\*]?"+Syntax.water+Syntax.variable+Syntax.water+r";"
+        else:
+            return None
     @staticmethod
     def isVariable(varstr):
         p=re.compile(r'^'+Syntax.variable+r'$')
@@ -101,7 +116,23 @@ class Syntax(object):
         #in "lastModification" and "CheckingArgDefinition" function.
         #This weird behavior need be fixed in future. 
         if re.search(normal_assginment,codestr):
-            return Syntax.NORMAL_ASSIGN
+            pointer_def=re.compile(r"^\s*"+Syntax.identifier+r"\s*"+normal_assginment+".*")
+            if pointer_def.match(codestr) and '*' in normal_assginment:
+                #this is the case when finding *p=moo(p,c) where *p is the cared variable
+                #because of the naive search for parameer p,c, the type infomation is losed
+                #In this place we may find: int *p=&a;
+                #so at this time we got the type info.
+                #if there exists a long skip from the usage of p and int *p=&a;
+                #then checking the reference of p is necessary as we may find a=1 in middle place;
+                #just like this:
+                #int *p = & a;
+                #a=5
+                #use(p)
+                #The next search job should be 'a' relative.
+                #return Syntax.REF_ASSIGN
+                return Syntax.NORMAL_ASSIGN
+            else:
+                return Syntax.NORMAL_ASSIGN
         op_assignment=r"(?<![A_Za-z0-9_])"+access+r"\s*(\[[^\[\]]+\])?\s*[\+\-\*\/%\^\|&]\s*=[^=]"
         if re.search(op_assignment,codestr):
             return Syntax.OP_ASSIGN
@@ -285,9 +316,11 @@ class Syntax(object):
         return pos,i,var_name,func_name
     @staticmethod
     def isPossibleArgumentDefinition(line,var):
-        access=var.pointerStr()
-        if not access:
-            return None
+        
+        if var.pointerStr():
+            access="("+var.pointerStr()+"|"+"&\s*"+var.accessStr()+")"
+        else:
+            access="&\s*"+var.accessStr()
         pattern=re.compile(access)
         codestr=line.codestr.strip()
         for m in pattern.finditer(codestr):
