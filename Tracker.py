@@ -200,7 +200,7 @@ class Tracker:
         #=======================================================================
         # Try to fix this lower bound wrongly higher problem but failed.
         #-----------------------------------------------------------------------
-        # jobs=self.check_ref_modification2(job,job.trace_index,job.trace_index)
+        # jobs=self.check_ref_mod_first(job,job.trace_index,job.trace_index)
         # if jobs is not None :return jobs
         #-----------------------------------------------------------------------
         # ignore this problem should be better.
@@ -314,7 +314,7 @@ class Tracker:
                 needSeeBellow=False
             i-=1
             if i<0:return []  
-    def check_ref_mod_before_last_mod_check(self,job,i,lowerBound):
+    def check_ref_mod_first(self,job,i,lowerBound):
         idxes=self.slice_same_func_lines(i,lowerBound)##BUG i+1
         if len(idxes)==0:return None
         pairs=self.findAllReferences(job.var,idxes)

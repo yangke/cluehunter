@@ -3,6 +3,7 @@ Created on Dec 13, 2015
 
 @author: yangke
 '''
+from Test_foomoo_a import Test_foomoo_a
 from Test_libsndfile_bytes import Test_libsndfile_bytes
 from Test_libsndfile_most import Test_libsndfile_most
 from test.Test_libsndfile_wav_fmt__min_blockalign import Test_libsndfile_wav_fmt__min_blockalign
@@ -17,6 +18,8 @@ class IntegrationTest:
     def test(self):
         print "Start integeration testing..."
         result_array=[]
+        test=Test_foomoo_a()
+        result_array.append(('foomoo',test.test()))
         test=Test_libsndfile_bytes()
         result_array.append(('libsndfile_bytes',test.test()))
         test=Test_libsndfile_most()

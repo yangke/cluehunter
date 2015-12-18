@@ -1,0 +1,29 @@
+Already logging to ./gdb.txt.
+Breakpoint 1 at 0x80483f6: file foomoo.c, line 3.
+Starting program: /home/yangke/workspace/cluehunter/test/gdb_logs/foomoo/foomoo 
+
+Breakpoint 1, main () at foomoo.c:3
+3		int a=1, b=2;
+4		int *p = &a;
+5		int *q = &b;
+6		int *c = q;
+7		*q=foo(&a,&b);
+foo (x=0xbfffe83c, y=0xbfffe840) at foomoo.c:14
+14		return *x%=(*x)+(*y); 
+15	}
+main () at foomoo.c:8
+8		*p=moo(p,c);
+moo (x=0xbfffe83c, y=0xbfffe840) at foomoo.c:18
+18		return *x-*y;
+19	}
+main () at foomoo.c:9
+9		moo(p,c);
+moo (x=0xbfffe83c, y=0xbfffe840) at foomoo.c:18
+18		return *x-*y;
+19	}
+main () at foomoo.c:10
+10		return 1/a;
+
+Program received signal SIGFPE, Arithmetic exception.
+0x08048470 in main () at foomoo.c:10
+10		return 1/a;
