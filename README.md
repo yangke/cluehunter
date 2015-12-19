@@ -1,9 +1,9 @@
 # cluehunter
-**ClueHunter** is an auxiliary tool for crash point reverse data flow analysis. It generate data flow graph according to the gdb debug log(C program source code level). It receive manually specified sink variables that cause the last line crash, and do interprocedural analysis, on the log trace. To obtain the auto debug trace first, the tool `robot_dbg.exp` in cluehunter requires the under debug program to be compiled with profiled code information (gcc **-g** opreation).
+**ClueHunter** is an auxiliary tool for crash point reverse data flow analysis. It generate data flow graph according to the gdb debug log(C program source code level). It receive manually specified sink variables that cause the last line crash and perform interprocedural analysis on the log trace. For obtaining the auto-debug trace, the tool `robot_dbg.exp` in ClueHunter requires the program under debug to be compiled with profiled code information (gcc **-g** operation).
 
 ##Quick Start Cookbook
 ###Install
-ClueHunter depend on **graphviz** to generate the picture frome the dot file.
+ClueHunter depends on **graphviz** to generate the picture from the dot file.
 ####For Ubuntu
 ```
 sudo apt-get install git
@@ -14,7 +14,7 @@ That's done.
 
 ####Start Funny
 First modify the 15 line in `cluehunter/robot_dbg.exp` to fit with your own debug scenarios.
-Here is an example for our executable program `swf2xml` test in **swfmill-0.3.3**.
+Here is an example for executable program `swf2xml` test in **swfmill-0.3.3**.
 
 ```
 spawn gdb --args swfmill swf2xml exploit_it_to_crash
@@ -23,7 +23,7 @@ The input file `exploit_it_to_crash` will cause the crash of `swf2xml`.
 
 Then use `robot_dbg.exp` to debug your program automatically.
 It executes gdb `next` command when meeting lines which contains library or system call site, other cases it executes gdb `step` command.
-Put the `robot_dbg.exp` into the same directory with binary executable program: `swf2xml` and the exploit input: `exploit_it_to_crash`.
+Copy the `robot_dbg.exp` into the directory of binary executable program: `swf2xml` and the exploit input: `exploit_it_to_crash`.
 This will make the former command valid(`spawn gdb --args swfmill swf2xml exploit_it_to_crash`).
 
 ```
@@ -33,16 +33,16 @@ swfmill-0.3.3_install_bin_path$./robot_dbg.exp
 swfmill-0.3.3_install_bin_path$ls
 ... exploit_it_to_crash ... gdb.txt ... robot_dbg.exp ... swf2xml ...
 ```
-Every thing come handy, we got the debug trace `gdb.txt` besides them. Then we can use `cluehunter.py` to analyse this trace.
+Every thing come handy, we got the debug trace `gdb.txt` besides them. Then we can use `cluehunter.py` to analyze this trace.
 ```
 python cluehunter.py -t path_to/gdb.txt\
       -vs length -ps N -o . -n telescope -l 1
 ```
-This command will use the test trace located at gdb.txt and analyse variable `length` with direct access pattern(`N` means direct acces, while `\*` means we need to dereference this pointer to access data we cared). And it will output `telescope.dot` and then use **graphviz** to gennerate `telescope.png` beside it.
-Three options, `-vs -ps -t`, are mandatory.
-`-o` option specified the output directory and -l specified the parsed trace redundancy level.
-`0` means only remove the line redundancy in same function and `1` means remove both the inner function and inter function reduandancy.
-Here is an executable test command which analyse the trace `gdb-swfmill-0.3.3.txt` provided in test module.  
+This command will use the test trace located at gdb.txt to perform reverse data flow analysis for variable `length`. The sensitive crash data `length` it self are marked as tainted. The access pattern of `length`, `N`, means direct access. Another mark `\*` means we need to dereference this pointer to access sensitive sink data we cared about). 
+This command will cause ClueHunter output `telescope.dot` and use **graphviz** to generate `telescope.png` beside it.`-vs`, `-ps` and `-t` are three mandatory options which specify the sink variable names, patterns and the trace to analysis respectively.
+`-o` option specified the output directory. `-l` specified the parsed trace redundancy level.
+`0` means only remove the line redundancy in same function and `1` means remove both the inner function and inter-function reduandancy.
+Here is an executable test command which analyze the trace `gdb-swfmill-0.3.3.txt` provided in test module.  
 ```
 python cluehunter.py -t test/gdb_logs/swfmill-0.3.3/gdb-swfmill-0.3.3.txt\
       -vs length -ps N -o . -n telescope -l 1

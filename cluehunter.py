@@ -12,9 +12,10 @@ from model.TaintVar import TaintVar
 from Tracker import Tracker
 from parse.RedundancyFixer import RedundancyFixer
 
-DESCRIPTION = """ClueHunter is a auxiliary crash analysis tools.
-It draws data flow graph according to the gdb debug log.
-Taint data of the last line executed should be specified."""
+DESCRIPTION = """ClueHunter is an auxiliary tool for crash point reverse data flow analysis.
+It generate data flow graph according to the gdb debug log(C program source code level).
+It receive manually specified sink variables that cause the last line crash and perform interprocedural analysis on the log trace.
+For obtaining the auto-debug trace, the tool `robot_dbg.exp` in ClueHunter requires the program under debug to be compiled with profiled code information (gcc **-g** operation)."""
 DEFAULT_GDB_LOG="test/gdb_logs/swfmill-0.3.3/gdb-swfmill-0.3.3.txt"
 DEFAULT_OUTPUT_PATH="."
 DEFAULT_NAME="output"
