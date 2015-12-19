@@ -635,18 +635,14 @@ class Tracker:
 if __name__=="__main__":
     parser=LogParser()
     l=parser.parse("test/gdb_logs/swfmill-0.3.3/gdb-swfmill-0.3.3.txt")
-    #tracker=Tracker(l,argv[1])
     tracker=Tracker(l)
     traceIndex=len(l)-1
-    #tracker.setStartJobs(traceIndex, [TaintVar("dst",['*'])])
     tracker.setStartJobs(traceIndex, [TaintVar("length",[])])
-    #tracker.setStartJobs(traceIndex, [TaintVar("ptr",["*"]),TaintVar("bytes",[]),TaintVar("most",[])])
-    #tracker.setStartJobs(traceIndex, [TaintVar("most",[])])
     TG=tracker.track()
-    output=file("baby", 'w')
+    output=file("output.dot", 'w')
     print TG.serialize2dot()
     output.write(TG.serialize2dot())
     output.close()
-    subprocess.call("dot -Tpng baby -o b1.png", shell = True)
+    subprocess.call("dot -Tpng output.dot -o output.png", shell = True)
     #print str(TG)
     
