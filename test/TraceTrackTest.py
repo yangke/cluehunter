@@ -10,6 +10,7 @@ from model.TaintVar import TaintVar
 from Tracker import Tracker
 import filecmp
 import time
+import os
 
 class TraceTrackTest(object):
     
@@ -34,7 +35,13 @@ class TraceTrackTest(object):
         output.close()
         #print str(TG)
         subprocess.call("dot -Tpng '"+self.outputdir+self.name+".dot' -o '"+self.outputdir+self.name+".png'", shell = True)
-        x=filecmp.cmp(self.outputdir+self.name+".dot", self.answer_path+self.name+".dot")
+        if os.path.exists(self.answer_path+self.name+".dot"):
+            x=filecmp.cmp(self.outputdir+self.name+".dot", self.answer_path+self.name+".dot")
+        elif os.path.exists(self.answer_path+self.name+"_level0.dot"):
+            x=filecmp.cmp(self.outputdir+self.name+".dot", self.answer_path+self.name+"_level0.dot")
+            if not x:
+                if os.path.exists(self.answer_path+self.name+"_level1.dot"):
+                    x=filecmp.cmp(self.outputdir+self.name+".dot", self.answer_path+self.name+"_level1.dot")
         self.print_message(x)
         return x
     

@@ -1,6 +1,7 @@
 import re
 from FunctionCallInfo import FunctionCallInfo
 from LineOfCode import LineOfCode
+from RedundancyFixer import RedundancyFixer 
 def fixBlock(blockOfNormalLines):
     if blockOfNormalLines==[]:
         return []
@@ -67,53 +68,11 @@ class LogParser:
                 blockOfNormalLines=[]
                 errorInfo.append(line)
         print 'ALL PARSED\n============================================'
-        l=fix_redundancy(l)
-        l=filter_complains(l)
+        fixer=RedundancyFixer(l,RedundancyFixer.REMOVE_INTERPROCEDURAL_REDUNDANT)
+        l=fixer.fix()
         write2File("trace.txt", l)
         return l
-def filter_complains(l):
-    new=[]
-    complains_pattern=r"^[0-9]+\s*in .*\.[c,S]$"
-    pat=re.compile(complains_pattern)
-    for line in l:
-        s=str(line)
-        if not isinstance(line, FunctionCallInfo):
-            if pat.match(s) or "No such file or directory." in s:
-                if len(new)>0 and isinstance(new[-1], FunctionCallInfo):
-                    new=new[:-1]
-            else:
-                new.append(line)
-        else:
-            new.append(line)   
-    return new   
-def fix_redundancy(l):
-    new_list=[]
-    i=0
-    while i< len(l):
-        if isinstance(l[i], FunctionCallInfo):
-            j=check_I(i,l)
-            while j>i:
-                #print "Caught IT!",l[i]
-                i=j
-                j=check_I(i,l)
-        #print "add:",i
-        new_list.append(l[i]) 
-        i+=1
-    return new_list       
-def check_I(i,l):
-    m=1
-    #print "--------------"
-    #print i
-    while i+m<len(l) and str(l[i])!=str(l[i+m]):
-        m+=1
-    #print i+m
-    if i+m==len(l):
-        return 0
-    else:
-        for j in range(0,m):
-            if str(l[i+j])!=str(l[i+m+j]):
-                return i
-        return i+m    
+    
 def write2File(filepath,l):
     tra=file(filepath,"w")
     result=""
