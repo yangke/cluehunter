@@ -51,10 +51,10 @@ python cluehunter.py -t test/gdb_logs/swfmill-0.3.3/gdb-swfmill-0.3.3.txt\
 ##Complete Usage
 
 ```
-python cluhunter.py -h
-```
-
-```
+usage: cluehunter.py [-h] -ps PATTERNS [PATTERNS ...] -vs VARIABLES
+                     [VARIABLES ...] [-l LEVEL] -t TRACE [-o OUTPUT_PATH]
+                     [-n NAME] [-d | -v | -q]
+                     
 optional arguments:
   -h, --help            show this help message and exit
   -l LEVEL, --level LEVEL
