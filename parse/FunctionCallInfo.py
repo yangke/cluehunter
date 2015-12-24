@@ -20,7 +20,7 @@ class FunctionCallInfo:
         i=0
         while str[i]!='(':i+=1
         self.func_name = str[:i].strip()
-        j=len(str)-7
+        j=len(str)-7#'at a.c:9'
         while str[j:j+3]!='at ':j-=1
         self.pos_info = str[j+3:].strip()
         self.param_list = str[i+1:j].strip().rstrip(')')

@@ -11,6 +11,7 @@ from Tracker import Tracker
 import filecmp
 import time
 import os
+from parse.MacroInspector import MacroInspector
 
 class TraceTrackTest(object):
     
@@ -24,7 +25,10 @@ class TraceTrackTest(object):
         self.taintVars=taintVars
         self.passed_message=passed_message
         self.not_pass_message=not_pass_message
+        self.c_proj_dir=None
         
+    def set_c_proj_path(self,c_proj_path):
+        self.c_proj_dir=c_proj_path
         
     def test_tracker(self,tracker,traceIndex):
         tracker.setStartJobs(traceIndex, self.taintVars)
@@ -55,7 +59,8 @@ class TraceTrackTest(object):
         start = time.clock()
         parser=LogParser()
         l=parser.parse(self.logfile_path)
-        tracker=Tracker(l)
+        macro_inspector=MacroInspector(self.c_proj_dir)
+        tracker=Tracker(l,macro_inspector)
         traceIndex=len(l)-1
         passed=self.test_tracker(tracker,traceIndex)
         end = time.clock()

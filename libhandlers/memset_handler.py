@@ -27,12 +27,18 @@ class memset_handler(object):
         syscall_definition=memset_handler.gen_match_str(varstr)
         m=re.search(syscall_definition,codestr)
         start_pos=m.span()[1]
-        end_pos=ArgHandler.nextarg(codestr,start_pos)
-        if codestr[end_pos]!=",":
+        end_pos,islast=ArgHandler.nextarg(codestr,start_pos)
+        if end_pos is None:
+            print "Error! memset second arg wrong!"
+            x=1/0
+        elif islast:
             print "Error! memset third arg missing!" 
             x=1/0
         start_pos=end_pos+1
-        end_pos=ArgHandler.nextarg(codestr,start_pos)
+        end_pos,islast=ArgHandler.nextarg(codestr,start_pos)
+        if end_pos is None or not islast :
+            print "Error! memset third arg wrong!" 
+            x=1/0
         third_param=codestr[start_pos:end_pos]
         vs=Filter.expression2vars(third_param)
         jobs=[]

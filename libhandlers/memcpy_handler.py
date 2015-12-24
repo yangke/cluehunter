@@ -27,8 +27,11 @@ class memcpy_handler(object):
         syscall_definition=memcpy_handler.gen_match_str(varstr)
         m=re.search(syscall_definition,codestr)
         start_pos=m.span()[1]
-        end_pos=ArgHandler.nextarg(codestr,start_pos)
-        if codestr[end_pos]!=",":
+        end_pos,islast=ArgHandler.nextarg(codestr,start_pos)
+        if end_pos is None:
+            print "Error! memcpy second arg wrong!" 
+            x=1/0
+        elif islast:
             print "Error! memcpy third arg missing!" 
             x=1/0
         former_vars,follow_vars=ArgHandler.vars_in_pointer_offset_style(codestr[start_pos:end_pos])
@@ -38,7 +41,10 @@ class memcpy_handler(object):
             for v in follow_vars:
                 jobs.append(TaintJob(index,TaintVar(v,[])))
         start_pos=end_pos+1
-        end_pos=ArgHandler.nextarg(codestr,start_pos)
+        end_pos,islast=ArgHandler.nextarg(codestr,start_pos)
+        if end_pos is None or not islast:
+            print "Error! memcpy third arg wrong!" 
+            x=1/0
         vs=Filter.expression2vars(codestr[start_pos:end_pos])
         for v in vs:
             jobs.append(TaintJob(index,TaintVar(v,[])))
