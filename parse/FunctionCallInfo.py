@@ -25,13 +25,19 @@ class FunctionCallInfo:
         self.pos_info = str[j+3:].strip()
         self.param_list = str[i+1:j].strip().rstrip(')')
         self.listOfLines = []
+        self.init_file_name_and_line_num_now()
         #-------
         print "init codestr:",str
         print "function name:",self.func_name
         print "position info",self.pos_info
-        print "param_list",self.param_list   
+        print "param_list",self.param_list
+    def init_file_name_and_line_num_now(self):
+        self.file_name=self.pos_info.split(":")[0]
+        self.line_num_now=self.pos_info.split(":")[1]
+    def get_line_num_now(self):
+        return int(self.line_num_now)
     def get_file_name(self):
-        return self.pos_info.split(":")[0]
+        return self.file_name
        
     def addLines(self,l):
         self.listOfLines.extend(l)
