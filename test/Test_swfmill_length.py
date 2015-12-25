@@ -24,8 +24,10 @@ class Test_swfmill_length:
         answer_path='answers/swfmill/'
         name='swfmill-0.3.3_length'
         logfile_path="gdb_logs/swfmill-0.3.3/gdb-swfmill-0.3.3.txt"
+        c_proj_path='gdb_logs/swfmill-0.3.3/swfmill-0.3.3'
         taintVars=[TaintVar("length",[''])]
         test=TraceTrackTest(answer_path,name,logfile_path,taintVars,passed_message,not_pass_message)
+        test.set_c_proj_path(c_proj_path)
         passed=test.test()
         return passed
 if __name__ == '__main__':

@@ -13,14 +13,16 @@ from libhandlers.strncpy_handler import strncpy_handler
 from model.TaintJob import TaintJob
 from model.TaintVar import TaintVar
 from utils.Filter import Filter
+from parse.FunctionCallInfo import FunctionCallInfo
+
 class Syntax(object):
-    NORMAL_ASSIGN=128
-    OP_ASSIGN=64
-    REF_ASSIGN=32
-    INC=16
-    RAW_DEF=8
-    SYS_LIB_DEF=4
-    FOR=2
+    NORMAL_ASSIGN=64
+    OP_ASSIGN=32
+    REF_ASSIGN=16
+    INC=8
+    RAW_DEF=4
+    SYS_LIB_DEF=2
+    FOR=1
     NODEF=0
     keyword="if|while|switch|for|goto|return|sizeof|instanceof|label|case|class|struct|int|float|long|usigned|double|char"
     identifier=r'([_A-Za-z][_A-Za-z0-9]*)'
@@ -65,84 +67,20 @@ class Syntax(object):
     @staticmethod
     def isForStatement(codestr):
         m=re.search(Syntax.for_pattern, codestr)
-        if m:
+        if m is not None:
             return True
         return False
+    
     @staticmethod
-    def matchDefiniteDefinitionType(codestr,var):
-        if "fprintf" in codestr:
-            print "Got it!"
-        access=var.accessStr()
-        print "Checking Definition Type for:",access
-        #normal_assginment=r"(^|[^A_Za-z0-9_])"+access+r"\s*=[^=]"
-        normal_assginment=r"(?<![A_Za-z0-9_])"+access+r"\s*(\[[^\[\]]+\])?\s*=[^=]"
-        if Syntax.isForStatement(codestr):
-            return Syntax.FOR
-        if Syntax.isIncDef(var.v, codestr):
-            return Syntax.INC
-        #inc operation detection must be before the assignment.
-        #because when detecting variable (i) in case such as: "for (int i=-1;i<m;i++){",
-        #INC result must be returned as ForJobGenerator is only called in handle branch of INC operation
-        #in "lastModification" and "CheckingArgDefinition" function.
-        #This weird behavior need be fixed in future. 
-        if re.search(normal_assginment,codestr):
-            return Syntax.NORMAL_ASSIGN
-        op_assignment=r"(?<![A_Za-z0-9_])"+access+r"\s*(\[[^\[\]]+\])?\s*[\+\-\*\/%\^\|&]\s*=[^=]"
-        if re.search(op_assignment,codestr):
-            return Syntax.OP_ASSIGN
-        raw_definition=r"^\s*\{\s*[A-Za-z_][A-Za-z0-9_]+\s+(\*\s*)*([A-Za-z_][A-Za-z0-9_]+\s*,\s*)*"+var.v+"\s*;"
-        if re.search(raw_definition, codestr):
-            print "We got the raw definition!"
-            return Syntax.RAW_DEF
-        if Syntax.isLibArgDef(var.v,codestr):
-            return Syntax.SYS_LIB_DEF
-        return  Syntax.NODEF
-    @staticmethod
-    def matchDefinitionType(codestr,var):
-        if var.v=='i':
-            print "GotIt!!"
-        access=var.accessStr()
-        print "Checking Definition Type for:",access
-        print "codestr:",codestr
-        #normal_assginment=r"(^|[^A_Za-z0-9_])"+access+r"\s*=[^=]"
-        normal_assginment=r"(?<![A_Za-z0-9_])"+access+r"\s*(\[[^\[\]]+\])?\s*=[^=]"
-        if Syntax.isForStatement(codestr):
-            return Syntax.FOR
-        if Syntax.isIncDef(var.v, codestr):
-            return Syntax.INC
-        #inc operation detection must be before the assignment.
-        #because when detecting variable (i) in case such as: "for (int i=-1;i<m;i++){",
-        #INC result must be returned as ForJobGenerator is only called in handle branch of INC operation
-        #in "lastModification" and "CheckingArgDefinition" function.
-        #This weird behavior need be fixed in future. 
-        if re.search(normal_assginment,codestr):
-            pointer_def=re.compile(r"^\s*"+Syntax.identifier+r"\s*"+normal_assginment+".*")
-            if pointer_def.match(codestr) and '*' in normal_assginment:
-                #this is the case when finding *p=moo(p,c) where *p is the cared variable
-                #because of the naive search for parameer p,c, the type infomation is losed
-                #In this place we may find: int *p=&a;
-                #so at this time we got the type info.
-                #if there exists a long skip from the usage of p and int *p=&a;
-                #then checking the reference of p is necessary as we may find a=1 in middle place;
-                #just like this:
-                #int *p = & a;
-                #a=5
-                #use(p)
-                #The next search job should be 'a' relative.
-                #return Syntax.REF_ASSIGN
-                return Syntax.NORMAL_ASSIGN
-            else:
-                return Syntax.NORMAL_ASSIGN
-        op_assignment=r"(?<![A_Za-z0-9_])"+access+r"\s*(\[[^\[\]]+\])?\s*[\+\-\*\/%\^\|&]\s*=[^=]"
-        if re.search(op_assignment,codestr):
-            return Syntax.OP_ASSIGN
-        raw_definition=r"^\s*\{\s*[A-Za-z_][A-Za-z0-9_]+\s+(\*\s*)*([A-Za-z_][A-Za-z0-9_]+\s*,\s*)*"+var.v+"\s*;"
-        if re.search(raw_definition, codestr):
-            print "We got the raw definition!"
-            return Syntax.RAW_DEF
-        if Syntax.isLibArgDef(var.v,codestr):
-            return Syntax.SYS_LIB_DEF
-        return  Syntax.NODEF
+    def isInMultilineFor(l,i,var):
+        if isinstance(l[i],FunctionCallInfo) or isinstance(l[i-1],FunctionCallInfo) or isinstance(l[i-2],FunctionCallInfo):
+            return False
+        p1=re.compile(r"^\s*for\s*([^;\)];$")
+        p2=re.compile(r"^\s+[^;\)]+;$")
+        p3=re.compile(r"^\s+[^;\)]+\)$")
+        if p1.match(l[i-2].codestr) and p2.match(l[i-1].codestr) and p3.match(l[i].codestr):
+            return True
+    
     @staticmethod
     def isIncDef(access,codestr):
         increasement=r"("+access+r"\s*\+\+)|(\+\+\s*"+access+r")|("+access+r"\s*\-\-)|(\-\-\s*"+access+r")"
@@ -207,26 +145,6 @@ class Syntax(object):
         m=re.search(str_pat,codestr)
         if m:
             span=m.span()
-            #===================================================================
-            # print "hahah",codestr[:span[1]]
-            # print "hahah",var
-            # left=codestr[:span[1]].strip().rstrip('=').rstrip()
-            # if left=="char a[2]":
-            #     print "OH NO!",left
-            # i=0
-            # if re.search(r"[A-Za-z0-9_]+[\s|\*|\(]+[A-Za-z0-9_]+",left):
-            #     while re.search(r"[A-Za-z0-9_]",left[i]):
-            #         i+=1
-            #     while not re.search(r"[A-Za-z0-9_]",left[i]):
-            #         i+=1
-            #     j=i
-            #     while re.search(r"[A-Za-z0-9_]",left[j]) and j<len(left):
-            #         j+=1
-            #     name=left[i:j]
-            # else:
-            #     name=left
-            # print "left var name is:",name   
-            #===================================================================
             left=m.group()
             i=0
             while re.search(r"[A-Za-z0-9_\.\*\->\s]",left[i]):
@@ -273,6 +191,7 @@ class Syntax(object):
         if p==end-1:
             return None
         return codestr[p+1:end]#func_name
+    
     @staticmethod
     def vararg(codestr,start,end):
         if start>=end or start<0 or end>len(codestr):
@@ -369,84 +288,151 @@ class Syntax(object):
                             quotation=not quotation
         return None
     @staticmethod
-    def isPossibleArgumentDefinition2(line,var):
-        access=var.pointerStr()
-        pattern=re.compile(access)
-        if not access:
-            return None
-        codestr="".join(line.codestr.split())
-        resultset=[]
-        for m in pattern.finditer(codestr):
-            start,end=m.span()
-            result=Syntax.vararg(codestr,start,end)
-            if not result:continue
-            pos,index,arg,func_name=result
-            if pos==0:
-                #OK arg
-                pass
-            else:#pos=1
-                #In actual, pos>=1 you need to calculate accurately what is it.
-                j=index# index point to ','
-                stack=[]
-                quotation=False
-                while True:
-                    j-=1
-                    #BOUND CHECK
-                    if j<0:break
-                    if quotation==False:
-                        if codestr[j]==')':
-                            stack.append(')')
-                        elif codestr[j]=='(':
-                            if len(stack)==0:
-                                func_name=Syntax.extract_func_name(codestr,j)
-                                if func_name:
-                                    resultset.append([pos,arg,func_name])
-                                break
-                            else:
-                                stack.pop()
-                        elif codestr[j]==',':
-                            if len(stack)==0:
-                                pos+=1                            
-                    if codestr[j]=='"':
-                        if j-1>=0 and codestr[j-1]=="\\":#FIX ME : maybe out of bound
-                            continue
-                        else:
-                            quotation=not quotation
-                    
-        rs=[]
-        for r in resultset:
-            pos,arg,func_name=r         
-            rfl,p=var.matchAccessPattern(arg)
-            rs.append([rfl,p,pos,func_name])
-        return rs
+    def matchDefinitionType(codestr,var):
+        if var.v=='i':
+            print "GotIt!!"
+        access=var.accessStr()
+        print "Checking Definition Type for:",access
+        print "codestr:",codestr
+        
+        if Syntax.isForStatement(codestr):
+            return Syntax.FOR
+        if Syntax.isIncDef(var.v, codestr):
+            return Syntax.INC
+        
+        #inc operation detection must be before the assignment.
+        #because when detecting variable (i) in case such as: "for (int i=-1;i<m;i++){",
+        #INC result must be returned as ForJobGenerator is only called in handle branch of INC operation
+        #in "lastModification" and "CheckingArgDefinition" function.
+        #This weird behavior need be fixed in future. 
+        normal_assginment=r"(?<![A_Za-z0-9_])"+access+r"\s*(\[[^\[\]]+\])?\s*=[^=]"
+        if re.search(normal_assginment,codestr):
+            return Syntax.NORMAL_ASSIGN
+            #===================================================================
+            # pointer_def=re.compile(r"^\s*"+Syntax.identifier+r"\s*"+normal_assginment+".*")
+            # if pointer_def.match(codestr) and '*' in normal_assginment:
+            #     #this is the case when finding *p=moo(p,c) where *p is the cared variable
+            #     #because of the naive search for parameer p,c, the type infomation is losed
+            #     #In this place we may find: int *p=&a;
+            #     #so at this time we got the type info.
+            #     #if there exists a long skip from the usage of p and int *p=&a;
+            #     #then checking the reference of p is necessary as we may find a=1 in middle place;
+            #     #just like this:
+            #     #int *p = & a;
+            #     #a=5
+            #     #use(p)
+            #     #The next search job should be 'a' relative.
+            #     #return Syntax.REF_ASSIGN
+            #     return Syntax.NORMAL_ASSIGN
+            # else:
+            #     return Syntax.NORMAL_ASSIGN
+            #===================================================================
+        op_assignment=r"(?<![A_Za-z0-9_])"+access+r"\s*(\[[^\[\]]+\])?\s*[\+\-\*\/%\^\|&]\s*=[^=]"
+        if re.search(op_assignment,codestr):
+            return Syntax.OP_ASSIGN
+        raw_definition=r"^\s*\{\s*[A-Za-z_][A-Za-z0-9_]+\s+(\*\s*)*([A-Za-z_][A-Za-z0-9_]+\s*,\s*)*"+var.v+"\s*;"
+        if re.search(raw_definition, codestr):
+            print "We got the raw definition!"
+            return Syntax.RAW_DEF
+        if Syntax.isLibArgDef(var.v,codestr):
+            return Syntax.SYS_LIB_DEF
+        return  Syntax.NODEF
     
     @staticmethod
-    def generate_for_jobs(num,codestr,v):
-        v_access=v.accessStr()
+    def matchDefiniteDefinitionType(codestr,var):
+        if "fprintf" in codestr:
+            print "Got it!"
+        access=var.accessStr()
+        print "Checking Definition Type for:",access
+        #normal_assginment=r"(^|[^A_Za-z0-9_])"+access+r"\s*=[^=]"
+        normal_assginment=r"(?<![A_Za-z0-9_])"+access+r"\s*(\[[^\[\]]+\])?\s*=[^=]"
+        if Syntax.isForStatement(codestr):
+            return Syntax.FOR
+        if Syntax.isIncDef(var.v, codestr):
+            return Syntax.INC
+        #inc operation detection must be before the assignment.
+        #because when detecting variable (i) in case such as: "for (int i=-1;i<m;i++){",
+        #INC result must be returned as ForJobGenerator is only called in handle branch of INC operation
+        #in "lastModification" and "CheckingArgDefinition" function.
+        #This weird behavior need be fixed in future. 
+        if re.search(normal_assginment,codestr):
+            return Syntax.NORMAL_ASSIGN
+        op_assignment=r"(?<![A_Za-z0-9_])"+access+r"\s*(\[[^\[\]]+\])?\s*[\+\-\*\/%\^\|&]\s*=[^=]"
+        if re.search(op_assignment,codestr):
+            return Syntax.OP_ASSIGN
+        raw_definition=r"^\s*\{\s*[A-Za-z_][A-Za-z0-9_]+\s+(\*\s*)*([A-Za-z_][A-Za-z0-9_]+\s*,\s*)*"+var.v+"\s*;"
+        if re.search(raw_definition, codestr):
+            print "We got the raw definition!"
+            return Syntax.RAW_DEF
+        if Syntax.isLibArgDef(var.v,codestr):
+            return Syntax.SYS_LIB_DEF
+        return  Syntax.NODEF
+    @staticmethod
+    def vars_in_for_change_part(v_access,change_str):
+        change_str=''.join(change_str.split())
+        changes=change_str.split(',')
+        for change in changes:
+            #inc
+            find_inc=Syntax.isIncDef(v_access,change)
+            if find_inc:
+                return []
+            #assignment
+            #===================================================================
+            # find_assign=re.search(v_access+"=(?!=)", change)
+            # if find_assign:
+            #     rightvars=Filter.expression2vars(change[find_assign.span()[1]:])
+            #     return rightvars
+            #===================================================================
+            #op_assignment
+            find_op_assign=re.search(v_access+"[&/%\+\-\*\|\^]=(?!=)", change)
+            if find_op_assign:
+                rightvars=Filter.expression2vars(change[find_op_assign.span()[1]:])
+                return rightvars
+        return None
+    @staticmethod
+    def vars_in_for_init_part(v_access,init_str): 
+        init_str=''.join(init_str.split())
+        inits=init_str.split(',')
+        for init in inits:
+            match_init= re.search(v_access+r"=(?!=)",init)
+            if match_init:
+                left_var=match_init.group().rstrip("=")
+                right=init[match_init.span()[1]:]
+                right_var_strs_in_init=Filter.expression2vars(right)
+                return left_var,right_var_strs_in_init
+        return None
+    @staticmethod
+    def split_for(codestr):
+        codestr=''.join(codestr.split())
         m=re.search(Syntax.for_pattern, codestr)
         if m is None:
             return None
         array=m.group().split(";")
+        init=array[0]
+        cond=array[1]
+        change=array[2].rstrip(")")
+        return init,cond,change
+    @staticmethod
+    def generate_for_jobs(num,codestr,v):
+        v_access=v.accessStr()
+        init,cond,change=Syntax.split_for(codestr)
+        #right vars in init part
+        right_vars_in_change=Syntax.vars_in_for_change_part(v_access,change)
+        #bound vars in cond part
         bound_var_strs=[]
-        find_inc_exp=Syntax.isIncDef(v_access,array[2].rstrip(")").strip())
-        if find_inc_exp:
-            bound_var_strs=Filter.expression2vars(array[1])
-            print "bound_var_strs:",bound_var_strs
-        
-        m_init= re.search(v_access+r"\s*=\s*(?!=)",array[0])
-        init_var_strs=[]
-        if m_init:
-            left_var=m_init.group().rstrip("=").strip()
-            left_var=''.join(left_var.split())
-            right=array[0][m_init.span()[1]:]
-            init_var_strs=Filter.expression2vars(right)
-        if m_init is not None and find_inc_exp and left_var in bound_var_strs:
-            bound_var_strs.remove(left_var)
-        taint_vars=map(lambda x: TaintVar(x,[]),init_var_strs+bound_var_strs)
-        if not m_init and find_inc_exp:
+        if right_vars_in_change is not None:
+            bound_var_strs=Filter.expression2vars(cond)
+        #right vars in change part
+        init_vars=Syntax.vars_in_for_init_part(v_access,init)
+        right_var_strs_in_init=[]
+        if init_vars is not None:
+            left_var,right_var_strs_in_init=init_vars
+            if right_vars_in_change is not None and left_var in bound_var_strs:
+                bound_var_strs.remove(left_var)
+        taint_vars=map(lambda x: TaintVar(x,[]),right_var_strs_in_init+bound_var_strs)#+right_vars_in_change) Now we discard right increvalue because it's usually a fix value.
+        if init_vars is None and right_vars_in_change is not None:
             taint_vars.append(v)
         for t_v in taint_vars:
-            print 'taint var found in "for statement":',t_v
+            print 'Taint Vars found in FOR STATEMENT:',t_v
         jobs=map(lambda x:TaintJob(num,x),set(taint_vars))
         return list(set(jobs))
-    

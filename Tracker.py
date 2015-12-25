@@ -300,18 +300,19 @@ class Tracker:
                     if def_type == Syntax.FOR:
                         self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
                         jobs=Syntax.generate_for_jobs(i, self.l[i].codestr, job.var)
-                        return self.taintUp(jobs)
+                        return jobs
                     elif def_type == Syntax.INC:
                         self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
                         jobs.append(TaintJob(i,job.var))
                         jobs=list(set(jobs))
-                        return self.taintUp(jobs)
+                        return jobs
                     elif def_type==Syntax.RAW_DEF:
                         self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
                         return []
                     elif def_type==Syntax.SYS_LIB_DEF:
                         self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
-                        return Syntax.handle_sys_lib_def(i,job.var.v,self.l[i].codestr)
+                        jobs=Syntax.handle_sys_lib_def(i,job.var.v,self.l[i].codestr)
+                        return jobs
                     elif def_type == Syntax.NORMAL_ASSIGN or def_type == Syntax.OP_ASSIGN:
                         print "ASSIGNMENT FOUND:", self.l[i].codestr
                         self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
@@ -576,6 +577,7 @@ class Tracker:
         else:
             print "lowerBound line is:",self.l[lowerBound]
         return indexes#[i for i in indexes if i!=index]
+    
     def check_va_arg_style(self,skip_va_arg_nums,indexes):
         skip=skip_va_arg_nums
         for i in indexes:
@@ -587,8 +589,7 @@ class Tracker:
                     return left_var,indexes[idx:]
                 skip-=1
         return None       
-                
-        
+  
     def checkArgDef(self,callsiteIndex,beginIndex,lowerBound,p,rfl,childnum,callee):
         if p==[] or isinstance(self.l[callsiteIndex+1],LineOfCode):#Abort non-ponter variable.
             return [],False
