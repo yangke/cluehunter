@@ -3,18 +3,7 @@ Created on Oct 29, 2015
 
 @author: yangke
 '''
-import re
-import subprocess
-from model.TaintGraph import TaintGraph
-from parse.parse import LogParser
-from model.TaintJob import TaintJob
 from model.TaintVar import TaintVar
-from parse.FunctionCallInfo import FunctionCallInfo
-from parse.LineOfCode import LineOfCode
-from utils.Filter import Filter
-from Tracker import Tracker
-import filecmp
-import time
 from TraceTrackTest import TraceTrackTest
 class Test_swfdump_i:
     def test(self):

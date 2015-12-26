@@ -3,20 +3,7 @@ Created on Oct 7, 2015
 
 @author: yangke
 '''
-import os
-import re
-import subprocess
-from model.TaintGraph import TaintGraph
-from parse.parse import LogParser
-from model.TaintJob import TaintJob
 from model.TaintVar import TaintVar
-from parse.FunctionCallInfo import FunctionCallInfo
-from parse.LineOfCode import LineOfCode
-from utils.Filter import Filter
-from Tracker import Tracker
-import filecmp
-from numpy import diff
-import time
 from TraceTrackTest import TraceTrackTest
 class Test_libsndfile_most:
     def test(self):

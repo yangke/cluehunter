@@ -153,7 +153,6 @@ class Syntax(object):
     def getVars(var,line):
         codestr=line.codestr
         str_pat=var.accessStr()+r"\s*(\[[^\[\]]+\])*\s*[\+\-\*/%&\|]?\s*=\s*(?!=)"
-        print "GGGGG",str_pat
         print "CHECKING CODE:",codestr
         m=re.search(str_pat,codestr)
         if m:
