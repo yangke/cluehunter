@@ -5,18 +5,20 @@ Created on Dec 19, 2015
 '''
 import re
 from FunctionCallInfo import FunctionCallInfo
+from LineOfCode import LineOfCode
 class RedundancyFixer(object):
     REMOVE_INLINE_REDUNDANT=0
     REMOVE_INTERPROCEDURAL_REDUNDANT=1
     '''
     RedundancyFixer fix the redundant problem in Trace list
     '''
-    def __init__(self,l,redundancy_level=1):
+    def __init__(self,l,redundancy_level=0):
         self.l=l
         self.redundancy_level=redundancy_level
     def fix(self):
         self.func_fix_redundancy()
         self.filter_complains()
+        self.merge_multiline_for()
         return self.l    
     def filter_complains(self):
         new_list=[]
@@ -46,7 +48,46 @@ class RedundancyFixer(object):
             #print "add:",i
             new_list.append(self.l[i]) 
             i+=1
-        self.l=new_list       
+        self.l=new_list
+    def merge_multiline_for(self):
+        #=======================================================================
+        #Test case:
+        #-----------------------------------------------------------------------
+        # 922      for (counter = 0, set = ardata->symdefs;
+        # 923           counter < ardata->symdef_count;
+        # 924           counter++, set++, rbase += BSD_SYMDEF_SIZE)
+        #=======================================================================
+        p1=re.compile("^for\([^,;\)]+(,[^,;\)]+)*;$")
+        p2=re.compile("^[^,;\)]+;$")
+        p3=re.compile("^[^,;\)]+(,[^,;\)]+)*\)$")
+        newlist=[]
+        i=0
+        while i <len(self.l)-2:
+            x=None
+            if isinstance(self.l[i], LineOfCode):
+                if "for" in self.l[i].codestr:
+                    if isinstance(self.l[i+1], LineOfCode) and isinstance(self.l[i+2], LineOfCode):
+                        code1=''.join(self.l[i].codestr.split())
+                        code2=''.join(self.l[i+1].codestr.split())
+                        code3=''.join(self.l[i+2].codestr.split())
+                        if p1.match(code1) and p2.match(code2) and p3.match(code3):
+                            print self.l[i]
+                            print self.l[i+1]
+                            print self.l[i+2] 
+                            x=self.l[i]
+                            print self.l[i].codestr+code2+code3
+                            x.codestr=self.l[i].codestr.rstrip()+code2+code3+"\n"
+                            
+            if x is not None:
+                newlist.append(x)
+                i+=3
+            else:
+                newlist.append(self.l[i])
+                i+=1
+        newlist.append(self.l[i])
+        newlist.append(self.l[i+1])
+        self.l=newlist    
+                  
     def check_I(self,i):
         m=1
         while i+m<len(self.l) and str(self.l[i])!=str(self.l[i+m]):

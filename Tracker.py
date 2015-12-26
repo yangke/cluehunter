@@ -332,6 +332,8 @@ class Tracker:
             i-=1
             if i<0:return []
     def isMacroCall(self,callsite_index):
+        if self.macro_inspector is None:
+            return False
         print "Checking Macro Call..."
         print self.l[callsite_index]
         print self.l[callsite_index+1]
