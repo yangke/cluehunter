@@ -10,12 +10,14 @@ from libhandlers.fread_handler import fread_handler
 from libhandlers.read_handler import read_handler
 from libhandlers.strcpy_handler import strcpy_handler
 from libhandlers.strncpy_handler import strncpy_handler
+from libhandlers.ArgHandler import ArgHandler
 from model.TaintJob import TaintJob
 from model.TaintVar import TaintVar
 from utils.Filter import Filter
 from parse.FunctionCallInfo import FunctionCallInfo
 
 class Syntax(object):
+    RETURN_VALUE_ASSIGN=128
     NORMAL_ASSIGN=64
     OP_ASSIGN=32
     REF_ASSIGN=16
@@ -43,13 +45,13 @@ class Syntax(object):
     lib_func_name=memop+'|'+fileop+'|'+stdop+'|'+strop+'|'+syscall+'|'+other
     @staticmethod
     def isKeyWord(codestr):
-        pattern=re.compile(Syntax.lib_func_name)
+        pattern=re.compile(Syntax.keyword)
         if pattern.match(codestr.strip()):
             return True
         else:return False
     @staticmethod
     def isLibFuncName(codestr):
-        pattern=re.compile(Syntax.keyword)
+        pattern=re.compile(Syntax.lib_func_name)
         if pattern.match(codestr.strip()):
             return True
         else:return False
@@ -300,56 +302,27 @@ class Syntax(object):
                             quotation=not quotation
         return None
     @staticmethod
-    def matchDefinitionType(codestr,var):
-        if var.v=='i':
-            print "GotIt!!"
-        access=var.accessStr()
-        print "Checking Definition Type for:",access
-        print "codestr:",codestr
-        
-        if Syntax.isForStatement(codestr):
-            return Syntax.FOR
-        if Syntax.isIncDef(var.v, codestr):
-            return Syntax.INC
-        
-        #inc operation detection must be before the assignment.
-        #because when detecting variable (i) in case such as: "for (int i=-1;i<m;i++){",
-        #INC result must be returned as ForJobGenerator is only called in handle branch of INC operation
-        #in "lastModification" and "CheckingArgDefinition" function.
-        #This weird behavior need be fixed in future. 
-        normal_assginment=r"(?<![A_Za-z0-9_])"+access+r"\s*(\[[^\[\]]+\])?\s*=[^=]"
-        if re.search(normal_assginment,codestr):
-            return Syntax.NORMAL_ASSIGN
-            #===================================================================
-            # pointer_def=re.compile(r"^\s*"+Syntax.identifier+r"\s*"+normal_assginment+".*")
-            # if pointer_def.match(codestr) and '*' in normal_assginment:
-            #     #this is the case when finding *p=moo(p,c) where *p is the cared variable
-            #     #because of the naive search for parameer p,c, the type infomation is losed
-            #     #In this place we may find: int *p=&a;
-            #     #so at this time we got the type info.
-            #     #if there exists a long skip from the usage of p and int *p=&a;
-            #     #then checking the reference of p is necessary as we may find a=1 in middle place;
-            #     #just like this:
-            #     #int *p = & a;
-            #     #a=5
-            #     #use(p)
-            #     #The next search job should be 'a' relative.
-            #     #return Syntax.REF_ASSIGN
-            #     return Syntax.NORMAL_ASSIGN
-            # else:
-            #     return Syntax.NORMAL_ASSIGN
-            #===================================================================
-        op_assignment=r"(?<![A_Za-z0-9_])"+access+r"\s*(\[[^\[\]]+\])?\s*[\+\-\*\/%\^\|&]\s*=[^=]"
-        if re.search(op_assignment,codestr):
-            return Syntax.OP_ASSIGN
-        raw_definition=r"^\s*\{\s*[A-Za-z_][A-Za-z0-9_]+\s+(\*\s*)*([A-Za-z_][A-Za-z0-9_]+\s*,\s*)*"+var.v+"\s*;"
-        if re.search(raw_definition, codestr):
-            print "We got the raw definition!"
-            return Syntax.RAW_DEF
-        if Syntax.isLibArgDef(var.v,codestr):
-            return Syntax.SYS_LIB_DEF
-        return  Syntax.NODEF
+    def isUniqueNonLibCall(callstr):
+        callstr=''.join(callstr.split()).rstrip(';')
+        if callstr=='':return False
+        if re.search(r"[_A-Za-z0-9]",callstr[0]) is None:
+            return False
+        m=re.search(Syntax.identifier+r"\(",callstr)
+        if m is None :
+            return False
+        if Syntax.isLibFuncName(m.group().rstrip('(')):
+            return False
+        start=m.span()[1]
+        end,islast=ArgHandler.nextarg(callstr,start)
+        while islast==False:
+            print start,end,callstr
+            start=end+1
+            end,islast=ArgHandler.nextarg(callstr,start)
+        if end is not None and end==len(callstr)-1:
+            return True
+        return False
     
+
     @staticmethod
     def matchDefiniteDefinitionType(codestr,var):
         if "fprintf" in codestr:

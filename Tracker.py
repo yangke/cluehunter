@@ -296,7 +296,7 @@ class Tracker:
                         jobs,findIt=self.checkArgDef(i,job.trace_index,job.trace_index,p,rfl,childnum,callee)
                         if findIt:return jobs
                         print self.l[i].codestr.strip(),"does not contains arg definiton."
-                def_type=Syntax.matchDefinitionType(self.l[i].codestr,job.var)
+                def_type=self.matchDefinitionType(i,job.var)
                 print "still finding var:",job.var
                 if def_type!=Syntax.NODEF:
                     if job.trace_index-i>1:
@@ -334,25 +334,75 @@ class Tracker:
                         self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
                         jobs=Syntax.handle_sys_lib_def(i,job.var.v,self.l[i].codestr)
                         return jobs
-                    elif def_type == Syntax.NORMAL_ASSIGN or def_type == Syntax.OP_ASSIGN:
-                        print "ASSIGNMENT FOUND:", self.l[i].codestr
+                    elif def_type == Syntax.NORMAL_ASSIGN:
+                        print "HANDLE NORMAL_ASSIGN!"
+                        print "taintvar:",job.var.simple_access_str()
+                        print "line:",self.l[i]
                         self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
                         taintvars=Syntax.getVars(job.var,self.l[i])
-                        print "job.var.v now:",job.var.v
-                        print "tainted right vars:"
-                        for var_ in taintvars:
-                            print var_
-                        if def_type==Syntax.OP_ASSIGN:
-                            print "OPASSIN:",self.l[i]
-                            taintvars.add(job.var)
+                        print "normal assign new taint variable list------"
+                        for tv in taintvars:print tv
                         jobs=map(lambda x : TaintJob(i,x), taintvars)
                         return jobs
+                    elif def_type == Syntax.OP_ASSIGN:
+                        print "HANDLE NORMAL_ASSIGN!"
+                        print "taintvar:",job.var.simple_access_str()
+                        print "line:",self.l[i]
+                        self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
+                        taintvars=Syntax.getVars(job.var,self.l[i])
+                        taintvars.add(job.var)
+                        print "op assign new taint variable list------"
+                        for tv in taintvars:print tv
+                        jobs=map(lambda x : TaintJob(i,x), taintvars)
+                        return jobs
+                    elif def_type == Syntax.RETURN_VALUE_ASSIGN:
+                        self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
+                        jobs=self.handleReturnAssignDirect(job.trace_index,i,job.var)
+                        return jobs
+                        
             elif needSeeBellow:
                 print job.var.v, 'NOT IN', self.l[i].codestr
                 needSeeBellow=False
             i-=1
             if i<0:return []
-    
+            
+    def handleReturnAssignDirect(self,beginIndex,i,var):
+        leftvar=self.l[i].codestr.split('=')[0].strip()
+        variable_pat=re.compile(Syntax.variable)
+        if variable_pat.match(leftvar):
+            accesspattern=var.matchAccessPattern(leftvar)
+            return self.handleReturnAssgin(beginIndex,i,accesspattern)
+        else:
+            print "Fatal Error! the return assginment is wrongly recognized! Please check the matchDefinitionType"  
+            print 1/0       
+    def handleReturnAssgin(self,job_trace_index,i,accesspattern):
+        
+        if i+2+1<len(self.l) and isinstance(self.l[i+1],FunctionCallInfo) and isinstance(self.l[i+2],LineOfCode):
+            if self.l[i+1].get_func_name().split("::")[-1].strip() in self.l[i].codestr:
+                indexes=self.slice_same_func_lines(i+2, job_trace_index)
+                count=0
+                print "accesspattern:",accesspattern
+                for idx in indexes[::-1]:
+                    print "check return line:",self.l[idx]
+                    if 'return ' in self.l[idx].codestr:
+                        rightpart=self.l[idx].codestr.lstrip('return').strip()
+                        if Syntax.isUniqueNonLibCall(rightpart):
+                            jobs=self.handleReturnAssgin(job_trace_index,idx,accesspattern)
+                            return jobs
+                        else:
+                            variable_pat=re.compile(Syntax.variable)
+                            m=variable_pat.match(rightpart)
+                            if m:
+                                return TaintJob(idx,TaintVar(rightpart,accesspattern))
+                            else:
+                                taint_v_strs = Filter.expression2vars(rightpart)
+                                jobs=map(lambda x : TaintJob(idx,x),[TaintVar(tv,[]) for tv in taint_v_strs])
+                                return jobs
+                    count+=1
+                    if count == 3:break
+                return []
+        print "Fatal Error! the malformed call detail lines after return value assignment!"  
+        print 1/0            
     def check_ref_mod_first(self,job,i,lowerBound):
         idxes=self.slice_same_func_lines(i,lowerBound)##BUG i+1
         if len(idxes)==0:return None
@@ -390,13 +440,20 @@ class Tracker:
                 self.TG.linkInnerEdges(job.trace_index,d,v.simple_access_str())
                 jobs= Syntax.handle_sys_lib_def(d,v.v,self.l[d].codestr)
                 return jobs
-            elif def_type==Syntax.NORMAL_ASSIGN or def_type==Syntax.OP_ASSIGN:#ASSIGN
+            elif def_type==Syntax.NORMAL_ASSIGN:
                 self.TG.linkInnerEdges(job.trace_index,d,v.simple_access_str())
                 taintvars=Syntax.getVars(v,self.l[d])
-                if def_type==Syntax.OP_ASSIGN:
-                    taintvars.add(v)
                 jobs=map(lambda x : TaintJob(d, x), taintvars)
-                #return self.taintUp(jobs)
+                return jobs
+            elif def_type==Syntax.OP_ASSIGN:
+                self.TG.linkInnerEdges(job.trace_index,d,v.simple_access_str())
+                taintvars=Syntax.getVars(v,self.l[d])
+                taintvars.add(v)
+                jobs=map(lambda x : TaintJob(d, x), taintvars)
+                return jobs
+            elif def_type == Syntax.RETURN_VALUE_ASSIGN:
+                self.TG.linkInnerEdges(job.trace_index,d,v.simple_access_str())
+                jobs=self.handleReturnAssignDirect(job.trace_index,d,job.var)
                 return jobs
             else:
                 result=Syntax.isPossibleArgumentDefinition(self.l[d],v)
@@ -427,7 +484,7 @@ class Tracker:
                 print "Checking Def",self.l[i]
                 access=v.accessStr()
                 if re.search(access, self.l[i].codestr):
-                    def_type=Syntax.matchDefinitionType(self.l[i].codestr,v)
+                    def_type=self.matchDefinitionType(i,v)
                     #if def_type==Syntax.FOR or def_type==Syntax.NORMAL_ASSIGN or def_type==Syntax.OP_ASSIGN or def_type==Syntax.INC or def_type==Syntax.RAW_DEF or def_type==Syntax.SYS_LIB_DEF:#ASSIGN
                     if def_type!=Syntax.NODEF:
                         defs.append((i,v))
@@ -580,6 +637,7 @@ class Tracker:
             print "Now lowerBound is Unlimited."
         else:
             print "lowerBound line is:",self.l[lowerBound]
+        indexes.sort()
         return indexes#[i for i in indexes if i!=index]
     
     def check_va_arg_style(self,skip_va_arg_nums,indexes):
@@ -631,7 +689,7 @@ class Tracker:
             print "%%%",self.l[d]
         for d,v in defs:
             ####BUUUUUUUUUUUUUUUUUUUG
-            def_type=Syntax.matchDefinitionType(self.l[d].codestr,v)
+            def_type=self.matchDefinitionType(d,v)
             if def_type==Syntax.FOR:
                 self.TG.linkCrossEdges(beginIndex,d,v.simple_access_str())
                 jobs=Syntax.generate_for_jobs(d, self.l[d].codestr, v)
@@ -648,13 +706,21 @@ class Tracker:
                 self.TG.linkCrossEdges(beginIndex,d,v.simple_access_str())
                 jobs= Syntax.handle_sys_lib_def(d,v.v,self.l[d].codestr)
                 return self.taintUp(jobs),True
-            elif def_type==Syntax.NORMAL_ASSIGN or def_type==Syntax.OP_ASSIGN:#ASSIGN
+            elif def_type==Syntax.NORMAL_ASSIGN:
                 self.TG.linkCrossEdges(beginIndex,d,v.simple_access_str())
                 taintvars=Syntax.getVars(v,self.l[d])
-                if def_type==Syntax.OP_ASSIGN:
-                    taintvars.add(v)
                 jobs=map(lambda x : TaintJob(d, x), taintvars)
                 return self.taintUp(jobs),True
+            elif def_type==Syntax.OP_ASSIGN:
+                self.TG.linkCrossEdges(beginIndex,d,v.simple_access_str())
+                taintvars=Syntax.getVars(v,self.l[d])
+                taintvars.add(v)
+                jobs=map(lambda x : TaintJob(d, x), taintvars)
+                return self.taintUp(jobs),True
+            elif def_type == Syntax.RETURN_VALUE_ASSIGN:
+                self.TG.linkCrossEdges(beginIndex,d,v.simple_access_str())
+                jobs=self.handleReturnAssignDirect(beginIndex,d,v)
+                return jobs
             else:
                 #job.traceIndex-->l.index(line)
                 #f(t->q) variable:t syntax:*(t->q)
@@ -670,6 +736,62 @@ class Tracker:
                     jobs,b=self.checkArgDef(d,beginIndex,lowerBound,p,rfl,childnum,callee)
                     if b:return self.taintUp(jobs),True
         return [],False
+    
+    def matchDefinitionType(self,i,var):
+        codestr=self.l[i].codestr
+        if var.v=='i':
+            print "GotIt!!"
+        access=var.accessStr()
+        print "Checking Definition Type for:",access
+        print "codestr:",codestr
+        
+        if Syntax.isForStatement(codestr):
+            return Syntax.FOR
+        if Syntax.isIncDef(var.v, codestr):
+            return Syntax.INC
+        
+        #inc operation detection must be before the assignment.
+        #because when detecting variable (i) in case such as: "for (int i=-1;i<m;i++){",
+        #INC result must be returned as ForJobGenerator is only called in handle branch of INC operation
+        #in "lastModification" and "CheckingArgDefinition" function.
+        #This weird behavior need be fixed in future. 
+        normal_assginment=r"(?<![A_Za-z0-9_])"+access+r"\s*(\[[^\[\]]+\])?\s*=(?!=)"
+        match=re.search(normal_assginment,codestr)
+        if match:
+            if Syntax.isUniqueNonLibCall(codestr[match.span()[1]:].rstrip(';')):
+                if i+2+1<len(self.l) and isinstance(self.l[i+1],FunctionCallInfo) and isinstance(self.l[i+2],LineOfCode):
+                    if self.l[i+1].get_func_name().split("::")[-1].strip() in self.l[i].codestr:
+                        return Syntax.RETURN_VALUE_ASSIGN
+            return Syntax.NORMAL_ASSIGN
+            #===================================================================
+            # pointer_def=re.compile(r"^\s*"+Syntax.identifier+r"\s*"+normal_assginment+".*")
+            # if pointer_def.match(codestr) and '*' in normal_assginment:
+            #     #this is the case when finding *p=moo(p,c) where *p is the cared variable
+            #     #because of the naive search for parameer p,c, the type infomation is losed
+            #     #In this place we may find: int *p=&a;
+            #     #so at this time we got the type info.
+            #     #if there exists a long skip from the usage of p and int *p=&a;
+            #     #then checking the reference of p is necessary as we may find a=1 in middle place;
+            #     #just like this:
+            #     #int *p = & a;
+            #     #a=5
+            #     #use(p)
+            #     #The next search job should be 'a' relative.
+            #     #return Syntax.REF_ASSIGN
+            #     return Syntax.NORMAL_ASSIGN
+            # else:
+            #     return Syntax.NORMAL_ASSIGN
+            #===================================================================
+        op_assignment=r"(?<![A_Za-z0-9_])"+access+r"\s*(\[[^\[\]]+\])?\s*[\+\-\*\/%\^\|&]\s*=[^=]"
+        if re.search(op_assignment,codestr):
+            return Syntax.OP_ASSIGN
+        raw_definition=r"^\s*\{\s*[A-Za-z_][A-Za-z0-9_]+\s+(\*\s*)*([A-Za-z_][A-Za-z0-9_]+\s*,\s*)*"+var.v+"\s*;"
+        if re.search(raw_definition, codestr):
+            print "We got the raw definition!"
+            return Syntax.RAW_DEF
+        if Syntax.isLibArgDef(var.v,codestr):
+            return Syntax.SYS_LIB_DEF
+        return  Syntax.NODEF
             
 if __name__=="__main__":
     parser=LogParser()

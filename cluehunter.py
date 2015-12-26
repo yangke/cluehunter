@@ -11,6 +11,7 @@ from parse.parse import LogParser
 from model.TaintVar import TaintVar
 from Tracker import Tracker
 from parse.RedundancyFixer import RedundancyFixer
+from parse.MacroInspector import MacroInspector
 
 DESCRIPTION = """ClueHunter is an auxiliary tool for crash point reverse data flow analysis.
 It generate data flow graph according to the gdb debug log(C program source code level).
@@ -91,6 +92,13 @@ class ClueHunter:
                 default = DEFAULT_OUTPUT_PATH,
                 help = """The output directory in which .dot and .png files will be dumped in this path.""")
         self.arg_parser.add_argument(
+                '-m', '--c-project-dir',
+                action = 'store',
+                dest="c_project_dir",
+                default = None,
+                help = """The C project directory with the .i files maked by  gcc '-save-temps' option. 
+                Usually the we add this flags during configure: ./configure CFLAGS='-g -save-temps'.""")
+        self.arg_parser.add_argument(
                 '-n', '--name',
                 action = 'store',
                 dest = "name",
@@ -133,7 +141,11 @@ class ClueHunter:
         parser=LogParser()
         parser.setRedundantLevel(self.args.level)
         l=parser.parse(self.args.trace)
-        tracker=Tracker(l)
+        if self.args.c_project_dir is not None:
+            macro_inspector=MacroInspector(self.args.c_project_dir)
+            tracker=Tracker(l,macro_inspector)
+        else:
+            tracker=Tracker(l)
         traceIndex=len(l)-1
         vs=self.build_tiantvars_list()
         tracker.setStartJobs(traceIndex, vs)

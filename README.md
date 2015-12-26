@@ -38,14 +38,14 @@ Every thing come handy, we got the debug trace `gdb.txt` besides them. Then we c
 python cluehunter.py -t path_to/gdb.txt\
       -vs length -ps N -o . -n telescope -l 1
 ```
-This command will use the test trace located at gdb.txt to perform reverse data flow analysis for variable `length`. The sensitive crash data `length` it self are marked as tainted. The access pattern of `length`, `N`, means direct access. Another mark `\*` means we need to dereference this pointer to access sensitive sink data we cared about). 
+This command will use the test trace located at gdb.txt to perform reverse data flow analysis for variable `length`. The sensitive crash data `length` itself are marked as tainted. The access pattern of `length`, `N`, means direct access. Another mark `'\*'` means we need to dereference this pointer to access sensitive sink data we cared about. Note that the `\*` must be quoted with `""` or `''` in command line.  
 This command will cause ClueHunter output `telescope.dot` and use **graphviz** to generate `telescope.png` beside it.`-vs`, `-ps` and `-t` are three mandatory options which specify the sink variable names, patterns and the trace to analysis respectively.
 `-o` option specified the output directory. `-l` specified the parsed trace redundancy level.
 `0` means only remove the line redundancy in same function and `1` means remove both the inner function and inter-function reduandancy.
 Here is an executable test command which analyze the trace `gdb-swfmill-0.3.3.txt` provided in test module.  
 ```
 python cluehunter.py -t test/gdb_logs/swfmill-0.3.3/gdb-swfmill-0.3.3.txt\
-      -vs length -ps N -o . -n telescope -l 1
+      -vs length -ps 'N' -o . -n telescope -l 1 -m test/gdb_logs/swfmill-0.3.3/swfmill-0.3.3
 ```
 
 ##Complete Usage
@@ -53,7 +53,7 @@ python cluehunter.py -t test/gdb_logs/swfmill-0.3.3/gdb-swfmill-0.3.3.txt\
 ```
 usage: cluehunter.py [-h] -ps PATTERNS [PATTERNS ...] -vs VARIABLES
                      [VARIABLES ...] [-l LEVEL] -t TRACE [-o OUTPUT_PATH]
-                     [-n NAME] [-d | -v | -q]
+                     [-m C_PROJECT_DIR] [-n NAME] [-d | -v | -q]
                      
 optional arguments:
   -h, --help            show this help message and exit
@@ -68,6 +68,10 @@ optional arguments:
   -o OUTPUT_PATH, --output-directory OUTPUT_PATH
                         The output directory in which .dot and .png files will
                         be dumped in this path.
+  -m C_PROJECT_DIR, --c-project-dir C_PROJECT_DIR
+                        The C project directory with the .i files maked by gcc
+                        '-save-temps' option. Usually the we add this flags
+                        during configure: ./configure CFLAGS='-g -save-temps'.
   -n NAME, --name NAME  The prefix name of the generated .dot and .png files.
   -d, --debug           Enable debug output.
   -v, --verbose         Increase verbosity.
