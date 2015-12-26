@@ -19,8 +19,8 @@ from TraceTrackTest import TraceTrackTest
 class Test_objdump_addr:
     def test(self):
         passed_message="BINUTILS-2.23 'addr[1]' TEST PASSED!"
-        not_pass_message="ERRORS FOUND IN BINUTILS-2.3 'addr[1]' TEST!"
-        answer_path='answers/binutils/binutils-2.3/objdump/'
+        not_pass_message="ERRORS FOUND IN BINUTILS-2.23 'addr[1]' TEST!"
+        answer_path='answers/binutils/binutils-2.23/objdump/'
         name='binutils-2.23_objdump_addr'
         logfile_path="gdb_logs/binutils-2.23/binutils-2.23_objdump_gdb.txt"
         c_proj_path="gdb_logs/binutils-2.23/binutils-2.23"

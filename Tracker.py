@@ -86,17 +86,38 @@ class Tracker:
         expanded_str=self.macro_inspector.getExpanded(filename,linenum)
         print "expanded str:",expanded_str
         call_patttern=Syntax.lt+Syntax.identifier+Syntax.water+r"\)*"+Syntax.water+r"\("
-        m=re.search(call_patttern,expanded_str)
-        print "matched function name:",m.group(1)
-        if m and  not Syntax.isKeyWord(m.group(1)):
-            span=m.span()
-            #FIX ME this is wrong when handling cases like: MAZE(a,b)-->'call1(a)+call2(b)".
-            #Then when handling the second call site, it returns 'a' as the detected argument.  
-            return expanded_str[span[1]:]
-        else:
-            print "Fatal Error treat 'sizeof' as a function call or other ERROR!! Please check the lastModification()"
-            x=1/0
-    
+        for m in re.finditer(call_patttern,expanded_str):
+            print "matched candidate function name:",m.group(1)
+            if not Syntax.isKeyWord(m.group(1)) and not Syntax.isLibFuncName(m.group(1)):
+                span=m.span()
+                #FIX ME this is wrong when handling cases like: MAZE(a,b)-->'call1(a)+call2(b)".
+                #Then when handling the second call site, it returns 'a' as the detected argument.  
+                return expanded_str[span[1]:]
+        print "Fatal Error treat 'sizeof' as a function call or other ERROR!! Please check the lastModification()"
+        x=1/0
+        
+    def isMacroCall(self,callsite_index):
+        if self.macro_inspector is None:
+            return False
+        print "Checking Macro Call..."
+        print self.l[callsite_index]
+        print self.l[callsite_index+1]
+        if re.search(r"[_A-Z0-9]+\s*\(",self.l[callsite_index].codestr):
+            #Note that the second argument of getExpanded is the line_num of the call site code.
+            #So should be callsite_index+1
+            print "Find Macro Call:",self.l[callsite_index]
+            filename=self.l[callsite_index].get_func_call_info().get_file_name()
+            linenum=self.l[callsite_index].get_linenum()
+            print filename,linenum
+            expanded_str=self.macro_inspector.getExpanded(filename,linenum)
+            print "expanded str:",expanded_str
+            call_patttern=Syntax.lt+Syntax.identifier+Syntax.water+r"\)*"+Syntax.water+r"\("
+            for m in re.finditer(call_patttern,expanded_str):
+                cleaner=''.join(m.group().split())
+                clean=cleaner.rstrip('(').rstrip(')')
+                if not Syntax.isKeyWord(clean) and not Syntax.isLibFuncName(m.group(1)):
+                    return True
+        return False
     def taintUp(self,jobs):
         if jobs ==[]:return []
         P=[]
@@ -331,26 +352,7 @@ class Tracker:
                 needSeeBellow=False
             i-=1
             if i<0:return []
-    def isMacroCall(self,callsite_index):
-        if self.macro_inspector is None:
-            return False
-        print "Checking Macro Call..."
-        print self.l[callsite_index]
-        print self.l[callsite_index+1]
-        if re.search(r"[_A-Z0-9]+\s*\(",self.l[callsite_index].codestr):
-            #Note that the second argument of getExpanded is the line_num of the call site code.
-            #So should be callsite_index+1
-            print "Find Macro Call:",self.l[callsite_index]
-            filename=self.l[callsite_index].get_func_call_info().get_file_name()
-            linenum=self.l[callsite_index].get_linenum()
-            print filename,linenum
-            expanded_str=self.macro_inspector.getExpanded(filename,linenum)
-            print "expanded str:",expanded_str
-            call_patttern=Syntax.lt+Syntax.identifier+Syntax.water+r"\)*"+Syntax.water+r"\("
-            m=re.search(call_patttern,expanded_str)
-            if m and "sizeof" not in m.group():
-                return True
-        return False
+    
     def check_ref_mod_first(self,job,i,lowerBound):
         idxes=self.slice_same_func_lines(i,lowerBound)##BUG i+1
         if len(idxes)==0:return None

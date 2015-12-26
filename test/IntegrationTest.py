@@ -12,6 +12,7 @@ from Test_memcpy_src import Test_memcpy_src
 from Test_swfdump_i import Test_swfdump_i
 from Test_swfdump_t__data import  Test_swfdump_t__data
 from Test_swfmill_length import Test_swfmill_length
+from Test_objdump_addr import Test_objdump_addr
 
 class IntegrationTest:
 
@@ -36,6 +37,8 @@ class IntegrationTest:
         result_array.append(('swfdump_t->data',test.test()))
         test=Test_swfmill_length()
         result_array.append(('swfmill_length',test.test()))
+        test=Test_objdump_addr()
+        result_array.append(('objdump_addr',test.test()))
         for r in result_array:
             print r[0],":\t",r[1]
         print "Integeration testing ended."

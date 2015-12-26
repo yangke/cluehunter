@@ -34,8 +34,21 @@ class Syntax(object):
     constant_variable=r'([A-Z_][A-Z0-9_]*)'
     constant=r'('+constant_variable+r'|'+number+r')'
     for_pattern=r"for\s*([^;]*;[^;]*;[^;]*)";
+    memop="memcpy|memset|memchr|memmove|memcmp|malloc|calloc|alloca|realloc"
+    fileop="fopen|fclose|fwprintf|fprintf|vfprintf|fscanf|fread|fwrite|fgetc|fgets|fstat|fnmatch|real_fseek|fseeko64"
+    stdop="open|close|read|write|scanf|printf|stat|getc|gets"
+    strop="atoi|strlen|strcat|strncat|strtol|strtok|strcmp|strncmp|strcpy|strncpy|strstr|strrchr|strchr|sprintf|snprintf|vsprintf|vsnprintf|sscanf"
+    syscall="gettimeofday|fork|syscall|textdomain|setlocale|getopt_long|ENOENT|bindtextdomain|non_fatal|nonfatal|exit_status|sbrk|CONST_STRNEQ"
+    other="log|error|buildin"
+    lib_func_name=memop+'|'+fileop+'|'+stdop+'|'+strop+'|'+syscall+'|'+other
     @staticmethod
     def isKeyWord(codestr):
+        pattern=re.compile(Syntax.lib_func_name)
+        if pattern.match(codestr.strip()):
+            return True
+        else:return False
+    @staticmethod
+    def isLibFuncName(codestr):
         pattern=re.compile(Syntax.keyword)
         if pattern.match(codestr.strip()):
             return True

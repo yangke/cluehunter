@@ -84,8 +84,10 @@ class RedundancyFixer(object):
             else:
                 newlist.append(self.l[i])
                 i+=1
-        newlist.append(self.l[i])
-        newlist.append(self.l[i+1])
+        if i<len(self.l):
+            newlist.append(self.l[i])
+        if i+1<len(self.l):
+            newlist.append(self.l[i+1])
         self.l=newlist    
                   
     def check_I(self,i):
