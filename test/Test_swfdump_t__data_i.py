@@ -23,8 +23,10 @@ class Test_swfdump_t__data_i:
         answer_path='answers/swftools-0.9.2/swfdump/'
         name='swftools-0.9.2_swfdump_t-data_i'
         logfile_path="gdb_logs/swftools-0.9.2/gdb-swfdump_t-data_i.txt"
+        c_proj_path='gdb_logs/swftools-0.9.2/swftools-0.9.2'
         taintVars=[TaintVar("t->data",["*"]),TaintVar("i",[])]
         test=TraceTrackTest(answer_path,name,logfile_path,taintVars,passed_message,not_pass_message)
+        test.set_c_proj_path(c_proj_path)
         passed=test.test()
         return passed
 

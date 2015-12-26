@@ -80,16 +80,44 @@ class Tracker:
         return rightstr,upperIndex
     
     def macro_call_right_str(self,upperIndex):
+        filename=self.l[upperIndex].get_func_call_info().get_file_name()
+        linenum=self.l[upperIndex].get_linenum()
+        print filename,linenum
+        expanded_str=self.macro_inspector.getExpanded(filename,linenum)
+        print "expanded str:",expanded_str
         call_patttern=Syntax.lt+Syntax.identifier+Syntax.water+r"\)*"+Syntax.water+r"\("
-        m=re.search(call_patttern,self.l[upperIndex].codestr)
-        if m and "sizeof" not in m.group():
-            span=m.group().span()
-            #FIX ME this is wrong when handling cases like: MAZE(a,b)-->'call1(a)+call2(b)".
-            #Then when handling the second call site, it returns 'a' as the detected argument.  
-            return self.l[upperIndex].codestr[span[1]:]
-        else:
-            print "Fatal Error treat 'sizeof' as a function call or other ERROR!! Please check the lastModification()"
-    
+        for m in re.finditer(call_patttern,expanded_str):
+            print "matched candidate function name:",m.group(1)
+            if not Syntax.isKeyWord(m.group(1)) and not Syntax.isLibFuncName(m.group(1)):
+                span=m.span()
+                #FIX ME this is wrong when handling cases like: MAZE(a,b)-->'call1(a)+call2(b)".
+                #Then when handling the second call site, it returns 'a' as the detected argument.  
+                return expanded_str[span[1]:]
+        print "Fatal Error treat 'sizeof' as a function call or other ERROR!! Please check the lastModification()"
+        x=1/0
+        
+    def isMacroCall(self,callsite_index):
+        if self.macro_inspector is None:
+            return False
+        print "Checking Macro Call..."
+        print self.l[callsite_index]
+        print self.l[callsite_index+1]
+        if re.search(r"[_A-Z0-9]+\s*\(",self.l[callsite_index].codestr):
+            #Note that the second argument of getExpanded is the line_num of the call site code.
+            #So should be callsite_index+1
+            print "Find Macro Call:",self.l[callsite_index]
+            filename=self.l[callsite_index].get_func_call_info().get_file_name()
+            linenum=self.l[callsite_index].get_linenum()
+            print filename,linenum
+            expanded_str=self.macro_inspector.getExpanded(filename,linenum)
+            print "expanded str:",expanded_str
+            call_patttern=Syntax.lt+Syntax.identifier+Syntax.water+r"\)*"+Syntax.water+r"\("
+            for m in re.finditer(call_patttern,expanded_str):
+                cleaner=''.join(m.group().split())
+                clean=cleaner.rstrip('(').rstrip(')')
+                if not Syntax.isKeyWord(clean) and not Syntax.isLibFuncName(m.group(1)):
+                    return True
+        return False
     def taintUp(self,jobs):
         if jobs ==[]:return []
         P=[]
@@ -108,13 +136,11 @@ class Tracker:
             positions=self.findPositions(P,funcInfo)
             print "The inter point and the old line:",self.l[traceIndex]
             upperIndex=traceIndex-1#try to find last call site
-            #===================================================================
-            # if self.isMacroCall(upperIndex):
-            #     rightstr=self.macro_call_right_str(upperIndex)
-            # else:
-            #     rightstr,upperIndex=self.normal_right_str(upperIndex, funcInfo)
-            #===================================================================
-            rightstr,upperIndex=self.normal_right_str(upperIndex, funcInfo)
+            if self.isMacroCall(upperIndex):
+                rightstr=self.macro_call_right_str(upperIndex)
+            else:
+                rightstr,upperIndex=self.normal_right_str(upperIndex, funcInfo)
+            #rightstr,upperIndex=self.normal_right_str(upperIndex, funcInfo)
             args = ArgHandler.arglist(rightstr)
             cjobs=set()
             for pos,param in positions:
@@ -231,12 +257,14 @@ class Tracker:
                     if job.var.v in self.l[i].param_list:
                         self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
                         return [TaintJob(i,job.var)]
-                #===============================================================
-                # elif self.isMacroCall(i-1):
-                #     return [TaintJob(i,job.var)]
-                #===============================================================
+                
+                elif self.isMacroCall(i-1):
+                    self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
+                    return [TaintJob(i,job.var)]
+                
                 #===============================================================
                 # elif self.isFunctionPointerCall():
+                #     self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
                 #     return [TaintJob(i,job.var)]
                 #===============================================================
                 else:#This is a return point after call other functions
@@ -293,18 +321,19 @@ class Tracker:
                     if def_type == Syntax.FOR:
                         self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
                         jobs=Syntax.generate_for_jobs(i, self.l[i].codestr, job.var)
-                        return self.taintUp(jobs)
+                        return jobs
                     elif def_type == Syntax.INC:
                         self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
                         jobs.append(TaintJob(i,job.var))
                         jobs=list(set(jobs))
-                        return self.taintUp(jobs)
+                        return jobs
                     elif def_type==Syntax.RAW_DEF:
                         self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
                         return []
                     elif def_type==Syntax.SYS_LIB_DEF:
                         self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
-                        return Syntax.handle_sys_lib_def(i,job.var.v,self.l[i].codestr)
+                        jobs=Syntax.handle_sys_lib_def(i,job.var.v,self.l[i].codestr)
+                        return jobs
                     elif def_type == Syntax.NORMAL_ASSIGN or def_type == Syntax.OP_ASSIGN:
                         print "ASSIGNMENT FOUND:", self.l[i].codestr
                         self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
@@ -323,17 +352,7 @@ class Tracker:
                 needSeeBellow=False
             i-=1
             if i<0:return []
-    def isMacroCall(self,callsite_index):
-        if re.search(r"[A-Z_]+\s*\(",self.l[callsite_index].codestr):
-            #Note that the second argument of getExpanded is the line_num of the call site code.
-            #So should be callsite_index+1
-            print "Find Macro Call:",self.l[callsite_index]
-            expanded_str=self.macro_inspector.getExpanded(self.l[callsite_index].get_file_name(),callsite_index+1)
-            call_patttern=Syntax.lt+Syntax.identifier+Syntax.water+r"\)*"+Syntax.water+r"\(",expanded_str
-            m=re.search(call_patttern)
-            if m and "sizeof" not in m.group():
-                return True
-        return False
+    
     def check_ref_mod_first(self,job,i,lowerBound):
         idxes=self.slice_same_func_lines(i,lowerBound)##BUG i+1
         if len(idxes)==0:return None
@@ -562,6 +581,7 @@ class Tracker:
         else:
             print "lowerBound line is:",self.l[lowerBound]
         return indexes#[i for i in indexes if i!=index]
+    
     def check_va_arg_style(self,skip_va_arg_nums,indexes):
         skip=skip_va_arg_nums
         for i in indexes:
@@ -573,8 +593,7 @@ class Tracker:
                     return left_var,indexes[idx:]
                 skip-=1
         return None       
-                
-        
+  
     def checkArgDef(self,callsiteIndex,beginIndex,lowerBound,p,rfl,childnum,callee):
         if p==[] or isinstance(self.l[callsiteIndex+1],LineOfCode):#Abort non-ponter variable.
             return [],False

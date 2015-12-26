@@ -24,8 +24,10 @@ class Test_memcpy_dst:
         answer_path='answers/memcpy/'
         name='memcpy_dst'
         logfile_path="gdb_logs/memcpy/gdb-memcpy.txt"
+        c_proj_path="gdb_logs/memcpy"
         taintVars=[TaintVar("dst",['*'])]
         test=TraceTrackTest(answer_path,name,logfile_path,taintVars,passed_message,not_pass_message)
+        test.set_c_proj_path(c_proj_path)
         passed=test.test()
         return passed
     

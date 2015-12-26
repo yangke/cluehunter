@@ -4,6 +4,7 @@ Created on Sep 23, 2015
 @author: yangke
 '''
 import re
+
 class Filter:
     @staticmethod
     def filterLibFunc(symbols):
@@ -74,9 +75,9 @@ class Filter:
     def expression2vars(e):
         identifiers=Filter.expression2symbols(e)
         identifiers=Filter.removeKeywords(identifiers)
-        vars=Filter.filterLibFunc(Filter.filterConstants(identifiers))
-        print vars
-        return vars
+        variables=Filter.filterLibFunc(Filter.filterConstants(identifiers))
+        print variables
+        return variables
     @staticmethod
     def isFuncName(symbol,linestr):
         if re.search(r"(?!<[_A-Za-z0-9])"+symbol.strip()+r"\s*\(",linestr):

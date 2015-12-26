@@ -23,8 +23,10 @@ class Test_libsndfile_wav_fmt__min_blockalign:
         answer_path='answers/libsndfile/libsndfile-1.0.25/'
         name='libsndfile-1.0.25_wav_fmt->min.blockalign'
         logfile_path="gdb_logs/libsndfile/libsndfile-1.0.25/gdb-libsndfile-1.0.25_wav_fmt->min.blockalign.txt"
+        c_proj_path="gdb_logs/libsndfile/libsndfile-1.0.25/libsndfile-1.0.25"
         taintVars=[TaintVar("wav_fmt->min.blockalign",[])]
         test=TraceTrackTest(answer_path,name,logfile_path,taintVars,passed_message,not_pass_message)
+        test.set_c_proj_path(c_proj_path)
         passed=test.test()
         return passed
 if __name__ == '__main__':
