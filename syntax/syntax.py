@@ -29,6 +29,7 @@ class Syntax(object):
     keyword="if|while|switch|for|goto|return|sizeof|instanceof|label|case|class|struct|int|float|long|usigned|double|char"
     identifier=r'([_A-Za-z][_A-Za-z0-9]*)'
     water=r'\s*'
+    assign=r'=(?!=)'
     variable=r'('+identifier+'*('+water+'(\-'+water+'>|\.)'+water+identifier+')*)'
     lt=r'(?<![_A-Za-z0-9])'
     rt=r'(?![_A-Za-z0-9])'
@@ -43,6 +44,13 @@ class Syntax(object):
     syscall="gettimeofday|fork|syscall|textdomain|setlocale|getopt_long|ENOENT|bindtextdomain|non_fatal|nonfatal|exit_status|sbrk|CONST_STRNEQ"
     other="log|error|buildin"
     lib_func_name=memop+'|'+fileop+'|'+stdop+'|'+strop+'|'+syscall+'|'+other
+    
+    @staticmethod
+    def normal_assignment_pattern(accessstr):
+        return Syntax.lt+accessstr+Syntax.water+r"(\[[^\[\]]+\])?"+Syntax.water+Syntax.assign
+    @staticmethod
+    def op_assignment_pattern(accessstr):
+        return Syntax.lt+accessstr+Syntax.water+r"(\[[^\[\]]+\])?"+Syntax.water+r"[\+\-\*\/%\^\|&]"+Syntax.water+Syntax.assign
     @staticmethod
     def isKeyWord(codestr):
         pattern=re.compile(Syntax.keyword)
@@ -102,11 +110,11 @@ class Syntax(object):
         if re.search(increasement, codestr):
             print "NORMAL INC!"
             return True
-        lib_definition=r"(?<![A-Za-z0-9_])fread\s*\(\s*([^,\(]*),([^,\(]*),([^,\(]*),"+access+"([^,\(]*)\s*\)"
+        lib_definition=Syntax.lt+r"fread\s*\(\s*([^,\(]*),([^,\(]*),([^,\(]*),"+access+"([^,\(]*)\s*\)"
         if re.search(lib_definition, codestr):
             print "SYSCALL INC!"
             return True
-        syscall_definition=r"(?<![A-Za-z0-9_])read\s*\(\s*"+access+"([^,\(]*),([^,\(]*),([^,\(]*)\s*\)"
+        syscall_definition=Syntax.lt+r"read\s*\(\s*"+access+"([^,\(]*),([^,\(]*),([^,\(]*)\s*\)"
         if re.search(syscall_definition, codestr):
             print "SYSCALL INC!"
             return True
@@ -154,7 +162,7 @@ class Syntax(object):
     @staticmethod
     def getVars(var,line):
         codestr=line.codestr
-        str_pat=var.accessStr()+r"\s*(\[[^\[\]]+\])*\s*[\+\-\*/%&\|]?\s*=\s*(?!=)"
+        str_pat=var.accessStr()+r"\s*(\[[^\[\]]+\])*\s*[\+\-\*/%&\|]?\s*=(?!=)"
         print "CHECKING CODE:",codestr
         m=re.search(str_pat,codestr)
         if m:
@@ -303,7 +311,7 @@ class Syntax(object):
         return None
     @staticmethod
     def isUniqueNonLibCall(callstr):
-        callstr=''.join(callstr.split()).rstrip(';')
+        callstr=' '.join(callstr.split()).rstrip(';')
         if callstr=='':return False
         if re.search(r"[_A-Za-z0-9]",callstr[0]) is None:
             return False
@@ -329,8 +337,7 @@ class Syntax(object):
             print "Got it!"
         access=var.accessStr()
         print "Checking Definition Type for:",access
-        #normal_assginment=r"(^|[^A_Za-z0-9_])"+access+r"\s*=[^=]"
-        normal_assginment=r"(?<![A_Za-z0-9_])"+access+r"\s*(\[[^\[\]]+\])?\s*=[^=]"
+        normal_assginment=Syntax.normal_assignment_pattern(access)
         if Syntax.isForStatement(codestr):
             return Syntax.FOR
         if Syntax.isIncDef(var.v, codestr):
@@ -342,7 +349,7 @@ class Syntax(object):
         #This weird behavior need be fixed in future. 
         if re.search(normal_assginment,codestr):
             return Syntax.NORMAL_ASSIGN
-        op_assignment=r"(?<![A_Za-z0-9_])"+access+r"\s*(\[[^\[\]]+\])?\s*[\+\-\*\/%\^\|&]\s*=[^=]"
+        op_assignment=Syntax.op_assignment_pattern(access)
         if re.search(op_assignment,codestr):
             return Syntax.OP_ASSIGN
         raw_definition=r"^\s*\{\s*[A-Za-z_][A-Za-z0-9_]+\s+(\*\s*)*([A-Za-z_][A-Za-z0-9_]+\s*,\s*)*"+var.v+"\s*;"
@@ -363,39 +370,39 @@ class Syntax(object):
                 return []
             #assignment
             #===================================================================
-            # find_assign=re.search(v_access+"=(?!=)", change)
+            # find_assign=re.search(v_access+Syntax.assign, change)
             # if find_assign:
             #     rightvars=Filter.expression2vars(change[find_assign.span()[1]:])
             #     return rightvars
             #===================================================================
             #op_assignment
-            find_op_assign=re.search(v_access+"[&/%\+\-\*\|\^]=(?!=)", change)
+            find_op_assign=re.search(Syntax.op_assignment_pattern(v_access), change)
             if find_op_assign:
                 rightvars=Filter.expression2vars(change[find_op_assign.span()[1]:])
                 return rightvars
         return None
     @staticmethod
     def vars_in_for_init_part(v_access,init_str): 
-        init_str=''.join(init_str.split())
+        init_str=' '.join(init_str.split())
         inits=init_str.split(',')
         for init in inits:
-            match_init= re.search(v_access+r"=(?!=)",init)
+            match_init= re.search(v_access+Syntax.assign,init)
             if match_init:
                 left_var=match_init.group().rstrip("=")
-                right=init[match_init.span()[1]:]
-                right_var_strs_in_init=Filter.expression2vars(right)
+                rightstr=init[match_init.span()[1]:]
+                right_var_strs_in_init=Filter.expression2vars(rightstr)
                 return left_var,right_var_strs_in_init
         return None
     @staticmethod
     def split_for(codestr):
-        codestr=''.join(codestr.split())
+        codestr=' '.join(codestr.split())
         m=re.search(Syntax.for_pattern, codestr)
         if m is None:
             return None
         array=m.group().split(";")
-        init=array[0]
-        cond=array[1]
-        change=array[2].rstrip(")")
+        init=array[0].strip()
+        cond=array[1].strip()
+        change=array[2].rstrip(")").strip()
         return init,cond,change
     @staticmethod
     def generate_for_jobs(num,codestr,v):

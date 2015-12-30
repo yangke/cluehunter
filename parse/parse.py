@@ -12,11 +12,11 @@ def fixBlock(blockOfNormalLines):
 class LogParser:
     def __init__(self):
         self.redundant_level=RedundancyFixer.REMOVE_INTERPROCEDURAL_REDUNDANT
+        
     def setRedundantLevel(self,redundant_level):
         if redundant_level==RedundancyFixer.REMOVE_INLINE_REDUNDANT or redundant_level==RedundancyFixer.REMOVE_INTERPROCEDURAL_REDUNDANT:
             self.redundant_level=redundant_level
             
-        
     def parse(self,log_file_path='../gdb.txt'):
         logFile=file(log_file_path, 'r')
         lines = logFile.readlines()

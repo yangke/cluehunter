@@ -13,7 +13,7 @@ class memset_handler(object):
     @staticmethod
     def gen_match_str(varstr):
         #return r"(?<![A-Za-z0-9_])memset\s*\(\s*"+varstr+r"([^,\(]*),([^,\(]*),([^,\(]*)\s*\)"
-        return r"(?<![A-Za-z0-9_])memset\s*\(\s*"+varstr+r"\s*,"
+        return r"(?<![_A-Za-z0-9])memset\s*\(\s*"+varstr+r"\s*,"
     @staticmethod
     def isArgDef(varstr,codestr):
         lib_definition=memset_handler.gen_match_str(varstr)

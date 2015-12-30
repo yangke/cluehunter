@@ -12,7 +12,7 @@ class memcpy_handler(object):
     
     @staticmethod
     def gen_match_str(varstr):
-        return r"(?<![A-Za-z0-9_])memcpy\s*\(\s*"+varstr+r"\s*,"
+        return r"(?<![_A-Za-z0-9])memcpy\s*\(\s*"+varstr+r"\s*,"
     @staticmethod
     def isArgDef(varstr,codestr):
         lib_definition=memcpy_handler.gen_match_str(varstr)

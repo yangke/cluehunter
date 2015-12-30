@@ -100,8 +100,8 @@ class Tracker:
         if self.macro_inspector is None:
             return False
         print "Checking Macro Call..."
-        print self.l[callsite_index]
-        print self.l[callsite_index+1]
+        print "UPPER:",self.l[callsite_index]
+        print "CALLINFO:",self.l[callsite_index+1]
         if re.search(r"[_A-Z0-9]+\s*\(",self.l[callsite_index].codestr):
             #Note that the second argument of getExpanded is the line_num of the call site code.
             #So should be callsite_index+1
@@ -168,12 +168,7 @@ class Tracker:
         newjobs=set()
         for job in jobs:
             jbs=self.lastModification(job)
-            nj=set(jbs)
-            for jj in nj:
-                if jj.var.v=="1":
-                    print "hell"
-                    print job.var.v
-            newjobs=newjobs|nj
+            newjobs=newjobs|set(jbs)
         paramjobs=set()
         normaljobs=set()
         for job in newjobs:
@@ -225,7 +220,7 @@ class Tracker:
         # main () at foomoo.c:10
         # 10        return 1/a;
         #=======================================================================
-        # Try to fix this lower bound wrongly higher problem but failed.
+        # Try to fix this lower bound wrongly higher problem, but failed.
         #-----------------------------------------------------------------------
         # jobs=self.check_ref_mod_first(job,job.trace_index,job.trace_index)
         # if jobs is not None :return jobs
@@ -257,11 +252,12 @@ class Tracker:
                     if job.var.v in self.l[i].param_list:
                         self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
                         return [TaintJob(i,job.var)]
-                
+                    return []
                 elif self.isMacroCall(i-1):
-                    self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
-                    return [TaintJob(i,job.var)]
-                
+                    if job.var.v in self.l[i].param_list:
+                        self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
+                        return [TaintJob(i,job.var)]
+                    return []
                 #===============================================================
                 # elif self.isFunctionPointerCall():
                 #     self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
@@ -376,7 +372,6 @@ class Tracker:
             print "Fatal Error! the return assginment is wrongly recognized! Please check the matchDefinitionType"  
             print 1/0       
     def handleReturnAssgin(self,job_trace_index,i,accesspattern):
-        
         if i+2+1<len(self.l) and isinstance(self.l[i+1],FunctionCallInfo) and isinstance(self.l[i+2],LineOfCode):
             if self.l[i+1].get_func_name().split("::")[-1].strip() in self.l[i].codestr:
                 indexes=self.slice_same_func_lines(i+2, job_trace_index)
@@ -385,7 +380,7 @@ class Tracker:
                 for idx in indexes[::-1]:
                     print "check return line:",self.l[idx]
                     if 'return ' in self.l[idx].codestr:
-                        rightpart=self.l[idx].codestr.lstrip('return').strip()
+                        rightpart=self.l[idx].codestr.strip().lstrip('return').strip()
                         if Syntax.isUniqueNonLibCall(rightpart):
                             jobs=self.handleReturnAssgin(job_trace_index,idx,accesspattern)
                             return jobs
@@ -643,7 +638,7 @@ class Tracker:
     def check_va_arg_style(self,skip_va_arg_nums,indexes):
         skip=skip_va_arg_nums
         for i in indexes:
-            m = re.search(r"(?<![A-Za-z0-9_])va_arg\s*\(",self.l[i].codestr)
+            m = re.search(Syntax.lt+r"va_arg"+Syntax.water+r"\(",self.l[i].codestr)
             if m:
                 if skip == 0:
                     left_var = self.l[i].codestr[:m.span()[0]].strip().rstrip('=').split()[-1]
@@ -755,10 +750,12 @@ class Tracker:
         #INC result must be returned as ForJobGenerator is only called in handle branch of INC operation
         #in "lastModification" and "CheckingArgDefinition" function.
         #This weird behavior need be fixed in future. 
-        normal_assginment=r"(?<![A_Za-z0-9_])"+access+r"\s*(\[[^\[\]]+\])?\s*=(?!=)"
+        
+        normal_assginment=Syntax.normal_assignment_pattern(access)
         match=re.search(normal_assginment,codestr)
         if match:
-            if Syntax.isUniqueNonLibCall(codestr[match.span()[1]:].rstrip(';')):
+            rightstr=codestr[match.span()[1]:].rstrip(';')
+            if Syntax.isUniqueNonLibCall(rightstr):
                 if i+2+1<len(self.l) and isinstance(self.l[i+1],FunctionCallInfo) and isinstance(self.l[i+2],LineOfCode):
                     if self.l[i+1].get_func_name().split("::")[-1].strip() in self.l[i].codestr:
                         return Syntax.RETURN_VALUE_ASSIGN
@@ -782,7 +779,7 @@ class Tracker:
             # else:
             #     return Syntax.NORMAL_ASSIGN
             #===================================================================
-        op_assignment=r"(?<![A_Za-z0-9_])"+access+r"\s*(\[[^\[\]]+\])?\s*[\+\-\*\/%\^\|&]\s*=[^=]"
+        op_assignment=Syntax.op_assignment_pattern(access)
         if re.search(op_assignment,codestr):
             return Syntax.OP_ASSIGN
         raw_definition=r"^\s*\{\s*[A-Za-z_][A-Za-z0-9_]+\s+(\*\s*)*([A-Za-z_][A-Za-z0-9_]+\s*,\s*)*"+var.v+"\s*;"

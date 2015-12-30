@@ -12,7 +12,7 @@ class RedundancyFixer(object):
     '''
     RedundancyFixer fix the redundant problem in Trace list
     '''
-    def __init__(self,l,redundancy_level=0):
+    def __init__(self,l,redundancy_level=1):
         self.l=l
         self.redundancy_level=redundancy_level
     def fix(self):

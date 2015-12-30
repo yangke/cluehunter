@@ -41,7 +41,7 @@ class ArgHandler(object):
     
     @staticmethod
     def vars_in_pointer_offset_style(expstr):
-        m=re.search(r'\+|\-[^>]',expstr)
+        m=re.search(r'\+|(\-(?!>))',expstr)
         if m:
             first_op=m.span()[0]#first + or - operation for case: 'psf->header+psf->headerindex'
             former_vars=Filter.expression2vars(expstr[:first_op])

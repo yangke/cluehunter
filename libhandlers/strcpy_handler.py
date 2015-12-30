@@ -6,13 +6,12 @@ Created on Dec 13, 2015
 from ArgHandler import ArgHandler
 from model.TaintJob import TaintJob
 from model.TaintVar import TaintVar
-from utils.Filter import Filter
 import re
 class strcpy_handler(object):
     
     @staticmethod
     def gen_match_str(varstr):
-        return r"(?<![A-Za-z0-9_])strcpy\s*\(\s*"+varstr+r"\s*,"
+        return r"(?<![_A-Za-z0-9])strcpy\s*\(\s*"+varstr+r"\s*,"
     @staticmethod
     def isArgDef(varstr,codestr):
         lib_definition=strcpy_handler.gen_match_str(varstr)
