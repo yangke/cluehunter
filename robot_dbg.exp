@@ -12,7 +12,7 @@ if {$force_conservative} {
 }
 
 set timeout -1
-spawn gdb --args objdump -t objdump.log/exploit_0_0
+spawn gdb --args ./speexenc -n speexenclog/exploit_0_0 result.wav
 match_max 100000
 match_max 100000
 expect "*GNU*"
@@ -29,19 +29,24 @@ set memop "memcpy|memset|memchr|memmove|memcmp|malloc|calloc|alloca|realloc"
 set fileop "fopen|fclose|fwprintf|fprintf|vfprintf|fscanf|fread|fwrite|fgetc|fgets|fstat|fnmatch|real_fseek|fseeko64"
 set stdop "open|close|read|write|scanf|printf|stat|getc|gets"
 set strop "atoi|strlen|strcat|strncat|strtol|strtok|strcmp|strncmp|strcpy|strncpy|strstr|strrchr|strchr|sprintf|snprintf|vsprintf|vsnprintf|sscanf"
-set syscall "gettimeofday|fork|syscall|textdomain|setlocale|getopt_long|ENOENT|bindtextdomain|non_fatal|nonfatal|exit_status|sbrk|CONST_STRNEQ"
+set syscall "srand|gettimeofday|fork|syscall|textdomain|setlocale|getopt_long|ENOENT|bindtextdomain|non_fatal|nonfatal|exit_status|sbrk|CONST_STRNEQ"
 set warnings "Cannot find"
-set other "log|error|buildin"
-set esc "\(\(.*\[^A-Za-z0-9_\]\($memop|$fileop|$stdop|$strop|$syscall\)\)|\(.*$other\)\)"
+set loglike ".*\(log|error|buildin).*\r\n"
+set esc ".*\[^A-Za-z0-9_]\($memop|$fileop|$stdop|$strop|$syscall)\[ \\(].*\r\n"
+set error_info1 "\(.*\r\n)*\[0-9]+	.*: No such file or directory.\r\n"
+set error_info2 "\[0-9]+	in .*\r\n"
 #puts $esc
 set former "\(n|s\)\r\n"
 set latter "\\(gdb\\) "
-set suffix "\[^A-Za-z0-9_\].*\r\n"
+#set suffix ".*\r\n"
 expect {
 	-re ".*Program received signal.*$latter" { send -- "set logging off\r";}
 	-re ".*The program no longer exists.*$latter" { send -- "set logging off\r";}
 	-re ".*\r\n.*The program is not being run.*$latter" { exit }
-	-re "$former$esc$suffix$latter" {send -- "n\r";exp_continue -continue_timer}
+	-re "$former$error_info1$latter" {send -- "finish\rn\r";exp_continue -continue_timer}
+	-re "$former$error_info2$latter" {send -- "finish\rn\r";exp_continue -continue_timer}
+	-re "$former$loglike$latter" {send -- "n\r";exp_continue -continue_timer}
+	-re "$former$esc$latter" {send -- "n\r";exp_continue -continue_timer}
 	-re "$former.*\(?!The program|$esc\).*\r\n$latter" {send -- "s\r";exp_continue -continue_timer}
 }
 send -- "q\r"

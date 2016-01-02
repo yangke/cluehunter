@@ -13,7 +13,9 @@ from Test_swfdump_i import Test_swfdump_i
 from Test_swfdump_t__data import  Test_swfdump_t__data
 from Test_swfmill_length import Test_swfmill_length
 from Test_objdump_addr import Test_objdump_addr
-
+from Test_swfmill_data__pos import Test_swfmill_data__pos
+from Test_png2swf_len import Test_png2swf_len
+from Test_speexenc_channel import Test_speexenc_channel
 class IntegrationTest:
 
     def test(self):
@@ -35,10 +37,17 @@ class IntegrationTest:
         result_array.append(('swfdump_i',test.test()))
         test=Test_swfdump_t__data()
         result_array.append(('swfdump_t->data',test.test()))
+        test=Test_png2swf_len()
+        result_array.append(('png2swf_len',test.test()))
         test=Test_swfmill_length()
         result_array.append(('swfmill_length',test.test()))
+        test=Test_swfmill_data__pos()
+        result_array.append(('swfmill_data[pos++]',test.test()))
+        test=Test_speexenc_channel()
+        result_array.append(('speexenc_channel',test.test()))
         test=Test_objdump_addr()
         result_array.append(('objdump_addr',test.test()))
+        
         for r in result_array:
             print r[0],":\t",r[1]
         print "Integeration testing ended."

@@ -23,6 +23,7 @@ class LogParser:
         normalLinePattern = re.compile(r'^[1-9][0-9]*.*\n')
         headInfoPattern = re.compile(r'^[A-Za-z_][A-Za-z0-9_]+.*\n')
         nullLinePattern = re.compile(r'^\s*\n')
+        valueReturnLinePattern=re.compile(r'^(Value returned is |Run till exit from ).*\n')
         nullLineNum = 0
         l = []
         isFuncInfo=True
@@ -33,8 +34,9 @@ class LogParser:
         blockOfNormalLines=[]
         for line in lines:
             if nullLinePattern.match(line):
-                #trace head info
                 nullLineNum+=1
+            if valueReturnLinePattern.match(line):
+                continue
             elif nullLineNum == 1:
                 #trace content
                 if normalLinePattern.match(line):

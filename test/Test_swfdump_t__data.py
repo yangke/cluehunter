@@ -15,7 +15,7 @@ class Test_swfdump_t__data:
         c_proj_path='gdb_logs/swftools-0.9.2/swftools-0.9.2'
         taintVars=[TaintVar("t->data",["*"])]
         test=TraceTrackTest(answer_path,name,logfile_path,taintVars,passed_message,not_pass_message)
-        c_proj_path='gdb_logs/swftools-0.9.2/swftools-0.9.2'
+        test.set_c_proj_path(c_proj_path)
         passed=test.test()
         return passed
 if __name__ == '__main__':

@@ -10,11 +10,14 @@ import re
 class strcpy_handler(object):
     
     @staticmethod
-    def gen_match_str(varstr):
-        return r"(?<![_A-Za-z0-9])strcpy\s*\(\s*"+varstr+r"\s*,"
+    def gen_match_str(variable):
+        access=variable.accessStr()
+        if '|' not in access:
+            return r"(?<![_A-Za-z0-9])strcpy\s*\(\s*&\s*"+access+r"\s*,"
+        return r"(?<![_A-Za-z0-9])strcpy\s*\(\s*"+access+r"\s*,"
     @staticmethod
-    def isArgDef(varstr,codestr):
-        lib_definition=strcpy_handler.gen_match_str(varstr)
+    def isArgDef(variable,codestr):
+        lib_definition=strcpy_handler.gen_match_str(variable)
         m=re.search(lib_definition,codestr)
         if m is None:
             return False
@@ -32,7 +35,7 @@ class strcpy_handler(object):
         jobs=[]
         former_vars,follow_vars=ArgHandler.vars_in_pointer_offset_style(codestr[start_pos:end_pos])
         jobs.append(TaintJob(index,TaintVar(former_vars[0],['*'])))
-        print "handle strcpy! new job var:",vars[0],['*']
+        print "handle strcpy! new job var:",former_vars[0],['*']
         if follow_vars:
             for v in follow_vars:
                 jobs.append(TaintJob(index,TaintVar(v,[])))

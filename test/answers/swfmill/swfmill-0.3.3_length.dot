@@ -30,7 +30,7 @@ edge [fontname = "Verdana", fontsize = 10, color="crimson", style="solid"];
 "18#490			return swfmill_swf2xml( argc-i, &argv[i] );"->"0#main (argc=3, argv=0xbfffe894) at swfmill.cpp:419"[label="argv"];
 "80#70		data = new unsigned char[ length ];"->"76#57		length -= 8;"[label="length"];
 "50#98		infile = argv[0];"->"19#swfmill_swf2xml (argc=argc@entry=1, argv=argv@entry=0xbfffe89c) at swfmill.cpp:81"[label="argv"];
-"54#104		in_fp = std_in ? stdin : fopen( infile, \\"rb\\" );"->"50#98		infile = argv[0];"[label="infile"];
+"54#104		in_fp = std_in ? stdin : fopen( infile, \\"rb\\" );"->"50#98		infile = argv[0];"[label="*(infile)|*infile|infile"];
 "65#SWF::File::load (this=this@entry=0xbfffe718, fp=fp@entry=0x83bdd70, _ctx=_ctx@entry=0xbfffe724, filesize=filesize@entry=505) at SWFFile.cpp:34"->"64#130		if( (size = input.load( in_fp, &ctx, filesize )) != 0 ) \\{"[label="in_fp,0",style="dashed", color="forestgreen"];
 "19#swfmill_swf2xml (argc=argc@entry=1, argv=argv@entry=0xbfffe89c) at swfmill.cpp:81"->"18#490			return swfmill_swf2xml( argc-i, &argv[i] );"[label="&argv[i],1",style="dashed", color="forestgreen"];
 }

@@ -11,12 +11,14 @@ import re
 class memset_handler(object):
     
     @staticmethod
-    def gen_match_str(varstr):
-        #return r"(?<![A-Za-z0-9_])memset\s*\(\s*"+varstr+r"([^,\(]*),([^,\(]*),([^,\(]*)\s*\)"
-        return r"(?<![_A-Za-z0-9])memset\s*\(\s*"+varstr+r"\s*,"
+    def gen_match_str(variable):
+        access=variable.accessStr()
+        if '|' not in access:
+            return r"(?<![_A-Za-z0-9])memset\s*\(\s*&\s*"+access+r"\s*,"
+        return r"(?<![_A-Za-z0-9])memset\s*\(\s*"+access+r"\s*,"
     @staticmethod
-    def isArgDef(varstr,codestr):
-        lib_definition=memset_handler.gen_match_str(varstr)
+    def isArgDef(variable,codestr):
+        lib_definition=memset_handler.gen_match_str(variable)
         m=re.search(lib_definition,codestr)
         if m is None:
             return False

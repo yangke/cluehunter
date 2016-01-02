@@ -235,7 +235,9 @@ class Tracker:
         while True:
             print i,"#",self.l[i]
             print job.trace_index,"#",self.l[job.trace_index]
-            if i==450:
+            if job.var.v=="chan":
+                print "FIND YOU!"
+            if i==74:
                 print "HEY"
             if isinstance(self.l[i], FunctionCallInfo):
                 
@@ -328,7 +330,7 @@ class Tracker:
                         return []
                     elif def_type==Syntax.SYS_LIB_DEF:
                         self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
-                        jobs=Syntax.handle_sys_lib_def(i,job.var.v,self.l[i].codestr)
+                        jobs=Syntax.handle_sys_lib_def(i,job.var,self.l[i].codestr)
                         return jobs
                     elif def_type == Syntax.NORMAL_ASSIGN:
                         print "HANDLE NORMAL_ASSIGN!"
@@ -425,15 +427,15 @@ class Tracker:
                 return jobs
             if def_type==Syntax.INC:#INC
                 self.TG.linkInnerEdges(job.trace_index,d,v.simple_access_str())
-                jobs.append(TaintJob(d,v))
-                jobs=list(set(jobs))
+                #SYSCALL_INC and INC are same.Think about meeting "fread(&target,size,count,fp)" we should contiue searching for 'fp'. 
+                jobs=[TaintJob(d,v)]
                 return jobs
             elif def_type==Syntax.RAW_DEF:#RAW_DEF
                 self.TG.linkInnerEdges(job.trace_index,d,v.simple_access_str())
                 return []
             elif def_type==Syntax.SYS_LIB_DEF:
                 self.TG.linkInnerEdges(job.trace_index,d,v.simple_access_str())
-                jobs= Syntax.handle_sys_lib_def(d,v.v,self.l[d].codestr)
+                jobs= Syntax.handle_sys_lib_def(d,v,self.l[d].codestr)
                 return jobs
             elif def_type==Syntax.NORMAL_ASSIGN:
                 self.TG.linkInnerEdges(job.trace_index,d,v.simple_access_str())
@@ -699,7 +701,7 @@ class Tracker:
                 return [],True
             elif def_type==Syntax.SYS_LIB_DEF:
                 self.TG.linkCrossEdges(beginIndex,d,v.simple_access_str())
-                jobs= Syntax.handle_sys_lib_def(d,v.v,self.l[d].codestr)
+                jobs= Syntax.handle_sys_lib_def(d,v,self.l[d].codestr)
                 return self.taintUp(jobs),True
             elif def_type==Syntax.NORMAL_ASSIGN:
                 self.TG.linkCrossEdges(beginIndex,d,v.simple_access_str())
@@ -786,7 +788,7 @@ class Tracker:
         if re.search(raw_definition, codestr):
             print "We got the raw definition!"
             return Syntax.RAW_DEF
-        if Syntax.isLibArgDef(var.v,codestr):
+        if Syntax.isLibArgDef(var,codestr):
             return Syntax.SYS_LIB_DEF
         return  Syntax.NODEF
             

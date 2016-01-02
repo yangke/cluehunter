@@ -137,26 +137,26 @@ class Syntax(object):
         return False
     
     @staticmethod
-    def handle_sys_lib_def(i,varstr,codestr):
+    def handle_sys_lib_def(i,variable,codestr):
         jobs=[]
-        yes=fread_handler.isArgDef(varstr,codestr)
+        yes=fread_handler.isArgDef(variable,codestr)
         if yes:
-            jobs=fread_handler.getJobs(i,varstr, codestr)
-        yes=read_handler.isArgDef(varstr,codestr)
+            jobs=fread_handler.getJobs(i,variable, codestr)
+        yes=read_handler.isArgDef(variable,codestr)
         if yes:
-            jobs=read_handler.getJobs(i, varstr,codestr)
-        yes=memcpy_handler.isArgDef(varstr, codestr)
+            jobs=read_handler.getJobs(i, variable,codestr)
+        yes=memcpy_handler.isArgDef(variable, codestr)
         if yes:
-            jobs=memcpy_handler.getJobs(i, varstr, codestr)
-        yes=strncpy_handler.isArgDef(varstr, codestr)
+            jobs=memcpy_handler.getJobs(i, variable, codestr)
+        yes=strncpy_handler.isArgDef(variable, codestr)
         if yes:
-            jobs=strncpy_handler.getJobs(i, varstr, codestr)
-        yes=strcpy_handler.isArgDef(varstr, codestr)
+            jobs=strncpy_handler.getJobs(i, variable, codestr)
+        yes=strcpy_handler.isArgDef(variable, codestr)
         if yes:
-            jobs=strcpy_handler.getJobs(i, varstr, codestr)
-        yes=memset_handler.isArgDef(varstr, codestr)
+            jobs=strcpy_handler.getJobs(i, variable, codestr)
+        yes=memset_handler.isArgDef(variable, codestr)
         if yes:
-            jobs=memset_handler.getJobs(i, varstr, codestr)
+            jobs=memset_handler.getJobs(i, variable, codestr)
         return jobs#FIX ME: this should not happen
     
     @staticmethod
@@ -182,6 +182,18 @@ class Syntax(object):
                 else: 
                     print pp
                     return set([TaintVar(right, pp,rfl)])
+            elif re.search(r"\s*fopen\s*\(",right):
+                m_fopen=re.search(r"\s*fopen\s*\(",right)
+                start_pos=m_fopen.span()[1]
+                end_pos,reachend=ArgHandler.nextarg(right, start_pos)
+                if reachend:
+                    print "Fatal Error fopen() has only one argument!"
+                    1/0
+                if re.search("\[|\+|\-(?!>)", right):
+                    print "Fatal Error cannot handle expression filename now!"
+                    1/0
+                print right,right[start_pos:end_pos].strip()
+                return set([TaintVar(right[start_pos:end_pos].strip(), ['*'])])
             else:
                 m_cond_exp=re.compile(r'^[^\?:]*\?[^\?:]*:[^\?:]*$').match(right)
                 if m_cond_exp:
@@ -356,7 +368,7 @@ class Syntax(object):
         if re.search(raw_definition, codestr):
             print "We got the raw definition!"
             return Syntax.RAW_DEF
-        if Syntax.isLibArgDef(var.v,codestr):
+        if Syntax.isLibArgDef(var,codestr):
             return Syntax.SYS_LIB_DEF
         return  Syntax.NODEF
     @staticmethod

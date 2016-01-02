@@ -1,0 +1,656 @@
+Already logging to ./gdb.txt.
+Breakpoint 1 at 0x8049180: file speexenc.c, line 276.
+Starting program: /home/yangke/Program/Fabian-Yamaguchi/evdata/speex/test-speex-1.2rc2/speex-1.2rc2/bin/bin/speexenc -n speexenclog/exploit_0_0 result.wav
+
+Breakpoint 1, main (argc=4, argv=0xbfffe864) at speexenc.c:276
+276	{
+297	   struct option long_options[] =
+276	{
+297	   struct option long_options[] =
+276	{
+297	   struct option long_options[] =
+370	   snprintf(vendor_string, sizeof(vendor_string), "Encoded with Speex %s", speex_version);
+snprintf (__fmt=0x804c597 "Encoded with Speex %s", __n=64, __s=<optimized out>)
+    at /usr/include/i386-linux-gnu/bits/stdio2.h:64
+64	  return __builtin___snprintf_chk (__s, __n, __USE_FORTIFY_LEVEL - 1,
+main (argc=4, argv=0xbfffe864) at speexenc.c:292
+292	   int modeID = -1;
+369	   speex_lib_ctl(SPEEX_LIB_GET_VERSION_STRING, (void*)&speex_version);
+372	   comment_init(&comments, &comments_length, vendor_string);
+276	{
+369	   speex_lib_ctl(SPEEX_LIB_GET_VERSION_STRING, (void*)&speex_version);
+279	   int option_index = 0;
+286	   spx_int32_t vbr_max=0;
+287	   int abr_enabled=0;
+334	   spx_int32_t rate=0;
+336	   int chan=1;
+337	   int fmt=16;
+338	   spx_int32_t quality=-1;
+339	   float vbr_quality=-1;
+349	   spx_int32_t complexity=3;
+356	   spx_int32_t bitrate=0;
+363	   int denoise_enabled=0, agc_enabled=0;
+365	   int highpass_enabled=1;
+367	   spx_int32_t lookahead = 0;
+369	   speex_lib_ctl(SPEEX_LIB_GET_VERSION_STRING, (void*)&speex_version);
+speex_lib_ctl (request=9, ptr=ptr@entry=0xbfffca64) at speex.c:222
+222	{
+223	   switch (request)
+238	         *((const char**)ptr) = SPEEX_VERSION;
+253	}
+252	   return 0;
+253	}
+main (argc=4, argv=0xbfffe864) at speexenc.c:370
+370	   snprintf(vendor_string, sizeof(vendor_string), "Encoded with Speex %s", speex_version);
+372	   comment_init(&comments, &comments_length, vendor_string);
+comment_init (comments=comments@entry=0xbfffca68, 
+    length=length@entry=0xbfffca6c, 
+    vendor_string=vendor_string@entry=0xbfffdc7c "Encoded with Speex 1.2rc2")
+    at speexenc.c:1005
+1005	{
+1006	  int vendor_length=strlen(vendor_string);
+1008	  int len=4+vendor_length+4;
+1006	  int vendor_length=strlen(vendor_string);
+1009	  char *p=(char*)malloc(len);
+1010	  if(p==NULL){
+1009	  char *p=(char*)malloc(len);
+1010	  if(p==NULL){
+1014	  writeint(p, 0, vendor_length);
+1015	  memcpy(p+4, vendor_string, vendor_length);
+1017	  *length=len;
+1016	  writeint(p, 4+vendor_length, user_comment_list_length);
+1017	  *length=len;
+1018	  *comments=p;
+1019	}
+main (argc=4, argv=0xbfffe864) at speexenc.c:366
+366	   int output_rate=0;
+348	   int nframes=1;
+340	   int lsb=1;
+333	   int print_bitrate=0;
+296	   int with_skeleton = 0;
+289	   spx_int32_t dtx_enabled=0;
+288	   spx_int32_t vad_enabled=0;
+285	   spx_int32_t vbr_enabled=0;
+284	   int quiet=0;
+377	      c = getopt_long (argc, argv, "nwuhvV",
+379	      if (c==-1)
+382	      switch(c)
+505	         modeID = SPEEX_MODEID_NB;
+377	      c = getopt_long (argc, argv, "nwuhvV",
+379	      if (c==-1)
+530	   if (argc-optind!=2)
+535	   inFile=argv[optind];
+536	   outFile=argv[optind+1];
+539	   srand(time(NULL));
+535	   inFile=argv[optind];
+540	   if (ogg_stream_init(&os, rand())==-1)
+536	   outFile=argv[optind+1];
+539	   srand(time(NULL));
+540	   if (ogg_stream_init(&os, rand())==-1)
+rand () at rand.c:26
+26	rand.c: No such file or directory.
+Run till exit from #0  rand () at rand.c:26
+0x080494f1 in main (argc=4, argv=0xbfffe864) at speexenc.c:540
+540	   if (ogg_stream_init(&os, rand())==-1)
+Value returned is $1 = 698492109
+545	   if (with_skeleton && ogg_stream_init(&so, rand())==-1)
+551	   if (strcmp(inFile, "-")==0)
+562	      fin = fopen(inFile, "rb");
+568	      close_in=1;
+563	      if (!fin)
+562	      fin = fopen(inFile, "rb");
+563	      if (!fin)
+572	      if (fread(first_bytes, 1, 12, fin) != 12)
+577	      if (strncmp(first_bytes,"RIFF",4)==0 && strncmp(first_bytes,"RIFF",4)==0)
+579	         if (read_wav_header(fin, &rate, &chan, &fmt, &size)==-1)
+read_wav_header (file=file@entry=0x8057048, rate=rate@entry=0xbfffca48, 
+    channels=channels@entry=0xbfffca50, format=format@entry=0xbfffca54, 
+    size=size@entry=0xbfffca4c) at wav_io.c:43
+43	{
+71	   fread(ch, 1, 4, file);
+43	{
+71	   fread(ch, 1, 4, file);
+43	{
+71	   fread(ch, 1, 4, file);
+52	   ch[4]=0;
+43	{
+71	   fread(ch, 1, 4, file);
+72	   while (strcmp(ch, "fmt ")!=0)
+74	      fread(&itmp, 4, 1, file);
+72	   while (strcmp(ch, "fmt ")!=0)
+74	      fread(&itmp, 4, 1, file);
+72	   while (strcmp(ch, "fmt ")!=0)
+94	   fread(&itmp, 4, 1, file);
+96	   skip_bytes=itmp-16;
+99	   fread(&stmp, 2, 1, file);
+96	   skip_bytes=itmp-16;
+99	   fread(&stmp, 2, 1, file);
+101	   if (stmp!=1)
+107	   fread(&stmp, 2, 1, file);
+108	   stmp = le_short(stmp);
+109	   *channels = stmp;
+111	   if (stmp>2)
+109	   *channels = stmp;
+111	   if (stmp>2)
+117	   fread(&itmp, 4, 1, file);
+118	   itmp = le_int(itmp);
+119	   *rate = itmp;
+120	   if (*rate != 8000 && *rate != 16000 && *rate != 11025 && *rate != 22050 && *rate != 32000 && *rate != 44100 && *rate != 48000)
+119	   *rate = itmp;
+120	   if (*rate != 8000 && *rate != 16000 && *rate != 11025 && *rate != 22050 && *rate != 32000 && *rate != 44100 && *rate != 48000)
+126	   fread(&itmp, 4, 1, file);
+127	   bpersec = le_int(itmp);
+129	   fread(&stmp, 2, 1, file);
+127	   bpersec = le_int(itmp);
+129	   fread(&stmp, 2, 1, file);
+130	   balign = le_short(stmp);
+132	   fread(&stmp, 2, 1, file);
+130	   balign = le_short(stmp);
+132	   fread(&stmp, 2, 1, file);
+133	   stmp = le_short(stmp);
+134	   if (stmp!=16 && stmp!=8)
+139	   *format=stmp;
+141	   if (bpersec!=*rate**channels*stmp/8)
+139	   *format=stmp;
+141	   if (bpersec!=*rate**channels*stmp/8)
+147	   if (balign!=*channels*stmp/8)
+155	   if (skip_bytes>0)
+161	   fread(ch, 1, 4, file);
+162	   while (strcmp(ch, "data")!=0)
+164	      fread(&itmp, 4, 1, file);
+162	   while (strcmp(ch, "data")!=0)
+164	      fread(&itmp, 4, 1, file);
+162	   while (strcmp(ch, "data")!=0)
+179	   fread(&itmp, 4, 1, file);
+182	   *size=itmp;
+184	   return 1;
+185	}
+main (argc=4, argv=0xbfffe864) at speexenc.c:581
+581	         wave_input=1;
+582	         lsb=1; /* CHECK: exists big-endian .wav ?? */
+579	         if (read_wav_header(fin, &rate, &chan, &fmt, &size)==-1)
+586	   if (modeID==-1 && !rate)
+591	   } else if (modeID!=-1 && rate)
+593	      mode = speex_lib_get_mode (modeID);
+594	      if (rate>48000)
+598	      } else if (rate>25000)
+604	      } else if (rate>12500)
+610	      } else if (rate>=6000)
+612	         if (modeID != SPEEX_MODEID_NB)
+649	   if (!quiet)
+650	      if (rate!=8000 && rate!=16000 && rate!=32000)
+653	   if (!mode)
+656	   speex_init_header(&header, rate, 1, mode);
+speex_init_header (header=header@entry=0xbfffdcbc, rate=8000, 
+    nb_channels=nb_channels@entry=1, m=m@entry=0x804f160 <speex_nb_mode>)
+    at speex_header.c:87
+87	{
+95	   for (i=0;i<8;i++)
+87	{
+96	      header->speex_string[i]=h[i];
+95	   for (i=0;i<8;i++)
+96	      header->speex_string[i]=h[i];
+95	   for (i=0;i<8;i++)
+96	      header->speex_string[i]=h[i];
+95	   for (i=0;i<8;i++)
+96	      header->speex_string[i]=h[i];
+95	   for (i=0;i<8;i++)
+96	      header->speex_string[i]=h[i];
+95	   for (i=0;i<8;i++)
+96	      header->speex_string[i]=h[i];
+95	   for (i=0;i<8;i++)
+96	      header->speex_string[i]=h[i];
+95	   for (i=0;i<8;i++)
+96	      header->speex_string[i]=h[i];
+95	   for (i=0;i<8;i++)
+98	      header->speex_version[i]=SPEEX_VERSION[i];
+97	   for (i=0;i<SPEEX_HEADER_VERSION_LENGTH-1 && SPEEX_VERSION[i];i++)
+97	   for (i=0;i<SPEEX_HEADER_VERSION_LENGTH-1 && SPEEX_VERSION[i];i++)
+98	      header->speex_version[i]=SPEEX_VERSION[i];
+97	   for (i=0;i<SPEEX_HEADER_VERSION_LENGTH-1 && SPEEX_VERSION[i];i++)
+97	   for (i=0;i<SPEEX_HEADER_VERSION_LENGTH-1 && SPEEX_VERSION[i];i++)
+98	      header->speex_version[i]=SPEEX_VERSION[i];
+97	   for (i=0;i<SPEEX_HEADER_VERSION_LENGTH-1 && SPEEX_VERSION[i];i++)
+97	   for (i=0;i<SPEEX_HEADER_VERSION_LENGTH-1 && SPEEX_VERSION[i];i++)
+98	      header->speex_version[i]=SPEEX_VERSION[i];
+97	   for (i=0;i<SPEEX_HEADER_VERSION_LENGTH-1 && SPEEX_VERSION[i];i++)
+97	   for (i=0;i<SPEEX_HEADER_VERSION_LENGTH-1 && SPEEX_VERSION[i];i++)
+98	      header->speex_version[i]=SPEEX_VERSION[i];
+97	   for (i=0;i<SPEEX_HEADER_VERSION_LENGTH-1 && SPEEX_VERSION[i];i++)
+97	   for (i=0;i<SPEEX_HEADER_VERSION_LENGTH-1 && SPEEX_VERSION[i];i++)
+98	      header->speex_version[i]=SPEEX_VERSION[i];
+97	   for (i=0;i<SPEEX_HEADER_VERSION_LENGTH-1 && SPEEX_VERSION[i];i++)
+97	   for (i=0;i<SPEEX_HEADER_VERSION_LENGTH-1 && SPEEX_VERSION[i];i++)
+100	      header->speex_version[i]=0;
+99	   for (;i<SPEEX_HEADER_VERSION_LENGTH;i++)
+100	      header->speex_version[i]=0;
+99	   for (;i<SPEEX_HEADER_VERSION_LENGTH;i++)
+100	      header->speex_version[i]=0;
+99	   for (;i<SPEEX_HEADER_VERSION_LENGTH;i++)
+100	      header->speex_version[i]=0;
+99	   for (;i<SPEEX_HEADER_VERSION_LENGTH;i++)
+100	      header->speex_version[i]=0;
+99	   for (;i<SPEEX_HEADER_VERSION_LENGTH;i++)
+100	      header->speex_version[i]=0;
+99	   for (;i<SPEEX_HEADER_VERSION_LENGTH;i++)
+100	      header->speex_version[i]=0;
+99	   for (;i<SPEEX_HEADER_VERSION_LENGTH;i++)
+100	      header->speex_version[i]=0;
+99	   for (;i<SPEEX_HEADER_VERSION_LENGTH;i++)
+100	      header->speex_version[i]=0;
+99	   for (;i<SPEEX_HEADER_VERSION_LENGTH;i++)
+100	      header->speex_version[i]=0;
+99	   for (;i<SPEEX_HEADER_VERSION_LENGTH;i++)
+100	      header->speex_version[i]=0;
+99	   for (;i<SPEEX_HEADER_VERSION_LENGTH;i++)
+100	      header->speex_version[i]=0;
+99	   for (;i<SPEEX_HEADER_VERSION_LENGTH;i++)
+100	      header->speex_version[i]=0;
+99	   for (;i<SPEEX_HEADER_VERSION_LENGTH;i++)
+100	      header->speex_version[i]=0;
+99	   for (;i<SPEEX_HEADER_VERSION_LENGTH;i++)
+105	   header->rate = rate;
+107	   header->mode_bitstream_version = m->bitstream_version;
+102	   header->speex_version_id = 1;
+103	   header->header_size = sizeof(SpeexHeader);
+105	   header->rate = rate;
+106	   header->mode = m->modeID;
+107	   header->mode_bitstream_version = m->bitstream_version;
+108	   if (m->modeID<0)
+106	   header->mode = m->modeID;
+108	   if (m->modeID<0)
+110	   header->nb_channels = nb_channels;
+111	   header->bitrate = -1;
+110	   header->nb_channels = nb_channels;
+112	   speex_mode_query(m, SPEEX_MODE_FRAME_SIZE, &header->frame_size);
+speex_mode_query (mode=mode@entry=0x804f160 <speex_nb_mode>, 
+    request=request@entry=0, ptr=ptr@entry=0xbfffdcf4) at modes.c:383
+383	{
+384	   return mode->query(mode->mode, request, ptr);
+383	{
+384	   return mode->query(mode->mode, request, ptr);
+nb_mode_query (mode=0xb7fd9820 <nb_mode>, request=0, ptr=0xbfffdcf4)
+    at speex.c:196
+196	{
+199	   switch (request)
+202	      *((int*)ptr)=m->frameSize;
+217	}
+216	   return 0;
+217	}
+speex_mode_query (mode=mode@entry=0x804f160 <speex_nb_mode>, 
+    request=request@entry=0, ptr=ptr@entry=0xbfffdcf4) at modes.c:385
+385	}
+speex_init_header (header=header@entry=0xbfffdcbc, rate=8000, 
+    nb_channels=nb_channels@entry=1, m=m@entry=0x804f160 <speex_nb_mode>)
+    at speex_header.c:113
+113	   header->vbr = 0;
+115	   header->frames_per_packet = 0;
+116	   header->extra_headers = 0;
+117	   header->reserved1 = 0;
+118	   header->reserved2 = 0;
+119	}
+main (argc=4, argv=0xbfffe864) at speexenc.c:657
+657	   header.frames_per_packet=nframes;
+659	   header.nb_channels = chan;
+665	      if (!quiet)
+657	   header.frames_per_packet=nframes;
+658	   header.vbr=vbr_enabled;
+662	      char *st_string="mono";
+659	   header.nb_channels = chan;
+662	      char *st_string="mono";
+658	   header.vbr=vbr_enabled;
+662	      char *st_string="mono";
+665	      if (!quiet)
+666	         fprintf (stderr, "Encoding %d Hz audio using %s mode (%s)\n",
+673	   st = speex_encoder_init(mode);
+speex_encoder_init (mode=0x804f160 <speex_nb_mode>) at speex.c:52
+52	{
+53	   return mode->enc_init(mode);
+nb_encoder_init (m=0x804f160 <speex_nb_mode>) at nb_celp.c:108
+108	{
+113	   mode=(const SpeexNBMode *)m->mode;
+114	   st = (EncState*)speex_alloc(sizeof(EncState));
+speex_alloc (size=3128) at os_support.h:56
+56	   return calloc(size,1);
+nb_encoder_init (m=0x804f160 <speex_nb_mode>) at nb_celp.c:115
+115	   if (!st)
+114	   st = (EncState*)speex_alloc(sizeof(EncState));
+speex_alloc (size=3128) at os_support.h:56
+56	   return calloc(size,1);
+nb_encoder_init (m=0x804f160 <speex_nb_mode>) at nb_celp.c:115
+115	   if (!st)
+125	   st->gamma1=mode->gamma1;
+150	   for (i=0;i<NB_ORDER;i++)
+125	   st->gamma1=mode->gamma1;
+126	   st->gamma2=mode->gamma2;
+127	   st->lpc_floor = mode->lpc_floor;
+118	   st->stack = NULL;
+151	      st->old_lsp[i]= DIV32(MULT16_16(QCONST16(3.1415927f, LSP_SHIFT), i+1), NB_ORDER+1);
+123	   st->mode=m;
+129	   st->submodes=mode->submodes;
+130	   st->submodeID=st->submodeSelect=mode->defaultSubmode;
+131	   st->bounded_pitch = 1;
+133	   st->encode_submode = 1;
+142	   st->cumul_gain = 1024;
+130	   st->submodeID=st->submodeSelect=mode->defaultSubmode;
+144	   st->window= lpc_window;
+149	   st->first = 1;
+144	   st->window= lpc_window;
+147	   st->lagWindow = lag_window;
+151	      st->old_lsp[i]= DIV32(MULT16_16(QCONST16(3.1415927f, LSP_SHIFT), i+1), NB_ORDER+1);
+150	   for (i=0;i<NB_ORDER;i++)
+151	      st->old_lsp[i]= DIV32(MULT16_16(QCONST16(3.1415927f, LSP_SHIFT), i+1), NB_ORDER+1);
+150	   for (i=0;i<NB_ORDER;i++)
+151	      st->old_lsp[i]= DIV32(MULT16_16(QCONST16(3.1415927f, LSP_SHIFT), i+1), NB_ORDER+1);
+150	   for (i=0;i<NB_ORDER;i++)
+151	      st->old_lsp[i]= DIV32(MULT16_16(QCONST16(3.1415927f, LSP_SHIFT), i+1), NB_ORDER+1);
+150	   for (i=0;i<NB_ORDER;i++)
+151	      st->old_lsp[i]= DIV32(MULT16_16(QCONST16(3.1415927f, LSP_SHIFT), i+1), NB_ORDER+1);
+150	   for (i=0;i<NB_ORDER;i++)
+151	      st->old_lsp[i]= DIV32(MULT16_16(QCONST16(3.1415927f, LSP_SHIFT), i+1), NB_ORDER+1);
+150	   for (i=0;i<NB_ORDER;i++)
+151	      st->old_lsp[i]= DIV32(MULT16_16(QCONST16(3.1415927f, LSP_SHIFT), i+1), NB_ORDER+1);
+150	   for (i=0;i<NB_ORDER;i++)
+151	      st->old_lsp[i]= DIV32(MULT16_16(QCONST16(3.1415927f, LSP_SHIFT), i+1), NB_ORDER+1);
+150	   for (i=0;i<NB_ORDER;i++)
+151	      st->old_lsp[i]= DIV32(MULT16_16(QCONST16(3.1415927f, LSP_SHIFT), i+1), NB_ORDER+1);
+150	   for (i=0;i<NB_ORDER;i++)
+151	      st->old_lsp[i]= DIV32(MULT16_16(QCONST16(3.1415927f, LSP_SHIFT), i+1), NB_ORDER+1);
+150	   for (i=0;i<NB_ORDER;i++)
+151	      st->old_lsp[i]= DIV32(MULT16_16(QCONST16(3.1415927f, LSP_SHIFT), i+1), NB_ORDER+1);
+150	   for (i=0;i<NB_ORDER;i++)
+151	      st->old_lsp[i]= DIV32(MULT16_16(QCONST16(3.1415927f, LSP_SHIFT), i+1), NB_ORDER+1);
+150	   for (i=0;i<NB_ORDER;i++)
+151	      st->old_lsp[i]= DIV32(MULT16_16(QCONST16(3.1415927f, LSP_SHIFT), i+1), NB_ORDER+1);
+150	   for (i=0;i<NB_ORDER;i++)
+151	      st->old_lsp[i]= DIV32(MULT16_16(QCONST16(3.1415927f, LSP_SHIFT), i+1), NB_ORDER+1);
+150	   for (i=0;i<NB_ORDER;i++)
+151	      st->old_lsp[i]= DIV32(MULT16_16(QCONST16(3.1415927f, LSP_SHIFT), i+1), NB_ORDER+1);
+150	   for (i=0;i<NB_ORDER;i++)
+151	      st->old_lsp[i]= DIV32(MULT16_16(QCONST16(3.1415927f, LSP_SHIFT), i+1), NB_ORDER+1);
+150	   for (i=0;i<NB_ORDER;i++)
+151	      st->old_lsp[i]= DIV32(MULT16_16(QCONST16(3.1415927f, LSP_SHIFT), i+1), NB_ORDER+1);
+150	   for (i=0;i<NB_ORDER;i++)
+151	      st->old_lsp[i]= DIV32(MULT16_16(QCONST16(3.1415927f, LSP_SHIFT), i+1), NB_ORDER+1);
+150	   for (i=0;i<NB_ORDER;i++)
+151	      st->old_lsp[i]= DIV32(MULT16_16(QCONST16(3.1415927f, LSP_SHIFT), i+1), NB_ORDER+1);
+150	   for (i=0;i<NB_ORDER;i++)
+151	      st->old_lsp[i]= DIV32(MULT16_16(QCONST16(3.1415927f, LSP_SHIFT), i+1), NB_ORDER+1);
+150	   for (i=0;i<NB_ORDER;i++)
+156	   vbr_init(&st->vbr);
+153	   st->innov_rms_save = NULL;
+156	   vbr_init(&st->vbr);
+vbr_init (vbr=vbr@entry=0x8057d5c) at vbr.c:77
+77	{
+82	   vbr->accum_sum=0;
+77	{
+82	   vbr->accum_sum=0;
+83	   vbr->soft_pitch=0;
+84	   vbr->last_pitch_coef=0;
+85	   vbr->last_quality=0;
+94	      vbr->last_log_energy[i] = log(MIN_ENERGY);
+80	   vbr->average_energy=1600000;
+94	      vbr->last_log_energy[i] = log(MIN_ENERGY);
+81	   vbr->last_energy=1;
+87	   vbr->noise_accum = .05*pow(MIN_ENERGY, NOISE_POW);
+88	   vbr->noise_accum_count=.05;
+89	   vbr->noise_level=vbr->noise_accum/vbr->noise_accum_count;
+90	   vbr->consec_noise=0;
+94	      vbr->last_log_energy[i] = log(MIN_ENERGY);
+nb_encoder_init (m=0x804f160 <speex_nb_mode>) at nb_celp.c:157
+157	   st->vbr_quality = 8;
+158	   st->vbr_enabled = 0;
+159	   st->vbr_max = 0;
+160	   st->vad_enabled = 0;
+161	   st->dtx_enabled = 0;
+162	   st->dtx_count=0;
+163	   st->abr_enabled = 0;
+164	   st->abr_drift = 0;
+165	   st->abr_drift2 = 0;
+168	   st->plc_tuning = 2;
+169	   st->complexity=2;
+170	   st->sampling_rate=8000;
+171	   st->isWideband = 0;
+172	   st->highpass_enabled = 1;
+178	}
+speex_encoder_init (mode=0x804f160 <speex_nb_mode>) at speex.c:54
+54	}
+main (argc=4, argv=0xbfffe864) at speexenc.c:675
+675	   if (strcmp(outFile,"-")==0)
+684	      fout = fopen(outFile, "wb");
+690	      close_out=1;
+685	      if (!fout)
+684	      fout = fopen(outFile, "wb");
+685	      if (!fout)
+693	   speex_encoder_ctl(st, SPEEX_GET_FRAME_SIZE, &frame_size);
+speex_encoder_ctl (state=state@entry=0x80571b0, request=request@entry=3, 
+    ptr=ptr@entry=0xbfffca3c) at speex.c:184
+184	{
+185	   return (*((SpeexMode**)state))->enc_ctl(state, request, ptr);
+nb_encoder_ctl (state=0x80571b0, request=3, ptr=0xbfffca3c) at nb_celp.c:205
+205	{
+208	   switch(request)
+211	      (*(spx_int32_t*)ptr) = NB_FRAME_SIZE;
+405	   return 0;
+212	      break;
+406	}
+speex_encoder_ctl (state=state@entry=0x80571b0, request=request@entry=3, 
+    ptr=ptr@entry=0xbfffca3c) at speex.c:186
+186	}
+main (argc=4, argv=0xbfffe864) at speexenc.c:694
+694	   speex_encoder_ctl(st, SPEEX_SET_COMPLEXITY, &complexity);
+speex_encoder_ctl (state=state@entry=0x80571b0, request=request@entry=16, 
+    ptr=ptr@entry=0xbfffca60) at speex.c:184
+184	{
+185	   return (*((SpeexMode**)state))->enc_ctl(state, request, ptr);
+nb_encoder_ctl (state=0x80571b0, request=16, ptr=0xbfffca60) at nb_celp.c:205
+205	{
+208	   switch(request)
+290	      st->complexity = (*(spx_int32_t*)ptr);
+291	      if (st->complexity<0)
+290	      st->complexity = (*(spx_int32_t*)ptr);
+405	   return 0;
+406	}
+speex_encoder_ctl (state=state@entry=0x80571b0, request=request@entry=16, 
+    ptr=ptr@entry=0xbfffca60) at speex.c:186
+186	}
+main (argc=4, argv=0xbfffe864) at speexenc.c:695
+695	   speex_encoder_ctl(st, SPEEX_SET_SAMPLING_RATE, &rate);
+speex_encoder_ctl (state=state@entry=0x80571b0, request=request@entry=24, 
+    ptr=ptr@entry=0xbfffca48) at speex.c:184
+184	{
+185	   return (*((SpeexMode**)state))->enc_ctl(state, request, ptr);
+nb_encoder_ctl (state=0x80571b0, request=24, ptr=0xbfffca48) at nb_celp.c:205
+205	{
+208	   switch(request)
+319	      st->sampling_rate = (*(spx_int32_t*)ptr);
+405	   return 0;
+320	      break;
+406	}
+speex_encoder_ctl (state=state@entry=0x80571b0, request=request@entry=24, 
+    ptr=ptr@entry=0xbfffca48) at speex.c:186
+186	}
+main (argc=4, argv=0xbfffe864) at speexenc.c:697
+697	   if (quality >= 0)
+708	   if (bitrate)
+714	   if (vbr_enabled)
+718	   } else if (vad_enabled)
+723	   if (dtx_enabled)
+728	   } else if ((vbr_enabled || abr_enabled) && (vad_enabled))
+732	   if (with_skeleton) {
+736	   if (abr_enabled)
+741	   speex_encoder_ctl(st, SPEEX_SET_HIGHPASS, &highpass_enabled);
+speex_encoder_ctl (state=state@entry=0x80571b0, request=request@entry=44, 
+    ptr=ptr@entry=0xbfffca80) at speex.c:184
+184	{
+185	   return (*((SpeexMode**)state))->enc_ctl(state, request, ptr);
+nb_encoder_ctl (state=0x80571b0, request=44, ptr=0xbfffca80) at nb_celp.c:205
+205	{
+208	   switch(request)
+365	      st->highpass_enabled = (*(spx_int32_t*)ptr);
+405	   return 0;
+366	      break;
+406	}
+speex_encoder_ctl (state=state@entry=0x80571b0, request=request@entry=44, 
+    ptr=ptr@entry=0xbfffca80) at speex.c:186
+186	}
+main (argc=4, argv=0xbfffe864) at speexenc.c:743
+743	   speex_encoder_ctl(st, SPEEX_GET_LOOKAHEAD, &lookahead);
+speex_encoder_ctl (state=state@entry=0x80571b0, request=request@entry=39, 
+    ptr=ptr@entry=0xbfffca84) at speex.c:184
+184	{
+185	   return (*((SpeexMode**)state))->enc_ctl(state, request, ptr);
+nb_encoder_ctl (state=0x80571b0, request=39, ptr=0xbfffca84) at nb_celp.c:205
+205	{
+208	   switch(request)
+346	      (*(spx_int32_t*)ptr)=(NB_WINDOW_SIZE-NB_FRAME_SIZE);
+405	   return 0;
+347	      break;
+406	}
+speex_encoder_ctl (state=state@entry=0x80571b0, request=request@entry=39, 
+    ptr=ptr@entry=0xbfffca84) at speex.c:186
+186	}
+main (argc=4, argv=0xbfffe864) at speexenc.c:746
+746	   if (denoise_enabled || agc_enabled)
+362	   SpeexPreprocessState *preprocess = NULL;
+746	   if (denoise_enabled || agc_enabled)
+756	   if (with_skeleton) {
+768	      op.packet = (unsigned char *)speex_header_to_packet(&header, &packet_size);
+speex_header_to_packet (header=header@entry=0xbfffdcbc, 
+    size=size@entry=0xbfffccd0) at speex_header.c:122
+122	{
+124	   le_header = (SpeexHeader*)speex_alloc(sizeof(SpeexHeader));
+speex_alloc (size=80) at os_support.h:56
+56	   return calloc(size,1);
+speex_header_to_packet (header=header@entry=0xbfffdcbc, 
+    size=size@entry=0xbfffccd0) at speex_header.c:122
+122	{
+124	   le_header = (SpeexHeader*)speex_alloc(sizeof(SpeexHeader));
+speex_alloc (size=80) at os_support.h:56
+56	   return calloc(size,1);
+speex_header_to_packet (header=header@entry=0xbfffdcbc, 
+    size=size@entry=0xbfffccd0) at speex_header.c:141
+141	   *size = sizeof(SpeexHeader);
+126	   SPEEX_COPY(le_header, header, 1);
+memcpy (__len=80, __src=0xbfffdcbc, __dest=0x8057f58)
+    at /usr/include/i386-linux-gnu/bits/string3.h:51
+51	  return __builtin___memcpy_chk (__dest, __src, __len, __bos0 (__dest));
+speex_header_to_packet (header=header@entry=0xbfffdcbc, 
+    size=size@entry=0xbfffccd0) at speex_header.c:141
+141	   *size = sizeof(SpeexHeader);
+143	}
+main (argc=4, argv=0xbfffe864) at speexenc.c:774
+774	      ogg_stream_packetin(&os, &op);
+770	      op.b_o_s = 1;
+771	      op.e_o_s = 0;
+772	      op.granulepos = 0;
+768	      op.packet = (unsigned char *)speex_header_to_packet(&header, &packet_size);
+769	      op.bytes = packet_size;
+773	      op.packetno = 0;
+769	      op.bytes = packet_size;
+774	      ogg_stream_packetin(&os, &op);
+775	      free(op.packet);
+__GI___libc_free (mem=0x8057f58) at malloc.c:2912
+2912	malloc.c: No such file or directory.
+Run till exit from #0  __GI___libc_free (mem=0x8057f58) at malloc.c:2912
+main (argc=4, argv=0xbfffe864) at speexenc.c:777
+777	      while((result = ogg_stream_flush(&os, &og)))
+780	         ret = oe_write_page(&og, fout);
+oe_write_page (page=page@entry=0xbfffca8c, fp=fp@entry=0x8057df0)
+    at speexenc.c:74
+74	{
+76	   written = fwrite(page->header,1,page->header_len, fp);
+77	   written += fwrite(page->body,1,page->body_len, fp);
+76	   written = fwrite(page->header,1,page->header_len, fp);
+77	   written += fwrite(page->body,1,page->body_len, fp);
+80	}
+77	   written += fwrite(page->body,1,page->body_len, fp);
+80	}
+main (argc=4, argv=0xbfffe864) at speexenc.c:781
+781	         if(ret != og.header_len + og.body_len)
+777	      while((result = ogg_stream_flush(&os, &og)))
+790	      op.packet = (unsigned char *)comments;
+796	      ogg_stream_packetin(&os, &op);
+792	      op.b_o_s = 0;
+793	      op.e_o_s = 0;
+790	      op.packet = (unsigned char *)comments;
+791	      op.bytes = comments_length;
+794	      op.granulepos = 0;
+795	      op.packetno = 1;
+791	      op.bytes = comments_length;
+796	      ogg_stream_packetin(&os, &op);
+795	      op.packetno = 1;
+796	      ogg_stream_packetin(&os, &op);
+800	   if (with_skeleton) {
+810	   while((result = ogg_stream_flush(&os, &og)))
+813	      ret = oe_write_page(&og, fout);
+oe_write_page (page=page@entry=0xbfffca8c, fp=fp@entry=0x8057df0)
+    at speexenc.c:74
+74	{
+76	   written = fwrite(page->header,1,page->header_len, fp);
+77	   written += fwrite(page->body,1,page->body_len, fp);
+76	   written = fwrite(page->header,1,page->header_len, fp);
+77	   written += fwrite(page->body,1,page->body_len, fp);
+80	}
+77	   written += fwrite(page->body,1,page->body_len, fp);
+80	}
+main (argc=4, argv=0xbfffe864) at speexenc.c:814
+814	      if(ret != og.header_len + og.body_len)
+810	   while((result = ogg_stream_flush(&os, &og)))
+823	   free(comments);
+__GI___libc_free (mem=0x8050008) at malloc.c:2912
+2912	malloc.c: No such file or directory.
+Run till exit from #0  __GI___libc_free (mem=0x8050008) at malloc.c:2912
+main (argc=4, argv=0xbfffe864) at speexenc.c:826
+826	   if (with_skeleton) {
+836	   speex_bits_init(&bits);
+speex_bits_init (bits=bits@entry=0xbfffcabc) at bits.c:49
+49	{
+50	   bits->chars = (char*)speex_alloc(MAX_CHARS_PER_FRAME);
+speex_alloc (size=2000) at os_support.h:56
+56	   return calloc(size,1);
+speex_bits_init (bits=bits@entry=0xbfffcabc) at bits.c:49
+49	{
+50	   bits->chars = (char*)speex_alloc(MAX_CHARS_PER_FRAME);
+speex_alloc (size=2000) at os_support.h:56
+56	   return calloc(size,1);
+speex_bits_init (bits=bits@entry=0xbfffcabc) at bits.c:51
+51	   if (!bits->chars)
+50	   bits->chars = (char*)speex_alloc(MAX_CHARS_PER_FRAME);
+51	   if (!bits->chars)
+54	   bits->buf_size = MAX_CHARS_PER_FRAME;
+56	   bits->owner=1;
+58	   speex_bits_reset(bits);
+speex_bits_reset (bits=bits@entry=0xbfffcabc) at bits.c:93
+93	{
+95	   bits->chars[0]=0;
+96	   bits->nbBits=0;
+97	   bits->charPtr=0;
+98	   bits->bitPtr=0;
+99	   bits->overflow=0;
+speex_bits_init (bits=bits@entry=0xbfffcabc) at bits.c:59
+59	}
+main (argc=4, argv=0xbfffe864) at speexenc.c:838
+838	   if (!wave_input)
+842	      nb_samples = read_samples(fin,frame_size,fmt,chan,lsb,input, NULL, &size);
+read_samples (fin=fin@entry=0x8057048, frame_size=160, bits=16, channels=0, 
+    lsb=lsb@entry=1, input=input@entry=0xbfffccd0, buff=0x0, size=0xbfffca4c)
+    at speexenc.c:87
+87	{
+94	   if (size && *size<=0)
+87	{
+94	   if (size && *size<=0)
+99	   to_read = bits/8*channels*frame_size;
+104	      if (*size >= to_read)
+106	         *size -= to_read;
+115	   if (buff)
+106	         *size -= to_read;
+115	   if (buff)
+123	      nb_read = fread(in,1,to_read,fin);
+126	   nb_read /= bits/8*channels;
+
+Program received signal SIGFPE, Arithmetic exception.
+0x0804b020 in read_samples (fin=fin@entry=0x8057048, frame_size=160, bits=16, 
+    channels=0, lsb=lsb@entry=1, input=input@entry=0xbfffccd0, buff=0x0, 
+    size=0xbfffca4c) at speexenc.c:126
+126	   nb_read /= bits/8*channels;

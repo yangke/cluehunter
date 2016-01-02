@@ -1,0 +1,64 @@
+Already logging to ./gdb.txt.
+Breakpoint 1 at 0x804b780: file png2swf.c, line 785.
+Starting program: /home/yangke/Program/Fabian-Yamaguchi/evdata/swftools/test-swftools-0.9.2/swftools-0.9.2/bin/bin/png2swf png2swflog/exploit_0_0
+
+Breakpoint 1, main (argc=2, argv=0xbfffe854) at png2swf.c:785
+785	{
+789	    memset(&global, 0x00, sizeof(global));
+791	    global.framerate = 1.0;
+792	    global.verbose = 1;
+793	    global.version = 8;
+794	    global.scale = 1.0;
+796	    processargs(argc, argv);
+processargs (argv2=0xbfffe854, argn2=2) at ../lib/args.h:38
+38	    if(argn2==1)
+43	    for(t=1;t<argn2;t++)
+62	                if(strchr("?h",argv2[t][1]))
+43	    for(t=1;t<argn2;t++)
+46	        if(t<argn2-1) next=argv2[t+1];
+47	        else        next=0;
+46	        if(t<argn2-1) next=argv2[t+1];
+49	        if(argv2[t][0]=='-' && argv2[t][1])
+89		    int num = args_callback_command(argv2[t],next);
+args_callback_command (arg=0xbfffeb06 "png2swflog/exploit_0_0", 
+    next=next@entry=0x0) at png2swf.c:746
+746	{
+748	    if (CheckInputFile(arg, &s) < 0) {
+CheckInputFile (fname=fname@entry=0xbfffeb06 "png2swflog/exploit_0_0", 
+    realname=realname@entry=0xbfffe72c) at png2swf.c:551
+551	{
+553	    char *s = malloc(strlen(fname) + 5);
+556	    if (!s)
+558	    (*realname) = s;
+559	    strcpy(s, fname);
+563	    if ((fi = fopen(s, "rb")) == NULL) {
+577	    if(!png_read_header(fi, &head)) {
+png_read_header (fi=fi@entry=0x806b028, header=header@entry=0xbfffe6e0)
+    at png2swf.c:159
+159	{
+163	    U8 head[8] = {137,80,78,71,13,10,26,10};
+166	    fread(head2,8,1,fi);
+167	    if(strncmp((char*)head,(char*)head2,4))
+173		    printf("%c%c%c%c %d\n", id[0],id[1],id[2],id[3],len);
+170	    while(png_read_chunk(&id, &len, &data, fi))
+png_read_chunk (head=head@entry=0xbfffe688, destlen=destlen@entry=0xbfffe680, 
+    destdata=destdata@entry=0xbfffe684, fi=fi@entry=0x806b028) at png2swf.c:115
+115	{
+117	    if(destlen) *destlen=0;
+118	    if(destdata) *destdata=0;
+119	    if(!fread(&len, 4, 1, fi))
+120		return 0;
+119	    if(!fread(&len, 4, 1, fi))
+121	    if(!fread(head, 4, 1, fi))
+122		return 0;
+121	    if(!fread(head, 4, 1, fi))
+123	    len = BE_32_TO_NATIVE(len);
+124	    if(destlen) *destlen = len;
+125	    if(destdata) {
+126		if(len)
+127		    *destdata = malloc(len);
+130		if(!fread(*destdata, len, 1, fi)) {
+
+Program received signal SIGSEGV, Segmentation fault.
+__mempcpy_ia32 () at ../sysdeps/i386/i686/multiarch/../mempcpy.S:54
+54	../sysdeps/i386/i686/multiarch/../mempcpy.S: No such file or directory.

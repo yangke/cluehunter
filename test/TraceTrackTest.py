@@ -54,14 +54,18 @@ class TraceTrackTest(object):
             print self.passed_message
         else:
             print self.not_pass_message
-            
-    def test(self):
-        start = time.clock()
+                   
+    def parse_list(self):
         parser=LogParser()
         l=parser.parse(self.logfile_path)
+        return l
+      
+    def test(self,startindex=-1):
+        start = time.clock()
+        l=self.parse_list() 
         macro_inspector=MacroInspector(self.c_proj_dir)
         tracker=Tracker(l,macro_inspector)
-        traceIndex=len(l)-1
+        traceIndex=startindex % len(l)
         passed=self.test_tracker(tracker,traceIndex)
         end = time.clock()
         print "finished: %f s" % (end - start)
