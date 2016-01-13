@@ -8,7 +8,7 @@ from TraceTrackTest import TraceTrackTest
 class Test_speexenc_channel:
     def test(self):
         passed_message="SPEEX-1.2rc2 'channel' TEST PASSED!"
-        not_pass_message="ERRORS FOUND DURING SPEEX-1.2rc2 'channnel' TEST!"
+        not_pass_message="ERRORS FOUND DURING SPEEX-1.2rc2 'channel' TEST!"
         answer_path='answers/speex/speex-1.2rc2/speexenc/'
         name='speex-1.2rc2_speexenc_channel'
         logfile_path="gdb_logs/speex/speex-1.2rc2/speexenc/gdb-speex-1.2rc2_speexenc_channel.txt"
