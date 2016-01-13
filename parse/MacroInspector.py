@@ -32,7 +32,7 @@ class MacroInspector(object):
         if i_file_path is None:return None 
         i_file=open(i_file_path)
         lines=i_file.readlines()
-        pat=re.compile('^# ([0-9]+) "archive.c"$')#There are source line info in *.i files 
+        pat=re.compile('^# ([0-9]+) "'+c_cpp_file_name+'"$')#There are source line info in *.i files 
         up=(0,1)
         for line in lines:
             m=pat.match(line)
@@ -53,6 +53,10 @@ class MacroInspector(object):
         return ".".join(a)
         
 if __name__ =="__main__":
-    inspector=MacroInspector('/home/yangke/Program/Fabian-Yamaguchi/evdata/binutils/binutils-2.23')
-    r=inspector.getExpanded('archive.c',927)
+    #===========================================================================
+    # inspector=MacroInspector('/home/yangke/Program/Fabian-Yamaguchi/evdata/binutils/binutils-2.23')
+    # r=inspector.getExpanded('archive.c',927)
+    #===========================================================================
+    inspector=MacroInspector('/home/yangke/Program/Fabian-Yamaguchi/evdata/speex/CVE-2008-1686/speex-1.1.12')
+    r=inspector.getExpanded('speex_header.c',155)
     print r   

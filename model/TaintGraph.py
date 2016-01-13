@@ -12,6 +12,8 @@ class TaintGraph:
         self.outInterEdges=dict()
         self.inCrossEdges=dict()
         self.outCrossEdges=dict()
+        self.inExpandEdges=dict()
+        self.outExpandEdges=dict()
         self.nodes=set()
         self.l=l
         
@@ -37,8 +39,19 @@ class TaintGraph:
             self.inCrossEdges[endIndex]=set()
         self.inCrossEdges[endIndex].add((startIndex,accessstr))
         self.nodes.add(startIndex)
-        self.nodes.add(endIndex)  
+        self.nodes.add(endIndex)
           
+    def linkExpandEdges(self,startIndex,endIndex,accessstr):
+        print "ExpandEdge:"+str(self.l[startIndex]).rstrip()+"--->"+str(self.l[endIndex]).rstrip()+":"+accessstr+"\n"
+        if startIndex not in self.outCrossEdges:
+            self.outExpandEdges[startIndex]=set()
+        self.outExpandEdges[startIndex].add((endIndex,accessstr))
+        if endIndex not in self.inExpandEdges:
+            self.inExpandEdges[endIndex]=set()
+        self.inExpandEdges[endIndex].add((startIndex,accessstr))
+        self.nodes.add(startIndex)
+        self.nodes.add(endIndex)
+            
     def linkInterEdges(self,startIndex,endIndex,param,arg,argpos):
         print "InterEdge:"+str(self.l[startIndex]).rstrip()+"--->"+str(self.l[endIndex]).rstrip()+":"+str(arg)+","+str(argpos)+"\n"
         if startIndex not in self.outInterEdges:
@@ -57,6 +70,9 @@ class TaintGraph:
             result+=str(self.l[key]).rstrip()+"--->"+str(self.l[value[0]]).rstrip()+":"+str(value[1])+"\n"
         result="cross edges:\n"
         for key,value in self.outCrossEdges.items():
+            result+=str(self.l[key]).rstrip()+"--->"+str(self.l[value[0]]).rstrip()+":"+str(value[1])+"\n"
+        result="expand edges:\n"
+        for key,value in self.outExpandEdges.items():
             result+=str(self.l[key]).rstrip()+"--->"+str(self.l[value[0]]).rstrip()+":"+str(value[1])+"\n"
         result+="inter edges:\n"
         for key,value in self.outInterEdges.items():
@@ -77,6 +93,10 @@ class TaintGraph:
             for value in values:
                 result+="\""+self.linenum2DotStr(key)+"\"->\""+self.linenum2DotStr(value[0])+"\"[label=\""+self.handleDotKeywords(str(value[1]))+"\","
                 result+='style="dashed", color="yellow"];\n'
+        for key,values in self.outExpandEdges.items():
+            for value in values:
+                result+="\""+self.linenum2DotStr(key)+"\"->\""+self.linenum2DotStr(value[0])+"\"[label=\""+self.handleDotKeywords(str(value[1]))+"\","
+                result+='style="dashed", color="orange"];\n'
         for key,values in self.outInterEdges.items():
             for value in values:
                 result+="\""+self.linenum2DotStr(key)+"\"->\""+self.linenum2DotStr(value[0])+"\"[label=\""+self.handleDotKeywords(str(value[1]))+","+self.handleDotKeywords(str(value[2]))+"\","

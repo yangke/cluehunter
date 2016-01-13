@@ -1,0 +1,227 @@
+Already logging to ./gdb.txt.
+Breakpoint 1 at 0x8049c02: file speexdec.c, line 405.
+Starting program: /home/yangke/Program/Fabian-Yamaguchi/evdata/speex/CVE-2008-1686/speex-1.1.12/bin/bin/speexdec speex_exploit
+
+Breakpoint 1, main (argc=2, argv=0xbfffe884) at speexdec.c:405
+405	{
+407	   int option_index = 0;
+409	   FILE *fin, *fout=NULL;
+412	   int frame_size=0;
+413	   void *st=NULL;
+415	   int packet_count=0;
+416	   int stream_init = 0;
+417	   int quiet = 0;
+418	   ogg_int64_t page_granule=0, last_granule=0;
+419	   int skip_samples=0, page_nb_packets;
+420	   struct option long_options[] =
+444	   int nframes=2;
+445	   int print_bitrate=0;
+446	   int close_in=0;
+447	   int eos=0;
+448	   int forceMode=-1;
+449	   int audio_size=0;
+450	   float loss_percent=-1;
+451	   SpeexStereoState stereo = SPEEX_STEREO_STATE_INIT;
+452	   int channels=-1;
+453	   int rate=0;
+455	   int wav_format=0;
+457	   enh_enabled = 1;
+462	      c = getopt_long (argc, argv, "hvV",
+getopt_long (argc=2, argv=0xbfffe884, options=0x804bdbe "hvV", 
+    long_options=0xbfffc624, opt_index=0xbfffc4f8) at getopt1.c:64
+64	getopt1.c: No such file or directory.
+65	in getopt1.c
+Run till exit from #0  getopt_long (argc=2, argv=0xbfffe884, options=0x804bdbe "hvV", 
+    long_options=0xbfffc624, opt_index=0xbfffc4f8) at getopt1.c:65
+0x08049d8f in main (argc=2, argv=0xbfffe884) at speexdec.c:462
+462	      c = getopt_long (argc, argv, "hvV",
+Value returned is $1 = -1
+464	      if (c==-1)
+"finish" not meaningful in the outermost frame.
+465	         break;
+539	   if (argc-optind!=2 && argc-optind!=1)
+544	   inFile=argv[optind];
+546	   if (argc-optind==2)
+549	      outFile = "";
+550	   wav_format = strlen(outFile)>=4 && (
+554	   if (strcmp(inFile, "-")==0)
+563	      fin = fopen(inFile, "rb");
+564	      if (!fin)
+569	      close_in=1;
+574	   ogg_sync_init(&oy);
+576	   speex_bits_init(&bits);
+speex_bits_init (bits=0xbfffc600) at bits.c:49
+49	   bits->chars = (char*)speex_alloc(MAX_CHARS_PER_FRAME);
+speex_alloc (size=2000) at misc.c:137
+137	   return calloc(size,1);
+138	}
+speex_bits_init (bits=0xbfffc600) at bits.c:50
+50	   if (!bits->chars)
+53	   bits->buf_size = MAX_CHARS_PER_FRAME;
+55	   bits->owner=1;
+57	   speex_bits_reset(bits);
+speex_bits_reset (bits=0xbfffc600) at bits.c:79
+79	   bits->chars[0]=0;
+80	   bits->nbBits=0;
+81	   bits->charPtr=0;
+82	   bits->bitPtr=0;
+83	   bits->overflow=0;
+84	}
+speex_bits_init (bits=0xbfffc600) at bits.c:58
+58	}
+main (argc=2, argv=0xbfffe884) at speexdec.c:583
+583	      data = ogg_sync_buffer(&oy, 200);
+585	      nb_read = fread(data, sizeof(char), 200, fin);      
+586	      ogg_sync_wrote(&oy, nb_read);
+589	      while (ogg_sync_pageout(&oy, &og)==1)
+592	         if (stream_init == 0) {
+593	            ogg_stream_init(&os, ogg_page_serialno(&og));
+594	            stream_init = 1;
+597	         ogg_stream_pagein(&os, &og);
+598	         page_granule = ogg_page_granulepos(&og);
+599	         page_nb_packets = ogg_page_packets(&og);
+600	         if (page_granule>0 && frame_size)
+609	            skip_samples = 0;
+612	         last_granule = page_granule;
+614	         packet_no=0;
+615	         while (!eos && ogg_stream_packetout(&os, &op)==1)
+618	            if (packet_count==0)
+620	               st = process_header(&op, enh_enabled, &frame_size, &rate, &nframes, forceMode, &channels, &stereo, &extra_headers, quiet);
+process_header (op=0xbfffc5e0, enh_enabled=1, frame_size=0xbfffc4fc, rate=0xbfffc508, 
+    nframes=0xbfffc500, forceMode=-1, channels=0xbfffc504, stereo=0xbfffc5ac, 
+    extra_headers=0xbfffc50c, quiet=0) at speexdec.c:310
+310	   header = speex_packet_to_header((char*)op->packet, op->bytes);
+speex_packet_to_header (packet=0x8050a18 "Speex   1.0.5", size=80)
+    at speex_header.c:132
+132	   const char *h = "Speex   ";
+133	   for (i=0;i<8;i++)
+134	      if (packet[i]!=h[i])
+133	   for (i=0;i<8;i++)
+134	      if (packet[i]!=h[i])
+133	   for (i=0;i<8;i++)
+134	      if (packet[i]!=h[i])
+133	   for (i=0;i<8;i++)
+134	      if (packet[i]!=h[i])
+133	   for (i=0;i<8;i++)
+134	      if (packet[i]!=h[i])
+133	   for (i=0;i<8;i++)
+134	      if (packet[i]!=h[i])
+133	   for (i=0;i<8;i++)
+134	      if (packet[i]!=h[i])
+133	   for (i=0;i<8;i++)
+134	      if (packet[i]!=h[i])
+133	   for (i=0;i<8;i++)
+141	   if (size < (int)sizeof(SpeexHeader))
+147	   le_header = (SpeexHeader*)speex_alloc(sizeof(SpeexHeader));
+speex_alloc (size=80) at misc.c:137
+137	   return calloc(size,1);
+138	}
+speex_packet_to_header (packet=0x8050a18 "Speex   1.0.5", size=80)
+    at speex_header.c:149
+149	   speex_move(le_header, packet, sizeof(SpeexHeader));
+speex_move (dest=0x8057a30, src=0x8050a18, n=80) at misc.c:172
+172	   return memmove(dest,src,n);
+173	}
+speex_packet_to_header (packet=0x8050a18 "Speex   1.0.5", size=80)
+    at speex_header.c:152
+152	   ENDIAN_SWITCH(le_header->speex_version_id);
+le_int (i=1) at misc.c:80
+80	   spx_uint32_t ret=i;
+87	   return ret;
+88	}
+speex_packet_to_header (packet=0x8050a18 "Speex   1.0.5", size=80)
+    at speex_header.c:153
+153	   ENDIAN_SWITCH(le_header->header_size);
+le_int (i=80) at misc.c:80
+80	   spx_uint32_t ret=i;
+87	   return ret;
+88	}
+speex_packet_to_header (packet=0x8050a18 "Speex   1.0.5", size=80)
+    at speex_header.c:154
+154	   ENDIAN_SWITCH(le_header->rate);
+le_int (i=44100) at misc.c:80
+80	   spx_uint32_t ret=i;
+87	   return ret;
+88	}
+speex_packet_to_header (packet=0x8050a18 "Speex   1.0.5", size=80)
+    at speex_header.c:155
+155	   ENDIAN_SWITCH(le_header->mode);
+le_int (i=4026531842) at misc.c:80
+80	   spx_uint32_t ret=i;
+87	   return ret;
+88	}
+speex_packet_to_header (packet=0x8050a18 "Speex   1.0.5", size=80)
+    at speex_header.c:156
+156	   ENDIAN_SWITCH(le_header->mode_bitstream_version);
+le_int (i=4) at misc.c:80
+80	   spx_uint32_t ret=i;
+87	   return ret;
+88	}
+speex_packet_to_header (packet=0x8050a18 "Speex   1.0.5", size=80)
+    at speex_header.c:157
+157	   ENDIAN_SWITCH(le_header->nb_channels);
+le_int (i=2) at misc.c:80
+80	   spx_uint32_t ret=i;
+87	   return ret;
+88	}
+speex_packet_to_header (packet=0x8050a18 "Speex   1.0.5", size=80)
+    at speex_header.c:158
+158	   ENDIAN_SWITCH(le_header->bitrate);
+le_int (i=4294967295) at misc.c:80
+80	   spx_uint32_t ret=i;
+87	   return ret;
+88	}
+speex_packet_to_header (packet=0x8050a18 "Speex   1.0.5", size=80)
+    at speex_header.c:159
+159	   ENDIAN_SWITCH(le_header->frame_size);
+le_int (i=640) at misc.c:80
+80	   spx_uint32_t ret=i;
+87	   return ret;
+88	}
+speex_packet_to_header (packet=0x8050a18 "Speex   1.0.5", size=80)
+    at speex_header.c:160
+160	   ENDIAN_SWITCH(le_header->vbr);
+le_int (i=0) at misc.c:80
+80	   spx_uint32_t ret=i;
+87	   return ret;
+88	}
+speex_packet_to_header (packet=0x8050a18 "Speex   1.0.5", size=80)
+    at speex_header.c:161
+161	   ENDIAN_SWITCH(le_header->frames_per_packet);
+le_int (i=1) at misc.c:80
+80	   spx_uint32_t ret=i;
+87	   return ret;
+88	}
+speex_packet_to_header (packet=0x8050a18 "Speex   1.0.5", size=80)
+    at speex_header.c:162
+162	   ENDIAN_SWITCH(le_header->extra_headers);
+le_int (i=0) at misc.c:80
+80	   spx_uint32_t ret=i;
+87	   return ret;
+88	}
+speex_packet_to_header (packet=0x8050a18 "Speex   1.0.5", size=80)
+    at speex_header.c:164
+164	   return le_header;
+166	}
+process_header (op=0xbfffc5e0, enh_enabled=1, frame_size=0xbfffc4fc, rate=0xbfffc508, 
+    nframes=0xbfffc500, forceMode=-1, channels=0xbfffc504, stereo=0xbfffc5ac, 
+    extra_headers=0xbfffc50c, quiet=0) at speexdec.c:311
+311	   if (!header)
+316	   if (header->mode >= SPEEX_NB_MODES)
+323	   modeID = header->mode;
+324	   if (forceMode!=-1)
+327	   mode = speex_lib_get_mode (modeID);
+speex_lib_get_mode (mode=-268435454) at modes.c:719
+719	  if (mode < 0 || mode > SPEEX_NB_MODES) return NULL;
+722	}
+process_header (op=0xbfffc5e0, enh_enabled=1, frame_size=0xbfffc4fc, rate=0xbfffc508, 
+    nframes=0xbfffc500, forceMode=-1, channels=0xbfffc504, stereo=0xbfffc5ac, 
+    extra_headers=0xbfffc50c, quiet=0) at speexdec.c:329
+329	   if (header->speex_version_id > 1)
+335	   if (mode->bitstream_version < header->mode_bitstream_version)
+
+Program received signal SIGSEGV, Segmentation fault.
+0x0804992d in process_header (op=0xbfffc5e0, enh_enabled=1, frame_size=0xbfffc4fc, 
+    rate=0xbfffc508, nframes=0xbfffc500, forceMode=-1, channels=0xbfffc504, 
+    stereo=0xbfffc5ac, extra_headers=0xbfffc50c, quiet=0) at speexdec.c:335
+335	   if (mode->bitstream_version < header->mode_bitstream_version)

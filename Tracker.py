@@ -151,18 +151,39 @@ class Tracker:
                 print "arg expression:",arg
                 identifiers=Filter.expression2vars(arg)
                 print "variables in arg expression",identifiers
-                first=True
-                for identifier in identifiers:
-                    print "identifier in call site:",identifier
-                    accessp=[e for e in param.p]
-                    print "param_pattern:",param.p
-                    if arg[0]=="&" and first and len(param.p)>0:
-                        if param.p[-1]=="*":
-                            accessp=param.p[:-1]
-                        first=False
-                    #if not Filter.isConstants(identifier):
-                    job=TaintJob(upperIndex,TaintVar(identifier,accessp))
+                #handle the 'header->index+offset' and '&op' pattern
+                #NOTE: We let the TaintVar to help us handle variables with '&' or '->'.
+                #It will automatically performs dereference and reference action.
+                #FIXME: patterns like '&argv[i]' '*p' has not been handled soundly now.  
+                accessp=[e for e in param.p]
+                if len(identifiers)==0:
+                    print "ARG:",arg
+                    print "Arg of callsite doesn't contains variable! Maybe all is constant."
+                if len(identifiers)==1:
+                    print 'Unique variable argument:',identifiers[0]
+                    job=TaintJob(upperIndex,TaintVar(identifiers[0],accessp))
                     cjobs.add(job)
+                else:
+                    find_base_pointer=False
+                    for identifier in identifiers:
+                        if not find_base_pointer:
+                            m=re.search(identifier+r'\s*[\+\-]',arg)
+                            if m and m.span()[0]==0:
+                                job=TaintJob(upperIndex,TaintVar(identifier,accessp))
+                                find_base_pointer=True
+                            else:
+                                m=re.search(identifier+r'\s*\[',arg)
+                                if m:
+                                    job=TaintJob(upperIndex,TaintVar(identifier,['*']))
+                                else:
+                                    job=TaintJob(upperIndex,TaintVar(identifier,[]))
+                        else:
+                            m=re.search(identifier+r'\s*\[',arg)
+                            if m:
+                                job=TaintJob(upperIndex,TaintVar(identifier,['*']))
+                            else:
+                                job=TaintJob(upperIndex,TaintVar(identifier,[]))
+                        cjobs.add(job)
             return cjobs
     def taintOneStepUp(self,jobs):
         newjobs=set()
@@ -284,7 +305,7 @@ class Tracker:
                 if needSeeBellow:
                     print "see bellow of the call site:",i,"#",self.l[i]
                     needSeeBellow=False
-                    if i==474:
+                    if i==88:
                         print "OH no!"
                     result=Syntax.isPossibleArgumentDefinition(self.l[i],job.var)
                     if result is not None:
@@ -369,11 +390,11 @@ class Tracker:
         variable_pat=re.compile(Syntax.variable)
         if variable_pat.match(leftvar):
             accesspattern=var.matchAccessPattern(leftvar)
-            return self.handleReturnAssgin(beginIndex,i,accesspattern)
+            return self.handleReturnAssgin(beginIndex,i,accesspattern,var)
         else:
             print "Fatal Error! the return assginment is wrongly recognized! Please check the matchDefinitionType"  
             print 1/0       
-    def handleReturnAssgin(self,job_trace_index,i,accesspattern):
+    def handleReturnAssgin(self,job_trace_index,i,accesspattern,var):
         if i+2+1<len(self.l) and isinstance(self.l[i+1],FunctionCallInfo) and isinstance(self.l[i+2],LineOfCode):
             if self.l[i+1].get_func_name().split("::")[-1].strip() in self.l[i].codestr:
                 indexes=self.slice_same_func_lines(i+2, job_trace_index)
@@ -382,15 +403,17 @@ class Tracker:
                 for idx in indexes[::-1]:
                     print "check return line:",self.l[idx]
                     if 'return ' in self.l[idx].codestr:
-                        rightpart=self.l[idx].codestr.strip().lstrip('return').strip()
+                        self.TG.linkExpandEdges(job_trace_index,idx,"return by edge:"+var.simple_access_str())
+                        rightpart=self.l[idx].codestr.strip().lstrip('return').strip().rstrip(';').strip()
                         if Syntax.isUniqueNonLibCall(rightpart):
-                            jobs=self.handleReturnAssgin(job_trace_index,idx,accesspattern)
+                            jobs=self.handleReturnAssgin(job_trace_index,idx,accesspattern,var)
                             return jobs
                         else:
                             variable_pat=re.compile(Syntax.variable)
                             m=variable_pat.match(rightpart)
                             if m:
-                                return TaintJob(idx,TaintVar(rightpart,accesspattern))
+                                rfl,p=accesspattern
+                                return [TaintJob(idx,TaintVar(rightpart,p,rfl))]
                             else:
                                 taint_v_strs = Filter.expression2vars(rightpart)
                                 jobs=map(lambda x : TaintJob(idx,x),[TaintVar(tv,[]) for tv in taint_v_strs])
@@ -631,7 +654,7 @@ class Tracker:
                         break
             i-=1
         if lowerBound==len(self.l):
-            print "Now lowerBound is Unlimited."
+            print "Now lowerBound is unlimited."
         else:
             print "lowerBound line is:",self.l[lowerBound]
         indexes.sort()
@@ -650,7 +673,7 @@ class Tracker:
         return None       
   
     def checkArgDef(self,callsiteIndex,beginIndex,lowerBound,p,rfl,childnum,callee):
-        if p==[] or isinstance(self.l[callsiteIndex+1],LineOfCode):#Abort non-ponter variable.
+        if p==[] or isinstance(self.l[callsiteIndex+1],LineOfCode):#Abort non-pointer variable.
             return [],False
         if callee.strip()!=self.l[callsiteIndex+1].get_func_name().strip(): #function name of callsite and callee must match.
             return [],False

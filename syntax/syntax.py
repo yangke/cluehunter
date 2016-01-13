@@ -10,6 +10,7 @@ from libhandlers.fread_handler import fread_handler
 from libhandlers.read_handler import read_handler
 from libhandlers.strcpy_handler import strcpy_handler
 from libhandlers.strncpy_handler import strncpy_handler
+from libhandlers.memmove_handler import memmove_handler
 from libhandlers.ArgHandler import ArgHandler
 from model.TaintJob import TaintJob
 from model.TaintVar import TaintVar
@@ -38,7 +39,7 @@ class Syntax(object):
     constant=r'('+constant_variable+r'|'+number+r')'
     for_pattern=r"for\s*([^;]*;[^;]*;[^;]*)";
     memop="memcpy|memset|memchr|memmove|memcmp|malloc|calloc|alloca|realloc"
-    fileop="fopen|fclose|fwprintf|fprintf|vfprintf|fscanf|fread|fwrite|fgetc|fgets|fstat|fnmatch|real_fseek|fseeko64"
+    fileop="read|write|fopen|fclose|fwprintf|fprintf|vfprintf|fscanf|fread|fwrite|fgetc|fgets|fstat|fnmatch|real_fseek|fseeko64"
     stdop="open|close|read|write|scanf|printf|stat|getc|gets"
     strop="atoi|strlen|strcat|strncat|strtol|strtok|strcmp|strncmp|strcpy|strncpy|strstr|strrchr|strchr|sprintf|snprintf|vsprintf|vsnprintf|sscanf"
     syscall="gettimeofday|fork|syscall|textdomain|setlocale|getopt_long|ENOENT|bindtextdomain|non_fatal|nonfatal|exit_status|sbrk|CONST_STRNEQ"
@@ -73,7 +74,7 @@ class Syntax(object):
             pat=r"&"+Syntax.water+astr
         else:
             print "Fatal Error! v.accessStr() return None"
-            x=1/0
+            print 1/0
             return None
         return Syntax.lt+Syntax.variable+Syntax.water+r"="+Syntax.water+pat+Syntax.water+r";"
     @staticmethod
@@ -130,6 +131,8 @@ class Syntax(object):
             return True
         elif strncpy_handler.isArgDef(varstr,codestr):
             return True
+        elif memmove_handler.isArgDef(varstr,codestr):
+            return True
         elif memcpy_handler.isArgDef(varstr,codestr):
             return True
         elif memset_handler.isArgDef(varstr,codestr):
@@ -151,6 +154,9 @@ class Syntax(object):
         yes=strncpy_handler.isArgDef(variable, codestr)
         if yes:
             jobs=strncpy_handler.getJobs(i, variable, codestr)
+        yes=memmove_handler.isArgDef(variable, codestr)
+        if yes:
+            jobs=memmove_handler.getJobs(i, variable, codestr)
         yes=strcpy_handler.isArgDef(variable, codestr)
         if yes:
             jobs=strcpy_handler.getJobs(i, variable, codestr)
@@ -244,7 +250,7 @@ class Syntax(object):
                     func_name=Syntax.extract_func_name(codestr,i)
                     if Syntax.isKeyWord(func_name):
                         return None     
-                    break#The only exit port pos==1
+                    break#The first exit port pos==1
                 else:
                     bracket=True 
             elif codestr[i] == "&" or codestr[i] == "*" or re.search("\s", codestr[i]):

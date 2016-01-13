@@ -27,7 +27,7 @@ edge [fontname = "Verdana", fontsize = 10, color="crimson", style="solid"];
 "11#429		for( ; i<argc && command==NULL; i++ ) \\{"->"0#main (argc=3, argv=0xbfffe894) at swfmill.cpp:419"[label="argc"];
 "76#57		length -= 8;"->"74#53		length += fgetc(fp)<<24;"[label="length"];
 "18#490			return swfmill_swf2xml( argc-i, &argv[i] );"->"11#429		for( ; i<argc && command==NULL; i++ ) \\{"[label="i"];
-"18#490			return swfmill_swf2xml( argc-i, &argv[i] );"->"0#main (argc=3, argv=0xbfffe894) at swfmill.cpp:419"[label="argv"];
+"18#490			return swfmill_swf2xml( argc-i, &argv[i] );"->"0#main (argc=3, argv=0xbfffe894) at swfmill.cpp:419"[label="*(argv)|*argv|argv"];
 "80#70		data = new unsigned char[ length ];"->"76#57		length -= 8;"[label="length"];
 "50#98		infile = argv[0];"->"19#swfmill_swf2xml (argc=argc@entry=1, argv=argv@entry=0xbfffe89c) at swfmill.cpp:81"[label="argv"];
 "54#104		in_fp = std_in ? stdin : fopen( infile, \\"rb\\" );"->"50#98		infile = argv[0];"[label="*(infile)|*infile|infile"];

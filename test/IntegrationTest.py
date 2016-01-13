@@ -16,6 +16,8 @@ from Test_objdump_addr import Test_objdump_addr
 from Test_swfmill_data__pos import Test_swfmill_data__pos
 from Test_png2swf_len import Test_png2swf_len
 from Test_speexenc_channel import Test_speexenc_channel
+from Test_speexdec_mode import Test_speexdec_mode
+
 class IntegrationTest:
 
     def test(self):
@@ -44,6 +46,8 @@ class IntegrationTest:
         test=Test_swfmill_data__pos()
         result_array.append(('swfmill_data[pos++]',test.test()))
         test=Test_speexenc_channel()
+        result_array.append(('speexenc_channel',test.test()))
+        test=Test_speexdec_mode()
         result_array.append(('speexenc_channel',test.test()))
         test=Test_objdump_addr()
         result_array.append(('objdump_addr',test.test()))

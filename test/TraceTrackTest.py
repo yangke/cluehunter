@@ -62,12 +62,16 @@ class TraceTrackTest(object):
       
     def test(self,startindex=-1):
         start = time.clock()
-        l=self.parse_list() 
+        l=self.parse_list()
+        t1 = time.clock()
         macro_inspector=MacroInspector(self.c_proj_dir)
         tracker=Tracker(l,macro_inspector)
         traceIndex=startindex % len(l)
         passed=self.test_tracker(tracker,traceIndex)
         end = time.clock()
+        print "LIST LENTH:",len(l)
+        print "PARSE: %f s" % (t1 - start)
+        print "ANALYSIS: %f s" % (end - t1)
         print "finished: %f s" % (end - start)
         return passed
     

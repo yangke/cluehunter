@@ -42,7 +42,7 @@ class Filter:
     @staticmethod
     def isKeywords(symbol):
         types="sizeof|char|int|unsigned|long|short|float|double|register|size_t|u_int"
-        statements="for|while|if|else|goto"
+        statements="for|while|if|else|switch|goto"
         pattern="|".join([types,statements])
         p=re.compile(r"^("+pattern+r")$")
         if p.match(symbol):
@@ -50,8 +50,11 @@ class Filter:
         return False
     @staticmethod
     def expression2symbols(e):
-        if "SIZE" in e:
-            print "OH NO!"
+        #=======================================================================
+        # if "SIZE" in e:
+        #     print "OH NO!"
+        #     print 1/0
+        #=======================================================================
         clean = Filter.removeStrings(e)
         cleaner = "".join(clean.split())
         cleanest=cleaner.replace("->", "@")
@@ -60,7 +63,6 @@ class Filter:
         return symbols
     @staticmethod
     def removeStrings(e):
-        stack=[]
         i=0
         result=""
         in_string = False
