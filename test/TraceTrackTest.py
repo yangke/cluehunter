@@ -38,7 +38,7 @@ class TraceTrackTest(object):
         output.write(TG.serialize2dot())
         output.close()
         #print str(TG)
-        subprocess.call("dot -Tpng '"+self.outputdir+self.name+".dot' -o '"+self.outputdir+self.name+".png'", shell = True)
+        subprocess.call("dot -Tsvg '"+self.outputdir+self.name+".dot' -o '"+self.outputdir+self.name+".svg'", shell = True)
         if os.path.exists(self.answer_path+self.name+".dot"):
             x=filecmp.cmp(self.outputdir+self.name+".dot", self.answer_path+self.name+".dot")
         elif os.path.exists(self.answer_path+self.name+"_level0.dot"):

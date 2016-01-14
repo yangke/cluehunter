@@ -1,5 +1,5 @@
 # cluehunter
-**ClueHunter** is an auxiliary tool for crash point reverse data flow analysis. It generate data flow graph according to the gdb debug log(C program source code level). It receive manually specified sink variables that cause the last line crash and perform interprocedural analysis on the log trace. For obtaining the auto-debug trace, the tool `robot_dbg.exp` in ClueHunter requires the program under debug to be compiled with profiled code information (gcc **-g -save-temp** option).
+**ClueHunter** is an auxiliary tool for crash point reverse data flow analysis. It generate data flow graph according to the gdb debug log(C program source code level). It receive manually specified sink variables that cause the last line crash and perform interprocedural analysis on the log trace. For obtaining the auto-debug trace, the tool `robot_dbg.exp` in ClueHunter requires the program under debug to be compiled with profiled code information (gcc **-g -save-temp** option).During the current develop stage, only command line program is supported. 
 
 ##Quick Start Cookbook
 ###Install
@@ -13,7 +13,13 @@ git clone https://github.com/yangke/cluehunter.git
 That's done.
 
 ####Start Funny
-First modify the 15 line in `cluehunter/robot_dbg.exp` to fit with your own debug scenarios.
+First make sure your C program under analysis is compiled by **gcc** with **-g -save-temps** option.
+In most cases you can specify this in the configure procedure like this:
+```
+$./configure CFLAGS="-g -save-temps" CXXFLAGS="-g -save-temps" --prefix=$YOUR_INSTALL_PATH 
+```
+Otherwise you may have to change the `Makefile`.
+Then modify the 15 line in `cluehunter/robot_dbg.exp` to fit with your own debug scenarios.
 Here is an example for executable program `swf2xml` test in **swfmill-0.3.3**.
 
 ```
@@ -24,12 +30,13 @@ The input file `exploit_it_to_crash` will cause the crash of `swf2xml`.
 Then use `robot_dbg.exp` to debug your program automatically.
 It executes gdb `next` command when meeting lines which contains library or system call site, other cases it executes gdb `step` command.
 Copy the `robot_dbg.exp` into the directory of binary executable program: `swf2xml` and the exploit input: `exploit_it_to_crash`.
-This will make the former command valid(`spawn gdb --args swfmill swf2xml exploit_it_to_crash`).
+This will make the former command valid(`spawn gdb -q --args swfmill swf2xml exploit_it_to_crash`).
 
 ```
 swfmill-0.3.3_install_bin_path$ls
 ... exploit_it_to_crash ... robot_dbg.exp ... swf2xml ...
 swfmill-0.3.3_install_bin_path$./robot_dbg.exp
+...
 swfmill-0.3.3_install_bin_path$ls
 ... exploit_it_to_crash ... gdb.txt ... robot_dbg.exp ... swf2xml ...
 ```
@@ -38,8 +45,8 @@ Every thing come handy, we got the debug trace `gdb.txt` besides them. Then we c
 python cluehunter.py -t path_to/gdb.txt\
       -vs length -ps N -o . -n telescope -l 1
 ```
-This command will use the test trace located at gdb.txt to perform reverse data flow analysis for variable `length`. The sensitive crash data `length` itself are marked as tainted. The access pattern of `length`, `N`, means direct access. Another mark `'\*'` means we need to dereference this pointer to access sensitive sink data we cared about. Note that the `\*` must be quoted with `""` or `''` in command line.  
-This command will cause ClueHunter output `telescope.dot` and use **graphviz** to generate `telescope.png` beside it.`-vs`, `-ps` and `-t` are three mandatory options which specify the sink variable names, patterns and the trace to analysis respectively.
+This command will use the test trace located at gdb.txt to perform reverse data flow analysis for variable `length`. The sensitive crash data `length` itself are marked as tainted. The access pattern of `length`, `'N'`, means direct access. Another mark `'\*'` means we need to dereference this pointer to access sensitive sink data we cared about. Note that the `\*` must be quoted with `""` or `''` in command line.  
+This command will cause ClueHunter output `telescope.dot` and use **graphviz** to generate `telescope.svg` beside it.`-vs`, `-ps` and `-t` are three mandatory options which specify the names of sink variables, patterns and the trace to analysis respectively.
 `-o` option specified the output directory. `-l` specified the parsed trace redundancy level.
 `0` means only remove the line redundancy in same function and `1` means remove both the inner function and inter-function reduandancy.
 
