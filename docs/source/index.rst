@@ -17,6 +17,10 @@ Contents:
    :maxdepth: 2
    	
    quick_start
+   output_examples
+
+.. :height: 500px
+   :width: 500px
 
 ..
 	Indices and tables
@@ -25,4 +29,5 @@ Contents:
 	* :ref:`genindex`
 	* :ref:`modindex`
 	* :ref:`search`
+
 

@@ -2,6 +2,7 @@
 *.pyc
 *.log
 *.png
+*.svg
 .metadata
 trace.txt
 docs/build
