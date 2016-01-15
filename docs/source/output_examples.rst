@@ -4,7 +4,7 @@ Output Examples
 CVE-2008-1686 speex null pointer dereference
 --------------------------------------------
 
-The following table shows the summary of this `CVE-2008-1686 <http://www.cvedetails.com/vulnerability-list/vendor_id-7966/product_id-20855/year-2008/opec-1/Xiph-Speex.html>`_.
+The following table shows the summary of `CVE-2008-1686 <http://www.cvedetails.com/vulnerability-list/vendor_id-7966/product_id-20855/year-2008/opec-1/Xiph-Speex.html>`_.
 
 .. table:: Table 1 `CVE-2008-1686  summary <http://www.cvedetails.com/vulnerability-list/vendor_id-7966/product_id-20855/year-2008/opec-1/Xiph-Speex.html>`_
 
@@ -19,6 +19,8 @@ The following table shows the summary of this `CVE-2008-1686 <http://www.cvedeta
    |offset, which is used to dereference a function pointer.                                                    |
    +------------------------------------------------------------------------------------------------------------+
 
+Construct a crash exploit and use the robot_dbg.exp to record the source code execution trace.
+Then let ClueHunter to perform the interprocedural analysis on it. It will output the svg graph by default.
 Figure 1 shows the dependencies of variable ``mode`` which cause the crash. Table 2 shows there shape meaning of the node and edge in it.
  
 .. table:: Table 2 The Meaning of Shape for Node and Edge
