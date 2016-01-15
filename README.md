@@ -1,5 +1,5 @@
 # cluehunter
-**ClueHunter** is an auxiliary tool for crash point reverse data flow analysis. It generate data flow graph according to the gdb debug log(C program source code level). It receive manually specified sink variables that cause the last line crash and perform interprocedural analysis on the log trace. For obtaining the auto-debug trace, the tool `robot_dbg.exp` in ClueHunter requires the program under debug to be compiled with profiled code information (gcc **-g -save-temp** option).During the current develop stage, only command line program is supported. 
+**ClueHunter** is an auxiliary tool for crash point reverse data flow analysis. It generate data flow graph according to the gdb debug log(C program source code level). It receive manually specified sink variables that cause the last line crash and perform interprocedural analysis on the log trace. For obtaining the auto-debug trace, the tool `robot_dbg.exp` in ClueHunter requires the program under debug to be compiled with profiled code information (gcc **-g -save-temp** option).During the current develop stage, only command line program is supported.Please consult [here](http://cluehunter.readthedocs.org/) for detail documents. 
 
 ##Quick Start Cookbook
 ###Install

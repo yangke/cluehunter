@@ -4,7 +4,7 @@ Quick Start
 Install
 --------------------
 ClueHunter depends on `graphviz <http://www.graphviz.org/>`_ to generate the picture from the dot file. 
-Others dependencies are installed by default in Ubuntu-14.04 system.
+Others dependencies are installed in Ubuntu-14.04 system by default.
 
 List of dependencies:
 
