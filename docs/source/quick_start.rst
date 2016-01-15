@@ -3,7 +3,16 @@ Quick Start
 
 Install
 --------------------
-ClueHunter depends on `graphviz <http://www.graphviz.org/>`_ to generate the picture from the dot file.
+ClueHunter depends on `graphviz <http://www.graphviz.org/>`_ to generate the picture from the dot file. 
+Others dependencies are installed by default in Ubuntu-14.04 system.
+
+List of dependencies:
+
+ * gcc >=4.8
+ * gdb >=7.7
+ * expect 1.1
+ * python 2.7
+ * graphviz>=2.36
 
 For Ubuntu::
 
