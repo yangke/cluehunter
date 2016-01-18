@@ -333,7 +333,7 @@ class Syntax(object):
         if callstr=='':return False
         if re.search(r"[_A-Za-z0-9]",callstr[0]) is None:
             return False
-        m=re.search(Syntax.identifier+r"\(",callstr)
+        m=re.search(Syntax.identifier+r"\s*\(",callstr)
         if m is None :
             return False
         if Syntax.isLibFuncName(m.group().rstrip('(')):

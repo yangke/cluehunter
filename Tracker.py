@@ -258,7 +258,7 @@ class Tracker:
             print job.trace_index,"#",self.l[job.trace_index]
             if job.var.v=="chan":
                 print "FIND YOU!"
-            if i==74:
+            if i==171:
                 print "HEY"
             if isinstance(self.l[i], FunctionCallInfo):
                 
@@ -353,6 +353,10 @@ class Tracker:
                         self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
                         jobs=Syntax.handle_sys_lib_def(i,job.var,self.l[i].codestr)
                         return jobs
+                    elif def_type == Syntax.RETURN_VALUE_ASSIGN:
+                        self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
+                        jobs=self.handleReturnAssignDirect(job.trace_index,i,job.var)
+                        return jobs
                     elif def_type == Syntax.NORMAL_ASSIGN:
                         print "HANDLE NORMAL_ASSIGN!"
                         print "taintvar:",job.var.simple_access_str()
@@ -374,10 +378,7 @@ class Tracker:
                         for tv in taintvars:print tv
                         jobs=map(lambda x : TaintJob(i,x), taintvars)
                         return jobs
-                    elif def_type == Syntax.RETURN_VALUE_ASSIGN:
-                        self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
-                        jobs=self.handleReturnAssignDirect(job.trace_index,i,job.var)
-                        return jobs
+                    
                         
             elif needSeeBellow:
                 print job.var.v, 'NOT IN', self.l[i].codestr
@@ -404,7 +405,8 @@ class Tracker:
                     print "check return line:",self.l[idx]
                     if 'return ' in self.l[idx].codestr:
                         self.TG.linkExpandEdges(job_trace_index,idx,"return by edge:"+var.simple_access_str())
-                        rightpart=self.l[idx].codestr.strip().lstrip('return').strip().rstrip(';').strip()
+                        start=re.search(r'return ',self.l[idx].codestr).span()[1]
+                        rightpart=self.l[idx].codestr[start:].strip().rstrip(';').strip()
                         if Syntax.isUniqueNonLibCall(rightpart):
                             jobs=self.handleReturnAssgin(job_trace_index,idx,accesspattern,var)
                             return jobs

@@ -7,7 +7,7 @@ from model.TaintVar import TaintVar
 from TraceTrackTest import TraceTrackTest
 class Test_mcrypt_salt_size:
     def test(self):
-        passed_message="MCRYPT-2.6.5 'i' in 't->data[i]' TEST PASSED!"
+        passed_message="MCRYPT-2.6.5 '*salt_size' TEST PASSED!"
         not_pass_message="ERRORS FOUND DURING MCRYPT-2.6.5 'i' in '*salt_size' TEST!"
         answer_path='answers/mcrypt/mcrypt-2.6.5/'
         name='mcrypt-2.6.5_salt_size'
