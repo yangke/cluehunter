@@ -206,21 +206,6 @@ class Tracker:
             else:
                 normaljobs.add(job)
         return paramjobs,normaljobs
-    #===========================================================================
-    # def getUpperBound(self,job):
-    #     i=job.trace_index
-    #     if isinstance(self.l[job.trace_index],FunctionCallInfo):
-    #         print "Fatal Error: PARAM JOB should not be passed to lastModification()!!!!!!!!!!!!"
-    #         return -1
-    #     while i>0:
-    #         if isinstance(self.l[i], FunctionCallInfo) and isinstance(self.l[i-1], LineOfCode):
-    #             if self.l[i]==self.l[job.trace_index].get_func_call_info():
-    #                 if self.l[i].get_func_name().split("::")[-1] in self.l[i-1].codestr:
-    #                     return i-1
-    #         i-=1
-    #     print "Error Cannot find the same function segments in upper indexes!"
-    #     return -1
-    #===========================================================================
     def up_slice(self,job):
         indexes=[]
         i=job.trace_index-1
@@ -306,24 +291,6 @@ class Tracker:
                         jobs,b=self.checkArgDef(d,job.trace_index,job.trace_index,p,rfl,childnum,callee)
                         if b:
                             return jobs
-                        #=======================================================
-                        # elif arg.strip()[0]=='&' and len(v.p)==0:
-                        #     self.TG.linkInnerEdges(job.trace_index,d,v.simple_access_str())
-                        #     m=re.search(callee+r'\s*\(',self.l[d].codestr)
-                        #     jobs=[]
-                        #     #to make:start_pos=m.span()[1]
-                        #     end_pos=m.span()[1]-1
-                        #     is_last=False
-                        #     while not is_last:
-                        #         start_pos=end_pos+1
-                        #         end_pos,is_last=ArgHandler.nextarg(self.l[d].codestr, start_pos)
-                        #         print arg
-                        #         print self.l[d].codestr[start_pos:end_pos]
-                        #         variable=self.l[d].codestr[start_pos:end_pos]
-                        #         if arg not in variable and '&' not in variable:
-                        #             jobs.append(TaintJob(d,TaintVar(variable,[])))
-                        #     return jobs
-                        #=======================================================
         if len(indexes)>0:
             i=indexes[0]-1
         else:
@@ -348,180 +315,6 @@ class Tracker:
                 return [TaintJob(i,job.var)]
             return []
         return []
-        
-    def lastModification2(self,job):
-        print "Now we are checking for last definition of ",job.var
-        #=======================================================================
-        # BUUUUUUUUUUUG
-        # Cannot handle the following case:
-        # We need first time reference definition check
-        # main () at foomoo.c:3
-        # 3        int a=1, b=2;
-        # 4        int *p = &a;
-        # 5        int *q = &b;
-        # 6        int *c = q;
-        # 7        *q=foo(&a,&b);
-        # foo (x=0xbfffe83c, y=0xbfffe840) at foomoo.c:14
-        # 14        return *x%=(*x)+(*y);
-        # 15    }
-        # main () at foomoo.c:8
-        # 8        *p=moo(p,c);
-        # moo (x=0xbfffe83c, y=0xbfffe840) at foomoo.c:18
-        # 18        return *x-*y;
-        # 19    }
-        # main () at foomoo.c:9
-        # 9        moo(p,c);
-        # moo (x=0xbfffe83c, y=0xbfffe840) at foomoo.c:18
-        # 18        return *x-*y;
-        # 19    }
-        # main () at foomoo.c:10
-        # 10        return 1/a;
-        #=======================================================================
-        # Try to fix this lower bound wrongly higher problem, but failed.
-        #-----------------------------------------------------------------------
-        # jobs=self.check_ref_mod_first(job,job.trace_index,job.trace_index)
-        # if jobs is not None :return jobs
-        #-----------------------------------------------------------------------
-        # ignore this problem should be better.
-        #=======================================================================
-        
-        i=job.trace_index-1
-        jobs=[]
-        needSeeBellow = False
-        lowerBound=job.trace_index
-        while True:
-            print i,"#",self.l[i]
-            print job.trace_index,"#",self.l[job.trace_index]
-            if job.var.v=="chan":
-                print "FIND YOU!"
-            if i==171:
-                print "HEY"
-            if isinstance(self.l[i], FunctionCallInfo):
-                
-                if i==0:#begin
-                    if job.var.v in self.l[i].param_list:
-                        self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
-                    return []
-                elif self.l[i].get_func_name().split("::")[-1].strip() in self.l[i-1].codestr and self.l[i]==self.l[job.trace_index].get_func_call_info():#call point
-                    if job.var.v in self.l[i].param_list:
-                        self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
-                        return [TaintJob(i,job.var)]
-                    return []
-                elif i-2>0 and isinstance(self.l[i-2], LineOfCode) and self.l[i].get_func_name().split("::")[-1] in self.l[i-2].codestr and self.l[i]==self.l[job.trace_index].get_func_call_info():#call point
-                    if job.var.v in self.l[i].param_list:
-                        self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
-                        return [TaintJob(i,job.var)]
-                    return []
-                elif self.isMacroCall(i-1):
-                    if job.var.v in self.l[i].param_list:
-                        self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
-                        return [TaintJob(i,job.var)]
-                    return []
-                #===============================================================
-                # elif self.isFunctionPointerCall():
-                #     self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
-                #     return [TaintJob(i,job.var)]
-                #===============================================================
-                else:#This is a return point after call other functions
-                    lowerBound=i
-                    print self.l[i]
-                    i=lowerBound-1
-                    print self.l[i]
-                    while not self.l[i]==self.l[job.trace_index].get_func_call_info() and i>-1:#find the nearest same function segment
-                        #print str(self.l[i]),"NEQ",self.l[lowerBound]
-                        i-=1
-                    i+=1
-                    while isinstance(self.l[i],LineOfCode) and i<lowerBound:#find last statement
-                        i+=1
-                    needSeeBellow = True
-                    print "need see bellow:",i,"#",self.l[i]
-            elif job.var.v in self.l[i].codestr:
-                if job.var.v=="ucptr":
-                    print "teah"
-                if needSeeBellow:
-                    print "see bellow of the call site:",i,"#",self.l[i]
-                    needSeeBellow=False
-                    if i==88:
-                        print "OH no!"
-                    result=Syntax.isPossibleArgumentDefinition(self.l[i],job.var)
-                    if result is not None:
-                        rfl,p,childnum,callee,arg=result
-                        ###########################################################
-                        #jobs,findIt=self.checkArgDef(i,job.trace_index,lowerBound,p,rfl,childnum,callee)
-                        jobs,findIt=self.checkArgDef(i,job.trace_index,job.trace_index,p,rfl,childnum,callee)
-                        if findIt:return jobs
-                        print self.l[i].codestr.strip(),"does not contains arg definiton."
-                def_type=self.matchDefinitionType(i,job.var)
-                print "still finding var:",job.var
-                if def_type!=Syntax.NODEF:
-                    if job.trace_index-i>1:
-                        #LONG SKIP! We need to check the reference modification.
-                        print 'LONG SKIP!',job.trace_index-i,". We need to check the reference modification."
-                        if i==206:
-                            print self.l[i]
-                        if job.trace_index-i==1088:
-                            print "HEY!" 
-                        print job.var
-                        #FIX me the lifted i will lose the reference definition that caused by upper reference propagation
-                        #1 int *p=&a;
-                        #2 a=5
-                        ######function calls########
-                        #3 *p=0
-                        #4 x=1/a;//crash
-                        jobs=self.check_ref_modification(job,i,lowerBound)
-                        #The lower bound wrongly upper problem,should be fix before lastModification that cause a poor performance
-                        #so we don't fix it.
-                        if jobs is not None:
-                            return jobs
-                    if def_type == Syntax.FOR:
-                        self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
-                        jobs=Syntax.generate_for_jobs(i, self.l[i].codestr, job.var)
-                        return jobs
-                    elif def_type == Syntax.INC:
-                        self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
-                        jobs.append(TaintJob(i,job.var))
-                        jobs=list(set(jobs))
-                        return jobs
-                    elif def_type==Syntax.RAW_DEF:
-                        self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
-                        return []
-                    elif def_type==Syntax.SYS_LIB_DEF:
-                        self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
-                        jobs=Syntax.handle_sys_lib_def(i,job.var,self.l[i].codestr)
-                        return jobs
-                    elif def_type == Syntax.RETURN_VALUE_ASSIGN:
-                        self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
-                        jobs=self.handleReturnAssignDirect(job.trace_index,i,job.var)
-                        return jobs
-                    elif def_type == Syntax.NORMAL_ASSIGN:
-                        print "HANDLE NORMAL_ASSIGN!"
-                        print "taintvar:",job.var.simple_access_str()
-                        print "line:",self.l[i]
-                        self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
-                        taintvars=Syntax.getVars(job.var,self.l[i])
-                        print "normal assign new taint variable list------"
-                        for tv in taintvars:print tv
-                        jobs=map(lambda x : TaintJob(i,x), taintvars)
-                        return jobs
-                    elif def_type == Syntax.OP_ASSIGN:
-                        print "HANDLE NORMAL_ASSIGN!"
-                        print "taintvar:",job.var.simple_access_str()
-                        print "line:",self.l[i]
-                        self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
-                        taintvars=Syntax.getVars(job.var,self.l[i])
-                        taintvars.add(job.var)
-                        print "op assign new taint variable list------"
-                        for tv in taintvars:print tv
-                        jobs=map(lambda x : TaintJob(i,x), taintvars)
-                        return jobs
-                    
-                        
-            elif needSeeBellow:
-                print job.var.v, 'NOT IN', self.l[i].codestr
-                needSeeBellow=False
-            i-=1
-            if i<0:return []
-            
     def handleReturnAssignDirect(self,beginIndex,i,var):
         leftvar=self.l[i].codestr.split('=')[0].strip()
         variable_pat=re.compile(Syntax.variable)
@@ -561,83 +354,7 @@ class Tracker:
                 return []
         print "Fatal Error! the malformed call detail lines after return value assignment!"  
         print 1/0            
-    #===========================================================================
-    # def check_ref_mod_first(self,job,i,lowerBound):
-    #     idxes=self.slice_same_func_lines(i,lowerBound)##BUG i+1
-    #     if len(idxes)==0:return None
-    #     pairs=self.findAllReferences(job.var,idxes,False)
-    #     defs=self.getDefs(pairs,idxes,idxes[0]-1)
-    #     jobs=self.handle_defs(defs,job,lowerBound)
-    #     return jobs
-    #===========================================================================
-          
-    def check_ref_modification(self,job,i,lowerBound):
-        
-        idxes=self.slice_same_func_lines(i,lowerBound)##BUG i+1
-        if "t1.next = 0;" in self.l[i].codestr:
-            print "GAAAAAA"
-        pairs=self.findAllReferences(job.var,idxes,False)
-        pairs.append((i+1,job.var,False,0,len(idxes)))
-        defs=self.getDefs(pairs,idxes,i)
-        jobs=self.handle_defs(defs,job,lowerBound)
-        return jobs
-    def handle_defs(self,defs,job,lowerBound):
-        for d,v in defs:
-            def_type=Syntax.matchDefiniteDefinitionType(self.l[d].codestr,v)
-            if def_type==Syntax.FOR:
-                self.TG.linkInnerEdges(job.trace_index,d,v.simple_access_str())
-                jobs=Syntax.generate_for_jobs(d, self.l[d].codestr, v)
-                return jobs
-            if def_type==Syntax.INC:#INC
-                self.TG.linkInnerEdges(job.trace_index,d,v.simple_access_str())
-                #SYSCALL_INC and INC are same.Think about meeting "fread(&target,size,count,fp)" we should contiue searching for 'fp'. 
-                jobs=[TaintJob(d,v)]
-                return jobs
-            elif def_type==Syntax.RAW_DEF:#RAW_DEF
-                self.TG.linkInnerEdges(job.trace_index,d,v.simple_access_str())
-                return []
-            elif def_type==Syntax.NORMAL_ASSIGN:
-                self.TG.linkInnerEdges(job.trace_index,d,v.simple_access_str())
-                taintvars=Syntax.getVars(v,self.l[d])
-                jobs=map(lambda x : TaintJob(d, x), taintvars)
-                return jobs
-            elif def_type==Syntax.OP_ASSIGN:
-                self.TG.linkInnerEdges(job.trace_index,d,v.simple_access_str())
-                taintvars=Syntax.getVars(v,self.l[d])
-                taintvars.add(v)
-                jobs=map(lambda x : TaintJob(d, x), taintvars)
-                return jobs
-            elif def_type == Syntax.RETURN_VALUE_ASSIGN:
-                self.TG.linkInnerEdges(job.trace_index,d,v.simple_access_str())
-                jobs=self.handleReturnAssignDirect(job.trace_index,d,job.var)
-                return jobs
-            elif def_type==Syntax.SYS_LIB_DEF:
-                self.TG.linkInnerEdges(job.trace_index,d,v.simple_access_str())
-                jobs= Syntax.handle_sys_lib_def(d,v,self.l[d].codestr)
-                return jobs
-            else:
-                result=Syntax.isPossibleArgumentDefinition(self.l[d],v)
-                if result is not None:
-                    rfl,p,childnum,callee,arg=result
-                    jobs,b=self.checkArgDef(d,job.trace_index,lowerBound,p,rfl,childnum,callee)
-                    if b:
-                        return jobs
-                    #===========================================================
-                    # elif arg.strip()[0]=='&':
-                    #     self.TG.linkInnerEdges(job.trace_index,d,v.simple_access_str())
-                    #     m=re.search(callee+r'\s*\(',self.l[d].codestr)
-                    #     jobs=[]
-                    #     #to make:start_pos=m.span()[1]
-                    #     end_pos=m.span()[1]-1
-                    #     is_last=False
-                    #     while not is_last:
-                    #         start_pos=end_pos+1
-                    #         end_pos,is_last=ArgHandler.nextarg(self.l[d].codestr, start_pos)
-                    #         variable=self.l[d].codestr[start_pos:end_pos]
-                    #         if arg not in variable and '&' not in variable:
-                    #             jobs.append(TaintJob(d,TaintVar(variable,[])))
-                    #     return jobs
-                    #===========================================================
+    
     def likeArgDef(self,v,codestr):
         if v.pointerStr():
             return re.search("\(.*"+v.pointerStr()+".*\)", codestr) or re.search("\(.*&\s*"+v.accessStr()+".*\)", codestr)
@@ -674,13 +391,6 @@ class Tracker:
                                 defs.append((i,v))
                                 print "Yes,it is Possible Definitions."
                                 print "But just possible,maybe 10%. We should continue search at least another 100% definition for assurance."
-                        #=======================================================
-                        # elif re.search(r'\(.*&\s*\(?'+v.v+r'.*\)',self.l[i].codestr):
-                        #     result=Syntax.isPossibleArgumentDefinition(self.l[i],v)
-                        #     if result:
-                        #         if ('&' in result[4] and v.p==[]):
-                        #             defs.append((i,v))
-                        #=======================================================
                 elif self.likeArgDef(v,self.l[i].codestr):
                     print "Check Possible Definitions:",self.l[i]
                     if isinstance(self.l[i+1],FunctionCallInfo):
@@ -688,13 +398,6 @@ class Tracker:
                             defs.append((i,v))
                             print "Yes,it is Possible Definitions."
                             print "But just possible,maybe 10%. We should continue search at least another 100% definition for assurance."
-                    #===========================================================
-                    # elif re.search(r'\(.*&\s*\(?'+v.v+r'.*\)',self.l[i].codestr):
-                    #     result=Syntax.isPossibleArgumentDefinition(self.l[i],v)
-                    #     if result:
-                    #         if ('&' in result[4] and v.p==[]):
-                    #             defs.append((i,v))
-                    #===========================================================
         defs.sort(key=lambda x:x[0],reverse=True)#index reversed order
         return defs
     
@@ -727,44 +430,6 @@ class Tracker:
                 #if not v.pointerStr():continue
                 lp=Syntax.left_ref_propagate_pattern(v)
                 rp=Syntax.right_ref_propagate_pattern(v)
-                
-                #===============================================================
-                # if count==0:
-                #     print "Check bellow the first found assignment:",self.l[index]
-                #     print "For ref assignment:"
-                #     if "for( ; i<argc && command==NULL; i++ ) {" in  self.l[index].codestr:
-                #         print "*****EE****"
-                #     for aIndex in indexrange[upperbound:lowerbound][::-1]:#search from down to up
-                #         print self.l[aIndex]
-                #         if rp:
-                #             if r"=" not in self.l[aIndex].codestr:
-                #                 visited.add(aIndex)
-                #                 continue
-                #             m_right_propgate=re.search(rp,self.l[aIndex].codestr)
-                #             if m_right_propgate:
-                #                 if aIndex not in visited:
-                #                     print "right propagate:",aIndex,self.l[aIndex]
-                #                     array=m_right_propgate.group().split("=")
-                #                     leftpart=array[0].strip()
-                #                     rightpart=array[1].strip()
-                #                     rightvar=rightpart.rstrip(";").strip()
-                #                     rfl,pat=v.matchAccessPattern(leftpart)
-                #                     # BUG if look downward
-                #                     if rfl<=0:#Not in arg definition
-                #                         upperbound=indexrange.index(aIndex)+1#The last(effective) right propagation of v. e.g. v=p
-                #                         #For the following left propagation of v (e.g. q_low=v) is usefull.
-                #                         #But the upper left and right propagation of v (e.g. "q_up=v;" or "v=&X") is useless.
-                #                         #This time we doesn't correct rfl value as it is an assignment.
-                #                         q=TaintVar(rightvar,pat,rfl,True)#Note that we should take ref_len in to consideration.
-                #                         pairs.add((aIndex,q,upperbound,lowerbound))
-                #                         A.add((aIndex,q,False,upperbound,lowerbound))
-                #                         visited.add(aIndex)
-                #                         break
-                #                     elif left_p:#rfl>0 
-                #                         lowerbound=aIndex
-                #                         #e.g p->next->data: p->next=m
-                #                         #we don't care p->next->data=m as m will not propagate
-                #===============================================================
                 print "Continue Check bellow the first found assignment:",self.l[index]
                 for idx in range(upperbound,lowerbound):
                     aIndex=indexrange[idx]
@@ -974,22 +639,6 @@ class Tracker:
                     jobs,b=self.checkArgDef(d,beginIndex,lowerBound,p,rfl,childnum,callee)
                     if b:
                         return self.taintUp(jobs),True
-                    #===========================================================
-                    # elif arg.strip()[0]=='&' and len(v.p)==0:
-                    #     self.TG.linkCrossEdges(beginIndex,d,v.simple_access_str())
-                    #     m=re.search(callee+r'\s*\(',self.l[d].codestr)
-                    #     jobs=[]
-                    #     #to make:start_pos=m.span()[1]
-                    #     end_pos=m.span()[1]-1
-                    #     is_last=False
-                    #     while not is_last:
-                    #         start_pos=end_pos+1
-                    #         end_pos,is_last=ArgHandler.nextarg(self.l[d].codestr, start_pos)
-                    #         variable=self.l[d].codestr[start_pos:end_pos]
-                    #         if arg not in variable and '&' not in variable:
-                    #             jobs.append(TaintJob(d,TaintVar(variable,[])))
-                    #     return self.taintUp(jobs),True
-                    #===========================================================
                             
         return [],False
     
@@ -1021,25 +670,6 @@ class Tracker:
                     if self.l[i+1].get_func_name().split("::")[-1].strip() in self.l[i].codestr:
                         return Syntax.RETURN_VALUE_ASSIGN
             return Syntax.NORMAL_ASSIGN
-            #===================================================================
-            # pointer_def=re.compile(r"^\s*"+Syntax.identifier+r"\s*"+normal_assginment+".*")
-            # if pointer_def.match(codestr) and '*' in normal_assginment:
-            #     #this is the case when finding *p=moo(p,c) where *p is the cared variable
-            #     #because of the naive search for parameer p,c, the type infomation is losed
-            #     #In this place we may find: int *p=&a;
-            #     #so at this time we got the type info.
-            #     #if there exists a long skip from the usage of p and int *p=&a;
-            #     #then checking the reference of p is necessary as we may find a=1 in middle place;
-            #     #just like this:
-            #     #int *p = & a;
-            #     #a=5
-            #     #use(p)
-            #     #The next search job should be 'a' relative.
-            #     #return Syntax.REF_ASSIGN
-            #     return Syntax.NORMAL_ASSIGN
-            # else:
-            #     return Syntax.NORMAL_ASSIGN
-            #===================================================================
         op_assignment=Syntax.op_assignment_pattern(access)
         if re.search(op_assignment,codestr):
             return Syntax.OP_ASSIGN
