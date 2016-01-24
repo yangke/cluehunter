@@ -57,16 +57,24 @@ class Filter:
         clean = Filter.removeStrings(e)
         cleaner = "".join(clean.split())
         cleanest=cleaner.replace("->", "@")
-        segs1=re.split(r"(?<=[_A-Za-z0-9])\s+(?=[_A-Za-z0-9])",cleanest)#To avoid the case:'int a'-->'inta' 
+        segs1=re.split(r"(?<=[_A-Za-z0-9])\s+(?=[_A-Za-z0-9])",cleanest)#To avoid the case:'int a'-->'inta'
         segs2=set()
         for seg in segs1:
-            sgs=re.split(r"(?<=[_A-Za-z0-9\)])\*",''.join(seg.split()))
+            sgs=re.split(r"(?<=[_A-Za-z0-9\)])\*",''.join(seg.split()))#split by the multiply operator 
             segs2|=set(sgs)
         segs3=set()
         for seg in segs2:
-            sgs=re.split(r"[^A-Za-z0-9_\.@\*]",seg)
+            sgs=re.split(r"&&",seg)#split by brackets or other  operators
             segs3|=set(sgs)
-        words=segs3-set([''])
+        segs4=set()
+        for seg in segs3:
+            sgs=re.split(r"(?<=[_A-Za-z0-9])&(?=[_A-Za-z0-9])",seg)#split by brackets or other  operators
+            segs4|=set(sgs)
+        segs5=set()
+        for seg in segs4:
+            sgs=re.split(r"[^A-Za-z0-9_&\.@\*]",seg)#split by brackets or other  operators
+            segs5|=set(sgs)
+        words=segs5-set([''])
         #words=set(re.split(r"[^A-Za-z0-9_\.@]",cleanest))-set([''])
         symbols=[w.replace("@","->") for w in words]
         return symbols
