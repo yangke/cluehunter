@@ -10,17 +10,21 @@ class ArgHandler(object):
     def nextarg(codestr,start_pos):
         i=start_pos
         stack=[]
+        inquote=False
         while i<len(codestr):
-            if codestr[i]==',':
-                if stack==[]:
-                    return i,False#still have following arguments.
-            elif codestr[i]=='(':
-                stack.append('(')
-            elif codestr[i]==')':
-                if stack!=[]:
-                    stack.pop()
-                else:
-                    return i,True#reach the last argument
+            if not inquote:
+                if codestr[i]==',':
+                    if stack==[]:
+                        return i,False#still have following arguments.
+                elif codestr[i]=='(':
+                    stack.append('(')
+                elif codestr[i]==')':
+                    if stack!=[]:
+                        stack.pop()
+                    else:
+                        return i,True#reach the last argument
+            elif codestr[i]=='"':
+                inquote=not inquote
             i+=1
         return None,True #can't find argument
     

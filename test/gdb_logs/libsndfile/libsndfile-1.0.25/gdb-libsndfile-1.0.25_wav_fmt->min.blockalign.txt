@@ -1,8 +1,7 @@
-Already logging to ./gdb.txt.
-Breakpoint 1 at 0x8048bc6: file sndfile-info.c, line 65.
-Starting program: /home/yangke/Program/Fabian-Yamaguchi/evdata/libsndfile/libsndfile-1.0.25/bin/bin/sndfile-info sndfile-infolog/exploit_0_0> output 2>&1
+Temporary breakpoint 1 at 0x8048bc6: file sndfile-info.c, line 65.
+Starting program: /home/yangke/Program/Fabian-Yamaguchi/evdata/libsndfile/libsndfile-1.0.25/bin/bin/sndfile-info sndfile-infolog/exploit_0_0 >out
 
-Breakpoint 1, main (argc=2, argv=0xbfffe874) at sndfile-info.c:65
+Temporary breakpoint 1, main (argc=2, argv=0xbfffe874) at sndfile-info.c:65
 65		print_version () ;
 67		if (argc < 2 || strcmp (argv [1], "--help") == 0 || strcmp (argv [1], "-h") == 0)
 72		if (strcmp (argv [1], "-i") == 0)
@@ -10,11 +9,11 @@ Breakpoint 1, main (argc=2, argv=0xbfffe874) at sndfile-info.c:65
 88		if (strcmp (argv [1], "-c") == 0)
 96		for (k = 1 ; k < argc ; k++)
 97			info_dump (argv [k]) ;
-info_dump (filename=0xbfffeb1d "sndfile-infolog/exploit_0_0")
+info_dump (filename=0xbfffeb1a "sndfile-infolog/exploit_0_0")
     at sndfile-info.c:238
 238		memset (&sfinfo, 0, sizeof (sfinfo)) ;
 240		if ((file = sf_open (filename, SFM_READ, &sfinfo)) == NULL)
-sf_open (path=0xbfffeb1d "sndfile-infolog/exploit_0_0", mode=16, 
+sf_open (path=0xbfffeb1a "sndfile-infolog/exploit_0_0", mode=16, 
     sfinfo=0xbfffe784) at sndfile.c:314
 314		if ((psf = calloc (1, sizeof (SF_PRIVATE))) == NULL)
 319		memset (psf, 0, sizeof (SF_PRIVATE)) ;
@@ -24,11 +23,380 @@ psf_init_files (psf=0x80ea008) at file_io.c:512
 513		psf->rsrc.filedes = -1 ;
 514		psf->file.savedes = -1 ;
 515	} /* psf_init_files */
-sf_open (path=0xbfffeb1d "sndfile-infolog/exploit_0_0", mode=16, 
+sf_open (path=0xbfffeb1a "sndfile-infolog/exploit_0_0", mode=16, 
     sfinfo=0xbfffe784) at sndfile.c:322
 322		psf_log_printf (psf, "File : %s\n", path) ;
+psf_log_printf (psf=0x80ea008, format=0xb7fbe349 "File : %s\n")
+    at common.c:52
+52	{	va_list			ap ;
+57		va_start (ap, format) ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=70 'F') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe34a "ile : %s\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=105 'i') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe34b "le : %s\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=108 'l') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe34c "e : %s\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=101 'e') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe34d " : %s\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe34e ": %s\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=58 ':') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe34f " %s\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe350 "%s\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+65			if (format [0] == '%') /* Handle %% */
+71			sign_char = 0 ;
+72			left_align = SF_FALSE ;
+74			{	switch (format [0])
+86					default : break ;
+89				break ;
+92			if (format [0] == 0)
+95			lead_char = ' ' ;
+96			if (format [0] == '0')
+99			width_specifier = 0 ;
+100			while ((c = *format++) && isdigit (c))
+__ctype_b_loc () at ../include/ctype.h:33
+33	../include/ctype.h: No such file or directory.
+Run till exit from #0  __ctype_b_loc () at ../include/ctype.h:33
+0xb7f90bab in psf_log_printf (psf=0x80ea008, format=0xb7fbe352 "\n")
+    at common.c:100
+100			while ((c = *format++) && isdigit (c))
+Value returned is $1 = (const unsigned short **) 0xb7d556c8
+103			switch (c)
+109						strptr = va_arg (ap, char *) ;
+110						if (strptr == NULL)
+112						width_specifier -= strlen (strptr) ;
+113						if (left_align == SF_FALSE)
+114							while (width_specifier -- > 0)
+116						while (*strptr)
+117							log_putchar (psf, *strptr++) ;
+log_putchar (psf=0x80ea008, ch=115 's') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe352 "\n") at common.c:116
+116						while (*strptr)
+117							log_putchar (psf, *strptr++) ;
+log_putchar (psf=0x80ea008, ch=110 'n') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe352 "\n") at common.c:116
+116						while (*strptr)
+117							log_putchar (psf, *strptr++) ;
+log_putchar (psf=0x80ea008, ch=100 'd') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe352 "\n") at common.c:116
+116						while (*strptr)
+117							log_putchar (psf, *strptr++) ;
+log_putchar (psf=0x80ea008, ch=102 'f') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe352 "\n") at common.c:116
+116						while (*strptr)
+117							log_putchar (psf, *strptr++) ;
+log_putchar (psf=0x80ea008, ch=105 'i') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe352 "\n") at common.c:116
+116						while (*strptr)
+117							log_putchar (psf, *strptr++) ;
+log_putchar (psf=0x80ea008, ch=108 'l') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe352 "\n") at common.c:116
+116						while (*strptr)
+117							log_putchar (psf, *strptr++) ;
+log_putchar (psf=0x80ea008, ch=101 'e') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe352 "\n") at common.c:116
+116						while (*strptr)
+117							log_putchar (psf, *strptr++) ;
+log_putchar (psf=0x80ea008, ch=45 '-') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe352 "\n") at common.c:116
+116						while (*strptr)
+117							log_putchar (psf, *strptr++) ;
+log_putchar (psf=0x80ea008, ch=105 'i') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe352 "\n") at common.c:116
+116						while (*strptr)
+117							log_putchar (psf, *strptr++) ;
+log_putchar (psf=0x80ea008, ch=110 'n') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe352 "\n") at common.c:116
+116						while (*strptr)
+117							log_putchar (psf, *strptr++) ;
+log_putchar (psf=0x80ea008, ch=102 'f') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe352 "\n") at common.c:116
+116						while (*strptr)
+117							log_putchar (psf, *strptr++) ;
+log_putchar (psf=0x80ea008, ch=111 'o') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe352 "\n") at common.c:116
+116						while (*strptr)
+117							log_putchar (psf, *strptr++) ;
+log_putchar (psf=0x80ea008, ch=108 'l') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe352 "\n") at common.c:116
+116						while (*strptr)
+117							log_putchar (psf, *strptr++) ;
+log_putchar (psf=0x80ea008, ch=111 'o') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe352 "\n") at common.c:116
+116						while (*strptr)
+117							log_putchar (psf, *strptr++) ;
+log_putchar (psf=0x80ea008, ch=103 'g') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe352 "\n") at common.c:116
+116						while (*strptr)
+117							log_putchar (psf, *strptr++) ;
+log_putchar (psf=0x80ea008, ch=47 '/') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe352 "\n") at common.c:116
+116						while (*strptr)
+117							log_putchar (psf, *strptr++) ;
+log_putchar (psf=0x80ea008, ch=101 'e') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe352 "\n") at common.c:116
+116						while (*strptr)
+117							log_putchar (psf, *strptr++) ;
+log_putchar (psf=0x80ea008, ch=120 'x') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe352 "\n") at common.c:116
+116						while (*strptr)
+117							log_putchar (psf, *strptr++) ;
+log_putchar (psf=0x80ea008, ch=112 'p') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe352 "\n") at common.c:116
+116						while (*strptr)
+117							log_putchar (psf, *strptr++) ;
+log_putchar (psf=0x80ea008, ch=108 'l') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe352 "\n") at common.c:116
+116						while (*strptr)
+117							log_putchar (psf, *strptr++) ;
+log_putchar (psf=0x80ea008, ch=111 'o') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe352 "\n") at common.c:116
+116						while (*strptr)
+117							log_putchar (psf, *strptr++) ;
+log_putchar (psf=0x80ea008, ch=105 'i') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe352 "\n") at common.c:116
+116						while (*strptr)
+117							log_putchar (psf, *strptr++) ;
+log_putchar (psf=0x80ea008, ch=116 't') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe352 "\n") at common.c:116
+116						while (*strptr)
+117							log_putchar (psf, *strptr++) ;
+log_putchar (psf=0x80ea008, ch=95 '_') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe352 "\n") at common.c:116
+116						while (*strptr)
+117							log_putchar (psf, *strptr++) ;
+log_putchar (psf=0x80ea008, ch=48 '0') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe352 "\n") at common.c:116
+116						while (*strptr)
+117							log_putchar (psf, *strptr++) ;
+log_putchar (psf=0x80ea008, ch=95 '_') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe352 "\n") at common.c:116
+116						while (*strptr)
+117							log_putchar (psf, *strptr++) ;
+log_putchar (psf=0x80ea008, ch=48 '0') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe352 "\n") at common.c:116
+116						while (*strptr)
+118						while (width_specifier -- > 0)
+120						break ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=10 '\n') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe353 "") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+317		return ;
+318	} /* psf_log_printf */
+sf_open (path=0xbfffeb1a "sndfile-infolog/exploit_0_0", mode=16, 
+    sfinfo=0xbfffe784) at sndfile.c:324
 324		copy_filename (psf, path) ;
-copy_filename (psf=0x80ea008, path=0xbfffeb1d "sndfile-infolog/exploit_0_0")
+copy_filename (psf=0x80ea008, path=0xbfffeb1a "sndfile-infolog/exploit_0_0")
     at sndfile.c:2492
 2492		snprintf (psf->file.path.c, sizeof (psf->file.path.c), "%s", path) ;
 2493		if ((ccptr = strrchr (path, '/')) || (ccptr = strrchr (path, '\\')))
@@ -39,7 +407,7 @@ copy_filename (psf=0x80ea008, path=0xbfffeb1d "sndfile-infolog/exploit_0_0")
 2503			cptr [1] = 0 ;
 2507		return ;
 2508	} /* copy_filename */
-sf_open (path=0xbfffeb1d "sndfile-infolog/exploit_0_0", mode=16, 
+sf_open (path=0xbfffeb1a "sndfile-infolog/exploit_0_0", mode=16, 
     sfinfo=0xbfffe784) at sndfile.c:326
 326		psf->file.mode = mode ;
 327		if (strcmp (path, "-") == 0)
@@ -61,7 +429,7 @@ psf_fopen (psf=0x80ea008) at file_io.c:85
 91		if (psf->file.filedes == -1)
 94		return psf->error ;
 95	} /* psf_fopen */
-sf_open (path=0xbfffeb1d "sndfile-infolog/exploit_0_0", mode=16, 
+sf_open (path=0xbfffeb1a "sndfile-infolog/exploit_0_0", mode=16, 
     sfinfo=0xbfffe784) at sndfile.c:332
 332		return psf_open_file (psf, sfinfo) ;
 psf_open_file (psf=0x80ea008, sfinfo=0xbfffe784) at sndfile.c:2567
@@ -144,6 +512,223 @@ psf_open_file (psf=0x80ea008, sfinfo=0xbfffe784) at sndfile.c:2634
 2634		if (psf->fileoffset > 0)
 2658		if (psf->filelength == SF_COUNT_MAX)
 2661			psf_log_printf (psf, "Length : %D\n", psf->filelength) ;
+psf_log_printf (psf=0x80ea008, format=0xb7fbe6d8 "Length : %D\n")
+    at common.c:52
+52	{	va_list			ap ;
+57		va_start (ap, format) ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=76 'L') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe6d9 "ength : %D\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=101 'e') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe6da "ngth : %D\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=110 'n') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe6db "gth : %D\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=103 'g') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe6dc "th : %D\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=116 't') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe6dd "h : %D\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=104 'h') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe6de " : %D\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe6df ": %D\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=58 ':') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe6e0 " %D\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe6e1 "%D\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+65			if (format [0] == '%') /* Handle %% */
+71			sign_char = 0 ;
+72			left_align = SF_FALSE ;
+74			{	switch (format [0])
+86					default : break ;
+89				break ;
+92			if (format [0] == 0)
+95			lead_char = ' ' ;
+96			if (format [0] == '0')
+99			width_specifier = 0 ;
+100			while ((c = *format++) && isdigit (c))
+__ctype_b_loc () at ../include/ctype.h:33
+33	../include/ctype.h: No such file or directory.
+Run till exit from #0  __ctype_b_loc () at ../include/ctype.h:33
+0xb7f90bab in psf_log_printf (psf=0x80ea008, format=0xb7fbe6e3 "\n")
+    at common.c:100
+100			while ((c = *format++) && isdigit (c))
+Value returned is $2 = (const unsigned short **) 0xb7d556c8
+103			switch (c)
+176							D = va_arg (ap, sf_count_t) ;
+178							if (D == 0)
+184							if (D < 0)
+188							Tens = 1 ;
+189							width = 1 ;
+190							while (D / Tens >= 10)
+191							{	Tens *= 10 ;
+192								width ++ ;
+190							while (D / Tens >= 10)
+191							{	Tens *= 10 ;
+192								width ++ ;
+190							while (D / Tens >= 10)
+191							{	Tens *= 10 ;
+192								width ++ ;
+190							while (D / Tens >= 10)
+191							{	Tens *= 10 ;
+192								width ++ ;
+190							while (D / Tens >= 10)
+195							while (width_specifier > width)
+200							while (Tens > 0)
+201							{	log_putchar (psf, '0' + D / Tens) ;
+log_putchar (psf=0x80ea008, ch=57 '9') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe6e3 "\n") at common.c:202
+202								D %= Tens ;
+203								Tens /= 10 ;
+200							while (Tens > 0)
+201							{	log_putchar (psf, '0' + D / Tens) ;
+log_putchar (psf=0x80ea008, ch=54 '6') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe6e3 "\n") at common.c:202
+202								D %= Tens ;
+203								Tens /= 10 ;
+200							while (Tens > 0)
+201							{	log_putchar (psf, '0' + D / Tens) ;
+log_putchar (psf=0x80ea008, ch=48 '0') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe6e3 "\n") at common.c:202
+202								D %= Tens ;
+203								Tens /= 10 ;
+200							while (Tens > 0)
+201							{	log_putchar (psf, '0' + D / Tens) ;
+log_putchar (psf=0x80ea008, ch=52 '4') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe6e3 "\n") at common.c:202
+202								D %= Tens ;
+203								Tens /= 10 ;
+200							while (Tens > 0)
+201							{	log_putchar (psf, '0' + D / Tens) ;
+log_putchar (psf=0x80ea008, ch=52 '4') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe6e3 "\n") at common.c:202
+202								D %= Tens ;
+203								Tens /= 10 ;
+200							while (Tens > 0)
+206						break ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=10 '\n') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fbe6e4 "") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+317		return ;
+318	} /* psf_log_printf */
+psf_open_file (psf=0x80ea008, sfinfo=0xbfffe784) at sndfile.c:2663
 2663		if (psf->file.mode == SFM_WRITE || (psf->file.mode == SFM_RDWR && psf->filelength == 0))
 2681		else if ((SF_CONTAINER (psf->sf.format)) != SF_FORMAT_RAW)
 2683			psf->sf.format = guess_file_type (psf) ;
@@ -314,6 +899,205 @@ wav_read_header (psf=0x80ea008, blockalign=0xbfffe698,
 346						else if (psf->filelength < RIFFsize + 2 * SIGNED_SIZEOF (dword))
 355						{	if (marker == RIFF_MARKER)
 356								psf_log_printf (psf, "RIFF : %u\n", RIFFsize) ;
+psf_log_printf (psf=0x80ea008, format=0xb7fc2fce "RIFF : %u\n")
+    at common.c:52
+52	{	va_list			ap ;
+57		va_start (ap, format) ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=82 'R') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc2fcf "IFF : %u\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=73 'I') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc2fd0 "FF : %u\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=70 'F') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc2fd1 "F : %u\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=70 'F') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc2fd2 " : %u\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc2fd3 ": %u\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=58 ':') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc2fd4 " %u\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc2fd5 "%u\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+65			if (format [0] == '%') /* Handle %% */
+71			sign_char = 0 ;
+72			left_align = SF_FALSE ;
+74			{	switch (format [0])
+86					default : break ;
+89				break ;
+92			if (format [0] == 0)
+95			lead_char = ' ' ;
+96			if (format [0] == '0')
+99			width_specifier = 0 ;
+100			while ((c = *format++) && isdigit (c))
+__ctype_b_loc () at ../include/ctype.h:33
+33	../include/ctype.h: No such file or directory.
+Run till exit from #0  __ctype_b_loc () at ../include/ctype.h:33
+0xb7f90bab in psf_log_printf (psf=0x80ea008, format=0xb7fc2fd7 "\n")
+    at common.c:100
+100			while ((c = *format++) && isdigit (c))
+Value returned is $3 = (const unsigned short **) 0xb7d556c8
+103			switch (c)
+209						u = va_arg (ap, unsigned int) ;
+211						tens = 1 ;
+212						width = 1 ;
+213						while (u / tens >= 10)
+214						{	tens *= 10 ;
+215							width ++ ;
+213						while (u / tens >= 10)
+214						{	tens *= 10 ;
+215							width ++ ;
+213						while (u / tens >= 10)
+214						{	tens *= 10 ;
+215							width ++ ;
+213						while (u / tens >= 10)
+214						{	tens *= 10 ;
+215							width ++ ;
+213						while (u / tens >= 10)
+218						width_specifier -= width ;
+220						if (sign_char == ' ')
+225						if (left_align == SF_FALSE && lead_char != '0')
+226						{	if (sign_char == '+')
+233						if (sign_char == '+' || sign_char == '-')
+238						if (left_align == SF_FALSE)
+239							while (width_specifier -- > 0)
+242						while (tens > 0)
+243						{	log_putchar (psf, '0' + u / tens) ;
+log_putchar (psf=0x80ea008, ch=49 '1') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc2fd7 "\n") at common.c:244
+244							u %= tens ;
+245							tens /= 10 ;
+242						while (tens > 0)
+243						{	log_putchar (psf, '0' + u / tens) ;
+log_putchar (psf=0x80ea008, ch=48 '0') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc2fd7 "\n") at common.c:244
+244							u %= tens ;
+245							tens /= 10 ;
+242						while (tens > 0)
+243						{	log_putchar (psf, '0' + u / tens) ;
+log_putchar (psf=0x80ea008, ch=48 '0') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc2fd7 "\n") at common.c:244
+244							u %= tens ;
+245							tens /= 10 ;
+242						while (tens > 0)
+243						{	log_putchar (psf, '0' + u / tens) ;
+log_putchar (psf=0x80ea008, ch=48 '0') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc2fd7 "\n") at common.c:244
+244							u %= tens ;
+245							tens /= 10 ;
+242						while (tens > 0)
+243						{	log_putchar (psf, '0' + u / tens) ;
+log_putchar (psf=0x80ea008, ch=48 '0') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc2fd7 "\n") at common.c:244
+244							u %= tens ;
+245							tens /= 10 ;
+242						while (tens > 0)
+248						while (width_specifier -- > 0)
+250						break ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=10 '\n') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc2fd8 "") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+317		return ;
+318	} /* psf_log_printf */
+wav_read_header (psf=0x80ea008, blockalign=0xbfffe698, 
+    framesperblock=0xbfffe69c) at wav.c:627
 627			if (! psf->sf.seekable && (parsestage & HAVE_data))
 630			if (psf_ftell (psf) >= psf->filelength - SIGNED_SIZEOF (dword))
 psf_ftell (psf=0x80ea008) at file_io.c:401
@@ -322,14 +1106,11 @@ psf_ftell (psf=0x80ea008) at file_io.c:401
 407		pos = lseek (psf->file.filedes, 0, SEEK_CUR) ;
 __llseek (fd=3, offset=0, whence=1) at ../sysdeps/unix/sysv/linux/llseek.c:30
 30	../sysdeps/unix/sysv/linux/llseek.c: No such file or directory.
-33	in ../sysdeps/unix/sysv/linux/llseek.c
-30	in ../sysdeps/unix/sysv/linux/llseek.c
-__x86.get_pc_thunk.bx () at ../sysdeps/i386/i686/multiarch/strcat.S:55
-55	../sysdeps/i386/i686/multiarch/strcat.S: No such file or directory.
-__llseek (fd=3, offset=0, whence=1) at ../sysdeps/unix/sysv/linux/llseek.c:33
-33	../sysdeps/unix/sysv/linux/llseek.c: No such file or directory.
-36	in ../sysdeps/unix/sysv/linux/llseek.c
-psf_ftell (psf=0x80ea008) at file_io.c:409
+Run till exit from #0  __llseek (fd=3, offset=0, whence=1)
+    at ../sysdeps/unix/sysv/linux/llseek.c:30
+0xb7f94ac8 in psf_ftell (psf=0x80ea008) at file_io.c:407
+407		pos = lseek (psf->file.filedes, 0, SEEK_CUR) ;
+Value returned is $4 = 12
 409		if (pos == ((sf_count_t) -1))
 414		return pos - psf->fileoffset ;
 415	} /* psf_ftell */
@@ -368,6 +1149,69 @@ wav_read_header (psf=0x80ea008, blockalign=0xbfffe698,
 363						if ((parsestage & HAVE_RIFF) != HAVE_RIFF)
 365						parsestage |= HAVE_WAVE ;
 367						psf_log_printf (psf, "WAVE\n") ;
+psf_log_printf (psf=0x80ea008, format=0xb7fc3018 "WAVE\n") at common.c:52
+52	{	va_list			ap ;
+57		va_start (ap, format) ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=87 'W') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc3019 "AVE\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=65 'A') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc301a "VE\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=86 'V') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc301b "E\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=69 'E') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc301c "\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=10 '\n') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc301d "") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+317		return ;
+318	} /* psf_log_printf */
+wav_read_header (psf=0x80ea008, blockalign=0xbfffe698, 
+    framesperblock=0xbfffe69c) at wav.c:368
 368						break ;
 627			if (! psf->sf.seekable && (parsestage & HAVE_data))
 630			if (psf_ftell (psf) >= psf->filelength - SIGNED_SIZEOF (dword))
@@ -377,14 +1221,11 @@ psf_ftell (psf=0x80ea008) at file_io.c:401
 407		pos = lseek (psf->file.filedes, 0, SEEK_CUR) ;
 __llseek (fd=3, offset=0, whence=1) at ../sysdeps/unix/sysv/linux/llseek.c:30
 30	../sysdeps/unix/sysv/linux/llseek.c: No such file or directory.
-33	in ../sysdeps/unix/sysv/linux/llseek.c
-30	in ../sysdeps/unix/sysv/linux/llseek.c
-__x86.get_pc_thunk.bx () at ../sysdeps/i386/i686/multiarch/strcat.S:55
-55	../sysdeps/i386/i686/multiarch/strcat.S: No such file or directory.
-__llseek (fd=3, offset=0, whence=1) at ../sysdeps/unix/sysv/linux/llseek.c:33
-33	../sysdeps/unix/sysv/linux/llseek.c: No such file or directory.
-36	in ../sysdeps/unix/sysv/linux/llseek.c
-psf_ftell (psf=0x80ea008) at file_io.c:409
+Run till exit from #0  __llseek (fd=3, offset=0, whence=1)
+    at ../sysdeps/unix/sysv/linux/llseek.c:30
+0xb7f94ac8 in psf_ftell (psf=0x80ea008) at file_io.c:407
+407		pos = lseek (psf->file.filedes, 0, SEEK_CUR) ;
+Value returned is $5 = 12
 409		if (pos == ((sf_count_t) -1))
 414		return pos - psf->fileoffset ;
 415	} /* psf_ftell */
@@ -494,6 +1335,164 @@ psf_binheader_readf (psf=0x80ea008, format=0xb7fc2fcd "") at common.c:985
 wav_read_header (psf=0x80ea008, blockalign=0xbfffe698, 
     framesperblock=0xbfffe69c) at wav.c:381
 381						psf_log_printf (psf, "fmt  : %d\n", dword) ;
+psf_log_printf (psf=0x80ea008, format=0xb7fc301e "fmt  : %d\n")
+    at common.c:52
+52	{	va_list			ap ;
+57		va_start (ap, format) ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=102 'f') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc301f "mt  : %d\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=109 'm') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc3020 "t  : %d\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=116 't') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc3021 "  : %d\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc3022 " : %d\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc3023 ": %d\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=58 ':') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc3024 " %d\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc3025 "%d\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+65			if (format [0] == '%') /* Handle %% */
+71			sign_char = 0 ;
+72			left_align = SF_FALSE ;
+74			{	switch (format [0])
+86					default : break ;
+89				break ;
+92			if (format [0] == 0)
+95			lead_char = ' ' ;
+96			if (format [0] == '0')
+99			width_specifier = 0 ;
+100			while ((c = *format++) && isdigit (c))
+__ctype_b_loc () at ../include/ctype.h:33
+33	../include/ctype.h: No such file or directory.
+Run till exit from #0  __ctype_b_loc () at ../include/ctype.h:33
+0xb7f90bab in psf_log_printf (psf=0x80ea008, format=0xb7fc3027 "\n")
+    at common.c:100
+100			while ((c = *format++) && isdigit (c))
+Value returned is $6 = (const unsigned short **) 0xb7d556c8
+103			switch (c)
+123						d = va_arg (ap, int) ;
+125						if (d < 0)
+132						tens = 1 ;
+133						width = 1 ;
+134						while (d / tens >= 10)
+135						{	tens *= 10 ;
+136							width ++ ;
+134						while (d / tens >= 10)
+139						width_specifier -= width ;
+141						if (sign_char == ' ')
+146						if (left_align == SF_FALSE && lead_char != '0')
+147						{	if (sign_char == '+')
+154						if (sign_char == '+' || sign_char == '-')
+159						if (left_align == SF_FALSE)
+160							while (width_specifier -- > 0)
+163						while (tens > 0)
+164						{	log_putchar (psf, '0' + d / tens) ;
+log_putchar (psf=0x80ea008, ch=49 '1') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc3027 "\n") at common.c:165
+165							d %= tens ;
+166							tens /= 10 ;
+163						while (tens > 0)
+164						{	log_putchar (psf, '0' + d / tens) ;
+log_putchar (psf=0x80ea008, ch=54 '6') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc3027 "\n") at common.c:165
+165							d %= tens ;
+166							tens /= 10 ;
+163						while (tens > 0)
+169						while (width_specifier -- > 0)
+171						break ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=10 '\n') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc3028 "") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+317		return ;
+318	} /* psf_log_printf */
+wav_read_header (psf=0x80ea008, blockalign=0xbfffe698, 
+    framesperblock=0xbfffe69c) at wav.c:383
 383						if ((error = wav_w64_read_fmt_chunk (psf, dword)))
 wav_w64_read_fmt_chunk (psf=0x80ea008, fmtsize=16) at wav_w64.c:116
 116		int	bytesread, k, bytespersec = 0 ;
@@ -501,8 +1500,9 @@ wav_w64_read_fmt_chunk (psf=0x80ea008, fmtsize=16) at wav_w64.c:116
 120		wav_fmt = &wpriv->wav_fmt ;
 122		memset (wav_fmt, 0, sizeof (WAV_FMT)) ;
 124		if (fmtsize < 16)
-130		bytesread = psf_binheader_readf (psf, "224422", &(wav_fmt->format), &(wav_fmt->min.channels), &(wav_fmt->min.samplerate), &(wav_fmt->min.bytespersec), &(wav_fmt->min.blockalign), &(wav_fmt->min.bitwidth)) ;
-psf_binheader_readf (psf=0x80ea008, format=0xb7fc1d42 "224422") at common.c:908
+130		bytesread = psf_binheader_readf (psf, "224422",
+psf_binheader_readf (psf=0x80ea008, format=0xb7fc1d42 "224422")
+    at common.c:908
 908	{	va_list			argptr ;
 917		int				byte_count = 0, count ;
 919		if (! format)
@@ -542,7 +1542,8 @@ header_read (psf=0x80ea008, ptr=0x80f862c, bytes=2) at common.c:818
 826		psf->headindex += bytes ;
 828		return bytes ;
 829	} /* header_read */
-psf_binheader_readf (psf=0x80ea008, format=0xb7fc1d43 "24422") at common.c:964
+psf_binheader_readf (psf=0x80ea008, format=0xb7fc1d43 "24422")
+    at common.c:964
 964						if (psf->rwf_endian == SF_ENDIAN_BIG)
 967							*shortptr = GET_LE_SHORT (ucptr) ;
 968						break ;
@@ -746,14 +1747,1357 @@ psf_binheader_readf (psf=0x80ea008, format=0xb7fc1d48 "") at common.c:964
 1085	} /* psf_binheader_readf */
 wav_w64_read_fmt_chunk (psf=0x80ea008, fmtsize=16) at wav_w64.c:135
 135		psf_log_printf (psf, "  Format        : 0x%X => %s\n", wav_fmt->format, wav_w64_format_str (wav_fmt->format)) ;
+wav_w64_format_str (k=6) at wav_w64.c:647
+647		lower = -1 ;
+648		upper = sizeof (wave_descs) / sizeof (WAV_FORMAT_DESC) ;
+651		if ((wave_descs [0].ID <= k) && (k <= wave_descs [upper - 1].ID))
+653			while (lower + 1 < upper)
+654			{	mid = (upper + lower) / 2 ;
+656				if (k == wave_descs [mid].ID)
+658				if (k < wave_descs [mid].ID)
+659					upper = mid ;
+653			while (lower + 1 < upper)
+654			{	mid = (upper + lower) / 2 ;
+656				if (k == wave_descs [mid].ID)
+658				if (k < wave_descs [mid].ID)
+659					upper = mid ;
+653			while (lower + 1 < upper)
+654			{	mid = (upper + lower) / 2 ;
+656				if (k == wave_descs [mid].ID)
+658				if (k < wave_descs [mid].ID)
+659					upper = mid ;
+653			while (lower + 1 < upper)
+654			{	mid = (upper + lower) / 2 ;
+656				if (k == wave_descs [mid].ID)
+657					return wave_descs [mid].name ;
+666	} /* wav_w64_format_str */
+wav_w64_read_fmt_chunk (psf=0x80ea008, fmtsize=16) at wav_w64.c:136
 136		psf_log_printf (psf, "  Channels      : %d\n", wav_fmt->min.channels) ;
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d67 "  Channels      : %d\n")
+    at common.c:52
+52	{	va_list			ap ;
+57		va_start (ap, format) ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d68 " Channels      : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d69 "Channels      : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=67 'C') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d6a "hannels      : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=104 'h') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d6b "annels      : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=97 'a') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d6c "nnels      : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=110 'n') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d6d "nels      : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=110 'n') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d6e "els      : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=101 'e') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d6f "ls      : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=108 'l') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d70 "s      : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=115 's') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d71 "      : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d72 "     : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d73 "    : %d\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d74 "   : %d\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d75 "  : %d\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d76 " : %d\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d77 ": %d\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=58 ':') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d78 " %d\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d79 "%d\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+65			if (format [0] == '%') /* Handle %% */
+71			sign_char = 0 ;
+72			left_align = SF_FALSE ;
+74			{	switch (format [0])
+86					default : break ;
+89				break ;
+92			if (format [0] == 0)
+95			lead_char = ' ' ;
+96			if (format [0] == '0')
+99			width_specifier = 0 ;
+100			while ((c = *format++) && isdigit (c))
+__ctype_b_loc () at ../include/ctype.h:33
+33	../include/ctype.h: No such file or directory.
+Run till exit from #0  __ctype_b_loc () at ../include/ctype.h:33
+0xb7f90bab in psf_log_printf (psf=0x80ea008, format=0xb7fc1d7b "\n")
+    at common.c:100
+100			while ((c = *format++) && isdigit (c))
+Value returned is $7 = (const unsigned short **) 0xb7d556c8
+103			switch (c)
+123						d = va_arg (ap, int) ;
+125						if (d < 0)
+132						tens = 1 ;
+133						width = 1 ;
+134						while (d / tens >= 10)
+139						width_specifier -= width ;
+141						if (sign_char == ' ')
+146						if (left_align == SF_FALSE && lead_char != '0')
+147						{	if (sign_char == '+')
+154						if (sign_char == '+' || sign_char == '-')
+159						if (left_align == SF_FALSE)
+160							while (width_specifier -- > 0)
+163						while (tens > 0)
+164						{	log_putchar (psf, '0' + d / tens) ;
+log_putchar (psf=0x80ea008, ch=48 '0') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d7b "\n") at common.c:165
+165							d %= tens ;
+166							tens /= 10 ;
+163						while (tens > 0)
+169						while (width_specifier -- > 0)
+171						break ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=10 '\n') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d7c "") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+317		return ;
+318	} /* psf_log_printf */
+wav_w64_read_fmt_chunk (psf=0x80ea008, fmtsize=16) at wav_w64.c:137
 137		psf_log_printf (psf, "  Sample Rate   : %d\n", wav_fmt->min.samplerate) ;
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d7d "  Sample Rate   : %d\n")
+    at common.c:52
+52	{	va_list			ap ;
+57		va_start (ap, format) ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d7e " Sample Rate   : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d7f "Sample Rate   : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=83 'S') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d80 "ample Rate   : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=97 'a') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d81 "mple Rate   : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=109 'm') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d82 "ple Rate   : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=112 'p') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d83 "le Rate   : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=108 'l') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d84 "e Rate   : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=101 'e') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d85 " Rate   : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d86 "Rate   : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=82 'R') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d87 "ate   : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=97 'a') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d88 "te   : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=116 't') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d89 "e   : %d\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=101 'e') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d8a "   : %d\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d8b "  : %d\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d8c " : %d\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d8d ": %d\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=58 ':') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d8e " %d\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d8f "%d\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+65			if (format [0] == '%') /* Handle %% */
+71			sign_char = 0 ;
+72			left_align = SF_FALSE ;
+74			{	switch (format [0])
+86					default : break ;
+89				break ;
+92			if (format [0] == 0)
+95			lead_char = ' ' ;
+96			if (format [0] == '0')
+99			width_specifier = 0 ;
+100			while ((c = *format++) && isdigit (c))
+__ctype_b_loc () at ../include/ctype.h:33
+33	../include/ctype.h: No such file or directory.
+Run till exit from #0  __ctype_b_loc () at ../include/ctype.h:33
+0xb7f90bab in psf_log_printf (psf=0x80ea008, format=0xb7fc1d91 "\n")
+    at common.c:100
+100			while ((c = *format++) && isdigit (c))
+Value returned is $8 = (const unsigned short **) 0xb7d556c8
+103			switch (c)
+123						d = va_arg (ap, int) ;
+125						if (d < 0)
+132						tens = 1 ;
+133						width = 1 ;
+134						while (d / tens >= 10)
+139						width_specifier -= width ;
+141						if (sign_char == ' ')
+146						if (left_align == SF_FALSE && lead_char != '0')
+147						{	if (sign_char == '+')
+154						if (sign_char == '+' || sign_char == '-')
+159						if (left_align == SF_FALSE)
+160							while (width_specifier -- > 0)
+163						while (tens > 0)
+164						{	log_putchar (psf, '0' + d / tens) ;
+log_putchar (psf=0x80ea008, ch=48 '0') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d91 "\n") at common.c:165
+165							d %= tens ;
+166							tens /= 10 ;
+163						while (tens > 0)
+169						while (width_specifier -- > 0)
+171						break ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=10 '\n') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1d92 "") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+317		return ;
+318	} /* psf_log_printf */
+wav_w64_read_fmt_chunk (psf=0x80ea008, fmtsize=16) at wav_w64.c:139
 139		if (wav_fmt->format == WAVE_FORMAT_PCM && wav_fmt->min.blockalign == 0
 146			psf_log_printf (psf, "  Block Align   : %d\n", wav_fmt->min.blockalign) ;
+psf_log_printf (psf=0x80ea008, format=0xb7fc1db8 "  Block Align   : %d\n")
+    at common.c:52
+52	{	va_list			ap ;
+57		va_start (ap, format) ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1db9 " Block Align   : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1dba "Block Align   : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=66 'B') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1dbb "lock Align   : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=108 'l') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1dbc "ock Align   : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=111 'o') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1dbd "ck Align   : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=99 'c') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1dbe "k Align   : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=107 'k') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1dbf " Align   : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1dc0 "Align   : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=65 'A') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1dc1 "lign   : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=108 'l') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1dc2 "ign   : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=105 'i') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1dc3 "gn   : %d\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=103 'g') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1dc4 "n   : %d\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=110 'n') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1dc5 "   : %d\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1dc6 "  : %d\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1dc7 " : %d\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1dc8 ": %d\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=58 ':') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1dc9 " %d\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1dca "%d\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+65			if (format [0] == '%') /* Handle %% */
+71			sign_char = 0 ;
+72			left_align = SF_FALSE ;
+74			{	switch (format [0])
+86					default : break ;
+89				break ;
+92			if (format [0] == 0)
+95			lead_char = ' ' ;
+96			if (format [0] == '0')
+99			width_specifier = 0 ;
+100			while ((c = *format++) && isdigit (c))
+__ctype_b_loc () at ../include/ctype.h:33
+33	../include/ctype.h: No such file or directory.
+Run till exit from #0  __ctype_b_loc () at ../include/ctype.h:33
+0xb7f90bab in psf_log_printf (psf=0x80ea008, format=0xb7fc1dcc "\n")
+    at common.c:100
+100			while ((c = *format++) && isdigit (c))
+Value returned is $9 = (const unsigned short **) 0xb7d556c8
+103			switch (c)
+123						d = va_arg (ap, int) ;
+125						if (d < 0)
+132						tens = 1 ;
+133						width = 1 ;
+134						while (d / tens >= 10)
+139						width_specifier -= width ;
+141						if (sign_char == ' ')
+146						if (left_align == SF_FALSE && lead_char != '0')
+147						{	if (sign_char == '+')
+154						if (sign_char == '+' || sign_char == '-')
+159						if (left_align == SF_FALSE)
+160							while (width_specifier -- > 0)
+163						while (tens > 0)
+164						{	log_putchar (psf, '0' + d / tens) ;
+log_putchar (psf=0x80ea008, ch=48 '0') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1dcc "\n") at common.c:165
+165							d %= tens ;
+166							tens /= 10 ;
+163						while (tens > 0)
+169						while (width_specifier -- > 0)
+171						break ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=10 '\n') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1dcd "") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+317		return ;
+318	} /* psf_log_printf */
+wav_w64_read_fmt_chunk (psf=0x80ea008, fmtsize=16) at wav_w64.c:148
 148		if (wav_fmt->format == WAVE_FORMAT_PCM && wav_fmt->min.bitwidth == 24 &&
 161		else if (wav_fmt->min.bitwidth == 0)
 162		{	switch (wav_fmt->format)
 168						psf_log_printf (psf, "  Bit Width     : %d (should not be 0)\n", wav_fmt->min.bitwidth) ;
+psf_log_printf (psf=0x80ea008, 
+    format=0xb7fc1f10 "  Bit Width     : %d (should not be 0)\n")
+    at common.c:52
+52	{	va_list			ap ;
+57		va_start (ap, format) ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, 
+    format=0xb7fc1f11 " Bit Width     : %d (should not be 0)\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, 
+    format=0xb7fc1f12 "Bit Width     : %d (should not be 0)\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=66 'B') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, 
+    format=0xb7fc1f13 "it Width     : %d (should not be 0)\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=105 'i') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, 
+    format=0xb7fc1f14 "t Width     : %d (should not be 0)\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=116 't') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, 
+    format=0xb7fc1f15 " Width     : %d (should not be 0)\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, 
+    format=0xb7fc1f16 "Width     : %d (should not be 0)\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=87 'W') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, 
+    format=0xb7fc1f17 "idth     : %d (should not be 0)\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=105 'i') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, 
+    format=0xb7fc1f18 "dth     : %d (should not be 0)\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=100 'd') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, 
+    format=0xb7fc1f19 "th     : %d (should not be 0)\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=116 't') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, 
+    format=0xb7fc1f1a "h     : %d (should not be 0)\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=104 'h') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, 
+    format=0xb7fc1f1b "     : %d (should not be 0)\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, 
+    format=0xb7fc1f1c "    : %d (should not be 0)\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, 
+    format=0xb7fc1f1d "   : %d (should not be 0)\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, 
+    format=0xb7fc1f1e "  : %d (should not be 0)\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1f1f " : %d (should not be 0)\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1f20 ": %d (should not be 0)\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=58 ':') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1f21 " %d (should not be 0)\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1f22 "%d (should not be 0)\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+65			if (format [0] == '%') /* Handle %% */
+71			sign_char = 0 ;
+72			left_align = SF_FALSE ;
+74			{	switch (format [0])
+86					default : break ;
+89				break ;
+92			if (format [0] == 0)
+95			lead_char = ' ' ;
+96			if (format [0] == '0')
+99			width_specifier = 0 ;
+100			while ((c = *format++) && isdigit (c))
+__ctype_b_loc () at ../include/ctype.h:33
+33	../include/ctype.h: No such file or directory.
+Run till exit from #0  __ctype_b_loc () at ../include/ctype.h:33
+0xb7f90bab in psf_log_printf (psf=0x80ea008, 
+    format=0xb7fc1f24 " (should not be 0)\n") at common.c:100
+100			while ((c = *format++) && isdigit (c))
+Value returned is $10 = (const unsigned short **) 0xb7d556c8
+103			switch (c)
+123						d = va_arg (ap, int) ;
+125						if (d < 0)
+132						tens = 1 ;
+133						width = 1 ;
+134						while (d / tens >= 10)
+139						width_specifier -= width ;
+141						if (sign_char == ' ')
+146						if (left_align == SF_FALSE && lead_char != '0')
+147						{	if (sign_char == '+')
+154						if (sign_char == '+' || sign_char == '-')
+159						if (left_align == SF_FALSE)
+160							while (width_specifier -- > 0)
+163						while (tens > 0)
+164						{	log_putchar (psf, '0' + d / tens) ;
+log_putchar (psf=0x80ea008, ch=48 '0') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1f24 " (should not be 0)\n")
+    at common.c:165
+165							d %= tens ;
+166							tens /= 10 ;
+163						while (tens > 0)
+169						while (width_specifier -- > 0)
+171						break ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1f25 "(should not be 0)\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=40 '(') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1f26 "should not be 0)\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=115 's') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1f27 "hould not be 0)\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=104 'h') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1f28 "ould not be 0)\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=111 'o') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1f29 "uld not be 0)\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=117 'u') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1f2a "ld not be 0)\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=108 'l') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1f2b "d not be 0)\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=100 'd') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1f2c " not be 0)\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1f2d "not be 0)\n")
+    at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=110 'n') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1f2e "ot be 0)\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=111 'o') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1f2f "t be 0)\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=116 't') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1f30 " be 0)\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1f31 "be 0)\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=98 'b') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1f32 "e 0)\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=101 'e') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1f33 " 0)\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=32 ' ') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1f34 "0)\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=48 '0') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1f35 ")\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=41 ')') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1f36 "\n") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+60		{	if (c != '%')
+61			{	log_putchar (psf, c) ;
+log_putchar (psf=0x80ea008, ch=10 '\n') at common.c:43
+43	{	if (psf->logindex < SIGNED_SIZEOF (psf->logbuffer) - 1)
+44		{	psf->logbuffer [psf->logindex++] = ch ;
+45			psf->logbuffer [psf->logindex] = 0 ;
+47		return ;
+48	} /* log_putchar */
+psf_log_printf (psf=0x80ea008, format=0xb7fc1f37 "") at common.c:62
+62				continue ;
+59		while ((c = *format++))
+317		return ;
+318	} /* psf_log_printf */
+wav_w64_read_fmt_chunk (psf=0x80ea008, fmtsize=16) at wav_w64.c:182
 182		psf->sf.samplerate	= wav_fmt->min.samplerate ;
 183		psf->sf.frames 		= 0 ;					/* Correct this when reading data chunk. */
 184		psf->sf.channels	= wav_fmt->min.channels ;

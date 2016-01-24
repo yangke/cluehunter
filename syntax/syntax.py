@@ -31,7 +31,7 @@ class Syntax(object):
     identifier=r'([_A-Za-z][_A-Za-z0-9]*)'
     water=r'\s*'
     assign=r'=(?!=)'
-    variable=r'('+identifier+'*('+water+'(\-'+water+'>|\.)'+water+identifier+')*)'
+    variable=r'[&\*]*('+identifier+'('+water+'(\-'+water+'>|\.)'+water+identifier+')*)'
     lt=r'(?<![_A-Za-z0-9])'
     rt=r'(?![_A-Za-z0-9])'
     number=r'([+-]?([0-9]*\.?[0-9]+|[0-9]+\.?[0-9]*)([eE][+-]?[0-9]+)?)'
@@ -261,8 +261,8 @@ class Syntax(object):
                     #Note that this may ignore the wrong syntax in "..." part.
                     while codestr[j]!=")":
                         j+=1
-                    if codestr[j]!=")":
-                        print "Fatal Error: bracket mismatch. May be like: &(a...."
+                        if j==len(codestr):
+                            print "Fatal Error: bracket mismatch. May be like: &(a...."
                     else:
                         j=j+1
                 continue
@@ -284,6 +284,8 @@ class Syntax(object):
         codestr=line.codestr.strip()
         for m in pattern.finditer(codestr):
             start,end=m.span()
+            if codestr[end]=="." or codestr[end:end+2]=="->" :
+                continue
             print "Argument check: the  matched string is :",m.group()
             result=Syntax.vararg(codestr,start,end)
             if not result:continue
@@ -293,8 +295,7 @@ class Syntax(object):
             rfl,p=res
             if pos==0:
                 #OK arg
-                
-                return rfl,p,pos,func_name
+                return rfl,p,pos,func_name,arg
             else:#pos=1
                 #In actual, pos>=1 you need to calculate accurately what is it.
                 j=index# index point to ','
@@ -313,7 +314,7 @@ class Syntax(object):
                                 if func_name:
                                     if Syntax.isKeyWord(func_name):
                                         return None
-                                    return rfl,p,pos,func_name
+                                    return rfl,p,pos,func_name,arg
                                 break
                             else:
                                 stack.pop()

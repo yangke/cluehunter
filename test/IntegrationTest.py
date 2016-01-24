@@ -48,9 +48,9 @@ class IntegrationTest:
         test=Test_speexenc_channel()
         result_array.append(('speexenc_channel',test.test()))
         test=Test_speexdec_mode()
-        result_array.append(('speexenc_channel',test.test()))
-        test=Test_objdump_addr()
-        result_array.append(('objdump_addr',test.test()))
+        result_array.append(('speexdec_mode',test.test()))
+        #test=Test_objdump_addr()
+        #result_array.append(('objdump_addr',test.test()))
         
         for r in result_array:
             print r[0],":\t",r[1]

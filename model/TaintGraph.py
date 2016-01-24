@@ -43,7 +43,7 @@ class TaintGraph:
           
     def linkExpandEdges(self,startIndex,endIndex,accessstr):
         print "ExpandEdge:"+str(self.l[startIndex]).rstrip()+"--->"+str(self.l[endIndex]).rstrip()+":"+accessstr+"\n"
-        if startIndex not in self.outCrossEdges:
+        if startIndex not in self.outExpandEdges:
             self.outExpandEdges[startIndex]=set()
         self.outExpandEdges[startIndex].add((endIndex,accessstr))
         if endIndex not in self.inExpandEdges:

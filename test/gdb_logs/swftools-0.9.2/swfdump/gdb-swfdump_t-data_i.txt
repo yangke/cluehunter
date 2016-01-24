@@ -1,34 +1,44 @@
-Already logging to ./gdb.txt.
-Breakpoint 1 at 0x804d725: file swfdump.c, line 1116.
-Starting program: /home/yangke/Program/Fabian-Yamaguchi/evdata/swftools/test-swftools-0.9.2/swftools-0.9.2/bin/bin/swfdump -D swfdump0.9.2log/exploit_0_0
+Temporary breakpoint 1 at 0x804c320: file swfdump.c, line 1116.
+Starting program: /home/yangke/Program/Fabian-Yamaguchi/evdata/swftools/test-swftools-0.9.2/swftools-0.9.2/bin/bin/swfdump swfdump -D swfdump0.9.2log/exploit_0_0 >out
 
-Breakpoint 1, main (argc=3, argv=0xbfffe7c4) at swfdump.c:1116
+Temporary breakpoint 1, main (argc=4, argv=0xbfffe844) at swfdump.c:1116
 1116	{ 
-1123	    char issprite = 0; // are we inside a sprite definition?
-1124	    int spriteframe = 0;
-1125	    int mainframe=0;
-1126	    char* spriteframelabel = 0;
-1127	    char* framelabel = 0;
-1129	    int filesize = 0;
-1130	    int filepos = 0;
 1131	    prefix[0] = 0;
 1132	    memset(idtab,0,65536);
 1134	    processargs(argc, argv);
-processargs (argn2=3, argv2=0xbfffe7c4) at ../lib/args.h:36
-36	{
+processargs (argv2=0xbfffe844, argn2=4) at ../lib/args.h:38
 38	    if(argn2==1)
 43	    for(t=1;t<argn2;t++)
+62	                if(strchr("?h",argv2[t][1]))
+43	    for(t=1;t<argn2;t++)
+46	        if(t<argn2-1) next=argv2[t+1];
+47	        else        next=0;
+46	        if(t<argn2-1) next=argv2[t+1];
+49	        if(argv2[t][0]=='-' && argv2[t][1])
+89		    int num = args_callback_command(argv2[t],next);
+args_callback_command (name=0xbfffeaf6 "swfdump", 
+    val=val@entry=0xbfffeafe "-D") at swfdump.c:200
+200	{
+201	    if(filename) {
+205	    filename = name;
+207	}
+processargs (argv2=0xbfffe844, argn2=4) at ../lib/args.h:90
+90		    if(num>2) {
+94	            t+=num;
+43	    for(t=1;t<argn2;t++)
+46	        if(t<argn2-1) next=argv2[t+1];
+47	        else        next=0;
 46	        if(t<argn2-1) next=argv2[t+1];
 49	        if(argv2[t][0]=='-' && argv2[t][1])
 51	            if(argv2[t][1]=='-')
 62	                if(strchr("?h",argv2[t][1]))
-67	                if(argv2[t][1]) // this might be something like e.g. -xvf
-70	                    int s=1;
 72	                    buf[1]=0;
+70	                    int s=1;
+76	                          ret = args_callback_option(buf,&argv2[t][s+1]);
 74	                        if(argv2[t][s+1]) {
 79	                          t+= args_callback_option(&argv2[t][s], next);
-args_callback_option (name=0xbfffea7e "D", 
-    val=0xbfffea80 "swfdump0.9.2log/exploit_0_0") at swfdump.c:89
+args_callback_option (name=0xbfffeaff "D", 
+    val=val@entry=0xbfffeb01 "swfdump0.9.2log/exploit_0_0") at swfdump.c:89
 89	{
 90	    if(!strcmp(name, "V")) {
 94	    else if(name[0]=='a') {
@@ -51,26 +61,25 @@ args_callback_option (name=0xbfffea7e "D",
 160		showbuttons = action = placements = showtext = showshapes = 1;
 161		return 0;
 169	}
-processargs (argn2=3, argv2=0xbfffe7c4) at ../lib/args.h:80
-80	                          break;
+processargs (argv2=0xbfffe844, argn2=4) at ../lib/args.h:43
 43	    for(t=1;t<argn2;t++)
 46	        if(t<argn2-1) next=argv2[t+1];
 47	        else        next=0;
+46	        if(t<argn2-1) next=argv2[t+1];
 49	        if(argv2[t][0]=='-' && argv2[t][1])
 89		    int num = args_callback_command(argv2[t],next);
-args_callback_command (name=0xbfffea80 "swfdump0.9.2log/exploit_0_0", val=0x0)
-    at swfdump.c:200
+args_callback_command (name=0xbfffeb01 "swfdump0.9.2log/exploit_0_0", 
+    val=val@entry=0x0) at swfdump.c:200
 200	{
 201	    if(filename) {
+202	        fprintf(stderr, "Only one file allowed. You supplied at least two. (%s and %s)\n",
 205	    filename = name;
-206	    return 0;
 207	}
-processargs (argn2=3, argv2=0xbfffe7c4) at ../lib/args.h:90
+processargs (argv2=0xbfffe844, argn2=4) at ../lib/args.h:90
 90		    if(num>2) {
 94	            t+=num;
 43	    for(t=1;t<argn2;t++)
-97	}
-main (argc=3, argv=0xbfffe7c4) at swfdump.c:1136
+main (argc=4, argv=0xbfffe844) at swfdump.c:1136
 1136	    if(!filename)
 1142	    f = open(filename,O_RDONLY|O_BINARY);
 1143	    if (f<0)
@@ -79,13 +88,14 @@ main (argc=3, argv=0xbfffe7c4) at swfdump.c:1136
 1153	    char isflash = (header[0]=='F' && header[1] == 'W' && header[2] == 'S') ||
 1155	    close(f);
 1157	    int fl=strlen(filename);
-1158	    if(!isflash && fl>3 && !strcmp(&filename[fl-4], ".abc")) {
 1161	        f = open(filename,O_RDONLY|O_BINARY);
 1162	        if FAILED(swf_ReadSWF(f,&swf))
-swf_ReadSWF (handle=3, swf=0x80f9ce0 <swf>) at rfxswf.c:1606
+swf_ReadSWF (handle=handle@entry=3, swf=swf@entry=0x80d18e0 <swf>)
+    at rfxswf.c:1606
 1606	{
 1608	  reader_init_filereader(&reader, handle);
-reader_init_filereader (r=0xbfffe3d4, handle=3) at bitio.c:90
+reader_init_filereader (r=r@entry=0xbfffe4b4, handle=handle@entry=3)
+    at bitio.c:90
 90	{
 91	    r->read = reader_fileread;
 92	    r->seek = reader_fileread_seek;
@@ -95,10 +105,11 @@ reader_init_filereader (r=0xbfffe3d4, handle=3) at bitio.c:90
 96	    r->mybyte = 0;
 97	    r->bitpos = 8;
 98	    r->pos = 0;
-99	}
-swf_ReadSWF (handle=3, swf=0x80f9ce0 <swf>) at rfxswf.c:1609
+swf_ReadSWF (handle=handle@entry=3, swf=swf@entry=0x80d18e0 <swf>)
+    at rfxswf.c:1609
 1609	  return swf_ReadSWF2(&reader, swf);
-swf_ReadSWF2 (reader=0xb7fdcb10, swf=0xb7e03268) at rfxswf.c:1543
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=swf@entry=0x80d18e0 <swf>)
+    at rfxswf.c:1543
 1543	{     
 1544	  if (!swf) return -1;
 1545	  memset(swf,0x00,sizeof(SWF));
@@ -112,136 +123,175 @@ swf_ReadSWF2 (reader=0xb7fdcb10, swf=0xb7e03268) at rfxswf.c:1543
 1562	    if(swf->compressed) {
 1566	    swf->compressed = 0; // derive from version number from now on
 1568	    reader_GetRect(reader, &swf->movieSize);
-reader_GetRect (reader=0xbfffe3d4, r=0x80f9ce8 <swf+8>) at rfxswf.c:702
+reader_GetRect (reader=reader@entry=0xbfffe4b4, r=r@entry=0x80d18e8 <swf+8>)
+    at rfxswf.c:702
 702	{ int nbits;
 704	  if (!r) r = &dummy;
 705	  nbits = (int) reader_GetBits(reader,5);
-reader_GetBits (reader=0xbfffe3d4, nbits=5) at rfxswf.c:238
+reader_GetBits (reader=reader@entry=0xbfffe4b4, nbits=nbits@entry=5)
+    at rfxswf.c:238
 238	{ return reader_readbits(reader, nbits);
-reader_readbits (r=0xbfffe3d4, num=5) at bitio.c:719
+reader_readbits (r=r@entry=0xbfffe4b4, num=num@entry=5) at bitio.c:719
 719	{
+722	    for(t=0;t<num;t++)
 721	    int val = 0;
 722	    for(t=0;t<num;t++)
-724		val<<=1;
 725		val|=reader_readbit(r);
-reader_readbit (r=0xbfffe3d4) at bitio.c:710
+reader_readbit (r=r@entry=0xbfffe4b4) at bitio.c:710
 710	{
 711	    if(r->bitpos==8) 
 713		r->bitpos=0;
 714	        r->read(r, &r->mybyte, 1);
 716	    return (r->mybyte>>(7-r->bitpos++))&1;
 717	}
-reader_readbits (r=0xbfffe3d4, num=5) at bitio.c:722
-722	    for(t=0;t<num;t++)
+reader_readbits (r=r@entry=0xbfffe4b4, num=num@entry=5) at bitio.c:724
 724		val<<=1;
 725		val|=reader_readbit(r);
-reader_readbit (r=0xbfffe3d4) at bitio.c:710
+722	    for(t=0;t<num;t++)
+725		val|=reader_readbit(r);
+reader_readbit (r=r@entry=0xbfffe4b4) at bitio.c:710
 710	{
 711	    if(r->bitpos==8) 
 716	    return (r->mybyte>>(7-r->bitpos++))&1;
 717	}
-reader_readbits (r=0xbfffe3d4, num=5) at bitio.c:722
-722	    for(t=0;t<num;t++)
+reader_readbits (r=r@entry=0xbfffe4b4, num=num@entry=5) at bitio.c:724
 724		val<<=1;
 725		val|=reader_readbit(r);
-reader_readbit (r=0xbfffe3d4) at bitio.c:710
+722	    for(t=0;t<num;t++)
+725		val|=reader_readbit(r);
+reader_readbit (r=r@entry=0xbfffe4b4) at bitio.c:710
 710	{
 711	    if(r->bitpos==8) 
 716	    return (r->mybyte>>(7-r->bitpos++))&1;
 717	}
-reader_readbits (r=0xbfffe3d4, num=5) at bitio.c:722
-722	    for(t=0;t<num;t++)
+reader_readbits (r=r@entry=0xbfffe4b4, num=num@entry=5) at bitio.c:724
 724		val<<=1;
 725		val|=reader_readbit(r);
-reader_readbit (r=0xbfffe3d4) at bitio.c:710
+722	    for(t=0;t<num;t++)
+725		val|=reader_readbit(r);
+reader_readbit (r=r@entry=0xbfffe4b4) at bitio.c:710
 710	{
 711	    if(r->bitpos==8) 
 716	    return (r->mybyte>>(7-r->bitpos++))&1;
 717	}
-reader_readbits (r=0xbfffe3d4, num=5) at bitio.c:722
-722	    for(t=0;t<num;t++)
+reader_readbits (r=r@entry=0xbfffe4b4, num=num@entry=5) at bitio.c:724
 724		val<<=1;
 725		val|=reader_readbit(r);
-reader_readbit (r=0xbfffe3d4) at bitio.c:710
+722	    for(t=0;t<num;t++)
+725		val|=reader_readbit(r);
+reader_readbit (r=r@entry=0xbfffe4b4) at bitio.c:710
 710	{
 711	    if(r->bitpos==8) 
 716	    return (r->mybyte>>(7-r->bitpos++))&1;
 717	}
-reader_readbits (r=0xbfffe3d4, num=5) at bitio.c:722
+reader_readbits (r=r@entry=0xbfffe4b4, num=num@entry=5) at bitio.c:724
+724		val<<=1;
+725		val|=reader_readbit(r);
 722	    for(t=0;t<num;t++)
-727	    return val;
 728	}
-reader_GetBits (reader=0xbfffe3d4, nbits=5) at rfxswf.c:239
+reader_GetBits (reader=reader@entry=0xbfffe4b4, nbits=nbits@entry=5)
+    at rfxswf.c:239
 239	}
-reader_GetRect (reader=0xbfffe3d4, r=0x80f9ce8 <swf+8>) at rfxswf.c:706
+reader_GetRect (reader=reader@entry=0xbfffe4b4, r=r@entry=0x80d18e8 <swf+8>)
+    at rfxswf.c:706
 706	  r->xmin = reader_GetSBits(reader,nbits);
-reader_GetSBits (reader=0xbfffe3d4, nbits=0) at rfxswf.c:241
+reader_GetSBits (reader=reader@entry=0xbfffe4b4, nbits=nbits@entry=0)
+    at rfxswf.c:241
 241	{ U32 res = reader_readbits(reader, nbits);
-reader_readbits (r=0xbfffe3d4, num=0) at bitio.c:719
+0x080490f0 in __x86.get_pc_thunk.bx ()
+Single stepping until exit from function __x86.get_pc_thunk.bx,
+which has no line number information.
+reader_readbits (r=r@entry=0xbfffe4b4, num=num@entry=0) at bitio.c:719
 719	{
-721	    int val = 0;
+0x080490f0 in __x86.get_pc_thunk.bx ()
+Single stepping until exit from function __x86.get_pc_thunk.bx,
+which has no line number information.
+reader_readbits (r=r@entry=0xbfffe4b4, num=num@entry=0) at bitio.c:722
 722	    for(t=0;t<num;t++)
-727	    return val;
+721	    int val = 0;
 728	}
-reader_GetSBits (reader=0xbfffe3d4, nbits=0) at rfxswf.c:242
+reader_GetSBits (reader=reader@entry=0xbfffe4b4, nbits=nbits@entry=0)
+    at rfxswf.c:242
 242	  if (res&(1<<(nbits-1))) res|=(0xffffffff<<nbits);  
-243	  return (S32)res;
 244	}
-reader_GetRect (reader=0xbfffe3d4, r=0x80f9ce8 <swf+8>) at rfxswf.c:707
+reader_GetRect (reader=reader@entry=0xbfffe4b4, r=r@entry=0x80d18e8 <swf+8>)
+    at rfxswf.c:707
 707	  r->xmax = reader_GetSBits(reader,nbits);
-reader_GetSBits (reader=0xbfffe3d4, nbits=0) at rfxswf.c:241
+reader_GetSBits (reader=reader@entry=0xbfffe4b4, nbits=nbits@entry=0)
+    at rfxswf.c:241
 241	{ U32 res = reader_readbits(reader, nbits);
-reader_readbits (r=0xbfffe3d4, num=0) at bitio.c:719
+0x080490f0 in __x86.get_pc_thunk.bx ()
+Single stepping until exit from function __x86.get_pc_thunk.bx,
+which has no line number information.
+reader_readbits (r=r@entry=0xbfffe4b4, num=num@entry=0) at bitio.c:719
 719	{
-721	    int val = 0;
+0x080490f0 in __x86.get_pc_thunk.bx ()
+Single stepping until exit from function __x86.get_pc_thunk.bx,
+which has no line number information.
+reader_readbits (r=r@entry=0xbfffe4b4, num=num@entry=0) at bitio.c:722
 722	    for(t=0;t<num;t++)
-727	    return val;
+721	    int val = 0;
 728	}
-reader_GetSBits (reader=0xbfffe3d4, nbits=0) at rfxswf.c:242
+reader_GetSBits (reader=reader@entry=0xbfffe4b4, nbits=nbits@entry=0)
+    at rfxswf.c:242
 242	  if (res&(1<<(nbits-1))) res|=(0xffffffff<<nbits);  
-243	  return (S32)res;
 244	}
-reader_GetRect (reader=0xbfffe3d4, r=0x80f9ce8 <swf+8>) at rfxswf.c:708
+reader_GetRect (reader=reader@entry=0xbfffe4b4, r=r@entry=0x80d18e8 <swf+8>)
+    at rfxswf.c:708
 708	  r->ymin = reader_GetSBits(reader,nbits);
-reader_GetSBits (reader=0xbfffe3d4, nbits=0) at rfxswf.c:241
+reader_GetSBits (reader=reader@entry=0xbfffe4b4, nbits=nbits@entry=0)
+    at rfxswf.c:241
 241	{ U32 res = reader_readbits(reader, nbits);
-reader_readbits (r=0xbfffe3d4, num=0) at bitio.c:719
+0x080490f0 in __x86.get_pc_thunk.bx ()
+Single stepping until exit from function __x86.get_pc_thunk.bx,
+which has no line number information.
+reader_readbits (r=r@entry=0xbfffe4b4, num=num@entry=0) at bitio.c:719
 719	{
-721	    int val = 0;
+0x080490f0 in __x86.get_pc_thunk.bx ()
+Single stepping until exit from function __x86.get_pc_thunk.bx,
+which has no line number information.
+reader_readbits (r=r@entry=0xbfffe4b4, num=num@entry=0) at bitio.c:722
 722	    for(t=0;t<num;t++)
-727	    return val;
+721	    int val = 0;
 728	}
-reader_GetSBits (reader=0xbfffe3d4, nbits=0) at rfxswf.c:242
+reader_GetSBits (reader=reader@entry=0xbfffe4b4, nbits=nbits@entry=0)
+    at rfxswf.c:242
 242	  if (res&(1<<(nbits-1))) res|=(0xffffffff<<nbits);  
-243	  return (S32)res;
 244	}
-reader_GetRect (reader=0xbfffe3d4, r=0x80f9ce8 <swf+8>) at rfxswf.c:709
+reader_GetRect (reader=reader@entry=0xbfffe4b4, r=r@entry=0x80d18e8 <swf+8>)
+    at rfxswf.c:709
 709	  r->ymax = reader_GetSBits(reader,nbits);
-reader_GetSBits (reader=0xbfffe3d4, nbits=0) at rfxswf.c:241
+reader_GetSBits (reader=reader@entry=0xbfffe4b4, nbits=nbits@entry=0)
+    at rfxswf.c:241
 241	{ U32 res = reader_readbits(reader, nbits);
-reader_readbits (r=0xbfffe3d4, num=0) at bitio.c:719
+0x080490f0 in __x86.get_pc_thunk.bx ()
+Single stepping until exit from function __x86.get_pc_thunk.bx,
+which has no line number information.
+reader_readbits (r=r@entry=0xbfffe4b4, num=num@entry=0) at bitio.c:719
 719	{
-721	    int val = 0;
+0x080490f0 in __x86.get_pc_thunk.bx ()
+Single stepping until exit from function __x86.get_pc_thunk.bx,
+which has no line number information.
+reader_readbits (r=r@entry=0xbfffe4b4, num=num@entry=0) at bitio.c:722
 722	    for(t=0;t<num;t++)
-727	    return val;
+721	    int val = 0;
 728	}
-reader_GetSBits (reader=0xbfffe3d4, nbits=0) at rfxswf.c:242
+reader_GetSBits (reader=reader@entry=0xbfffe4b4, nbits=nbits@entry=0)
+    at rfxswf.c:242
 242	  if (res&(1<<(nbits-1))) res|=(0xffffffff<<nbits);  
-243	  return (S32)res;
 244	}
-reader_GetRect (reader=0xbfffe3d4, r=0x80f9ce8 <swf+8>) at rfxswf.c:710
-710	  return 0;
+reader_GetRect (reader=reader@entry=0xbfffe4b4, r=r@entry=0x80d18e8 <swf+8>)
+    at rfxswf.c:711
 711	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1569
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1569
 1569	    reader->read(reader, &swf->frameRate, 2);
-1570	    swf->frameRate = LE_16_TO_NATIVE(swf->frameRate);
 1571	    reader->read(reader, &swf->frameCount, 2);
-1572	    swf->frameCount = LE_16_TO_NATIVE(swf->frameCount);
 1575	    t1.next = 0;
 1576	    t = &t1;
-1577	    while (t) {
 1578	      t = swf_ReadTag(reader,t);
-swf_ReadTag (reader=0xbfffe3d4, prev=0xbfffe36c) at rfxswf.c:1184
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0xbfffe43c)
+    at rfxswf.c:1184
 1184	{ TAG * t;
 1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
 1190	  raw = LE_16_TO_NATIVE(raw);
@@ -250,27 +300,27 @@ swf_ReadTag (reader=0xbfffe3d4, prev=0xbfffe36c) at rfxswf.c:1184
 1195	  if (len==0x3f)
 1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
 1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
-rfx_calloc (size=32) at mem.c:61
+rfx_calloc (size=size@entry=32) at mem.c:61
 61	{
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0xbfffe36c) at rfxswf.c:1205
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0xbfffe43c)
+    at rfxswf.c:1205
 1205	  t->len = len;
 1206	  t->id  = id;
 1208	  if (t->len)
 1221	  if (prev)
 1223	    t->prev  = prev;
 1224	    prev->next = t;
-1227	  return t;
 1228	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1579
 1579	      if(t && t->id == ST_FILEATTRIBUTES) {
-1577	    while (t) {
 1578	      t = swf_ReadTag(reader,t);
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe008) at rfxswf.c:1184
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6008)
+    at rfxswf.c:1184
 1184	{ TAG * t;
 1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
 1190	  raw = LE_16_TO_NATIVE(raw);
@@ -279,38 +329,38 @@ swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe008) at rfxswf.c:1184
 1195	  if (len==0x3f)
 1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
 1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
-rfx_calloc (size=32) at mem.c:61
+rfx_calloc (size=size@entry=32) at mem.c:61
 61	{
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe008) at rfxswf.c:1205
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6008)
+    at rfxswf.c:1205
 1205	  t->len = len;
 1206	  t->id  = id;
 1208	  if (t->len)
 1209	  { t->data = (U8*)rfx_alloc(t->len);
-rfx_alloc (size=32) at mem.c:22
+rfx_alloc (size=size@entry=32) at mem.c:22
 22	{
 24	  if(size == 0) {
 30	  ptr = malloc(size);
 31	  if(!ptr) {
-36	  return ptr;
 37	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe008) at rfxswf.c:1210
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6008)
+    at rfxswf.c:1210
 1210	    t->memsize = t->len;
 1211	    if (reader->read(reader, t->data, t->len) != t->len) {
 1221	  if (prev)
 1223	    t->prev  = prev;
 1224	    prev->next = t;
-1227	  return t;
 1228	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1579
 1579	      if(t && t->id == ST_FILEATTRIBUTES) {
-1577	    while (t) {
 1578	      t = swf_ReadTag(reader,t);
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe030) at rfxswf.c:1184
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6030)
+    at rfxswf.c:1184
 1184	{ TAG * t;
 1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
 1190	  raw = LE_16_TO_NATIVE(raw);
@@ -319,27 +369,27 @@ swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe030) at rfxswf.c:1184
 1195	  if (len==0x3f)
 1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
 1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
-rfx_calloc (size=32) at mem.c:61
+rfx_calloc (size=size@entry=32) at mem.c:61
 61	{
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe030) at rfxswf.c:1205
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6030)
+    at rfxswf.c:1205
 1205	  t->len = len;
 1206	  t->id  = id;
 1208	  if (t->len)
 1221	  if (prev)
 1223	    t->prev  = prev;
 1224	    prev->next = t;
-1227	  return t;
 1228	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1579
 1579	      if(t && t->id == ST_FILEATTRIBUTES) {
-1577	    while (t) {
 1578	      t = swf_ReadTag(reader,t);
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe080) at rfxswf.c:1184
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6080)
+    at rfxswf.c:1184
 1184	{ TAG * t;
 1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
 1190	  raw = LE_16_TO_NATIVE(raw);
@@ -348,27 +398,27 @@ swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe080) at rfxswf.c:1184
 1195	  if (len==0x3f)
 1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
 1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
-rfx_calloc (size=32) at mem.c:61
+rfx_calloc (size=size@entry=32) at mem.c:61
 61	{
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe080) at rfxswf.c:1205
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6080)
+    at rfxswf.c:1205
 1205	  t->len = len;
 1206	  t->id  = id;
 1208	  if (t->len)
 1221	  if (prev)
 1223	    t->prev  = prev;
 1224	    prev->next = t;
-1227	  return t;
 1228	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1579
 1579	      if(t && t->id == ST_FILEATTRIBUTES) {
-1577	    while (t) {
 1578	      t = swf_ReadTag(reader,t);
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe0a8) at rfxswf.c:1184
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e60a8)
+    at rfxswf.c:1184
 1184	{ TAG * t;
 1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
 1190	  raw = LE_16_TO_NATIVE(raw);
@@ -377,27 +427,27 @@ swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe0a8) at rfxswf.c:1184
 1195	  if (len==0x3f)
 1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
 1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
-rfx_calloc (size=32) at mem.c:61
+rfx_calloc (size=size@entry=32) at mem.c:61
 61	{
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe0a8) at rfxswf.c:1205
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e60a8)
+    at rfxswf.c:1205
 1205	  t->len = len;
 1206	  t->id  = id;
 1208	  if (t->len)
 1221	  if (prev)
 1223	    t->prev  = prev;
 1224	    prev->next = t;
-1227	  return t;
 1228	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1579
 1579	      if(t && t->id == ST_FILEATTRIBUTES) {
-1577	    while (t) {
 1578	      t = swf_ReadTag(reader,t);
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe0d0) at rfxswf.c:1184
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e60d0)
+    at rfxswf.c:1184
 1184	{ TAG * t;
 1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
 1190	  raw = LE_16_TO_NATIVE(raw);
@@ -406,27 +456,27 @@ swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe0d0) at rfxswf.c:1184
 1195	  if (len==0x3f)
 1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
 1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
-rfx_calloc (size=32) at mem.c:61
+rfx_calloc (size=size@entry=32) at mem.c:61
 61	{
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe0d0) at rfxswf.c:1205
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e60d0)
+    at rfxswf.c:1205
 1205	  t->len = len;
 1206	  t->id  = id;
 1208	  if (t->len)
 1221	  if (prev)
 1223	    t->prev  = prev;
 1224	    prev->next = t;
-1227	  return t;
 1228	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1579
 1579	      if(t && t->id == ST_FILEATTRIBUTES) {
-1577	    while (t) {
 1578	      t = swf_ReadTag(reader,t);
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe0f8) at rfxswf.c:1184
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e60f8)
+    at rfxswf.c:1184
 1184	{ TAG * t;
 1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
 1190	  raw = LE_16_TO_NATIVE(raw);
@@ -435,27 +485,27 @@ swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe0f8) at rfxswf.c:1184
 1195	  if (len==0x3f)
 1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
 1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
-rfx_calloc (size=32) at mem.c:61
+rfx_calloc (size=size@entry=32) at mem.c:61
 61	{
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe0f8) at rfxswf.c:1205
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e60f8)
+    at rfxswf.c:1205
 1205	  t->len = len;
 1206	  t->id  = id;
 1208	  if (t->len)
 1221	  if (prev)
 1223	    t->prev  = prev;
 1224	    prev->next = t;
-1227	  return t;
 1228	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1579
 1579	      if(t && t->id == ST_FILEATTRIBUTES) {
-1577	    while (t) {
 1578	      t = swf_ReadTag(reader,t);
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe120) at rfxswf.c:1184
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6120)
+    at rfxswf.c:1184
 1184	{ TAG * t;
 1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
 1190	  raw = LE_16_TO_NATIVE(raw);
@@ -464,27 +514,27 @@ swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe120) at rfxswf.c:1184
 1195	  if (len==0x3f)
 1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
 1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
-rfx_calloc (size=32) at mem.c:61
+rfx_calloc (size=size@entry=32) at mem.c:61
 61	{
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe120) at rfxswf.c:1205
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6120)
+    at rfxswf.c:1205
 1205	  t->len = len;
 1206	  t->id  = id;
 1208	  if (t->len)
 1221	  if (prev)
 1223	    t->prev  = prev;
 1224	    prev->next = t;
-1227	  return t;
 1228	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1579
 1579	      if(t && t->id == ST_FILEATTRIBUTES) {
-1577	    while (t) {
 1578	      t = swf_ReadTag(reader,t);
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe148) at rfxswf.c:1184
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6148)
+    at rfxswf.c:1184
 1184	{ TAG * t;
 1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
 1190	  raw = LE_16_TO_NATIVE(raw);
@@ -493,38 +543,38 @@ swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe148) at rfxswf.c:1184
 1195	  if (len==0x3f)
 1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
 1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
-rfx_calloc (size=32) at mem.c:61
+rfx_calloc (size=size@entry=32) at mem.c:61
 61	{
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe148) at rfxswf.c:1205
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6148)
+    at rfxswf.c:1205
 1205	  t->len = len;
 1206	  t->id  = id;
 1208	  if (t->len)
 1209	  { t->data = (U8*)rfx_alloc(t->len);
-rfx_alloc (size=32) at mem.c:22
+rfx_alloc (size=size@entry=32) at mem.c:22
 22	{
 24	  if(size == 0) {
 30	  ptr = malloc(size);
 31	  if(!ptr) {
-36	  return ptr;
 37	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe148) at rfxswf.c:1210
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6148)
+    at rfxswf.c:1210
 1210	    t->memsize = t->len;
 1211	    if (reader->read(reader, t->data, t->len) != t->len) {
 1221	  if (prev)
 1223	    t->prev  = prev;
 1224	    prev->next = t;
-1227	  return t;
 1228	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1579
 1579	      if(t && t->id == ST_FILEATTRIBUTES) {
-1577	    while (t) {
 1578	      t = swf_ReadTag(reader,t);
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe170) at rfxswf.c:1184
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6170)
+    at rfxswf.c:1184
 1184	{ TAG * t;
 1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
 1190	  raw = LE_16_TO_NATIVE(raw);
@@ -533,38 +583,38 @@ swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe170) at rfxswf.c:1184
 1195	  if (len==0x3f)
 1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
 1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
-rfx_calloc (size=32) at mem.c:61
+rfx_calloc (size=size@entry=32) at mem.c:61
 61	{
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe170) at rfxswf.c:1205
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6170)
+    at rfxswf.c:1205
 1205	  t->len = len;
 1206	  t->id  = id;
 1208	  if (t->len)
 1209	  { t->data = (U8*)rfx_alloc(t->len);
-rfx_alloc (size=2) at mem.c:22
+rfx_alloc (size=size@entry=2) at mem.c:22
 22	{
 24	  if(size == 0) {
 30	  ptr = malloc(size);
 31	  if(!ptr) {
-36	  return ptr;
 37	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe170) at rfxswf.c:1210
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6170)
+    at rfxswf.c:1210
 1210	    t->memsize = t->len;
 1211	    if (reader->read(reader, t->data, t->len) != t->len) {
 1221	  if (prev)
 1223	    t->prev  = prev;
 1224	    prev->next = t;
-1227	  return t;
 1228	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1579
 1579	      if(t && t->id == ST_FILEATTRIBUTES) {
-1577	    while (t) {
 1578	      t = swf_ReadTag(reader,t);
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe1c0) at rfxswf.c:1184
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e61c0)
+    at rfxswf.c:1184
 1184	{ TAG * t;
 1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
 1190	  raw = LE_16_TO_NATIVE(raw);
@@ -573,38 +623,38 @@ swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe1c0) at rfxswf.c:1184
 1195	  if (len==0x3f)
 1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
 1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
-rfx_calloc (size=32) at mem.c:61
+rfx_calloc (size=size@entry=32) at mem.c:61
 61	{
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe1c0) at rfxswf.c:1205
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e61c0)
+    at rfxswf.c:1205
 1205	  t->len = len;
 1206	  t->id  = id;
 1208	  if (t->len)
 1209	  { t->data = (U8*)rfx_alloc(t->len);
-rfx_alloc (size=1) at mem.c:22
+rfx_alloc (size=size@entry=1) at mem.c:22
 22	{
 24	  if(size == 0) {
 30	  ptr = malloc(size);
 31	  if(!ptr) {
-36	  return ptr;
 37	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe1c0) at rfxswf.c:1210
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e61c0)
+    at rfxswf.c:1210
 1210	    t->memsize = t->len;
 1211	    if (reader->read(reader, t->data, t->len) != t->len) {
 1221	  if (prev)
 1223	    t->prev  = prev;
 1224	    prev->next = t;
-1227	  return t;
 1228	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1579
 1579	      if(t && t->id == ST_FILEATTRIBUTES) {
-1577	    while (t) {
 1578	      t = swf_ReadTag(reader,t);
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe1f8) at rfxswf.c:1184
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e61f8)
+    at rfxswf.c:1184
 1184	{ TAG * t;
 1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
 1190	  raw = LE_16_TO_NATIVE(raw);
@@ -613,38 +663,46 @@ swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe1f8) at rfxswf.c:1184
 1195	  if (len==0x3f)
 1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
 1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
-rfx_calloc (size=32) at mem.c:61
+rfx_calloc (size=size@entry=32) at mem.c:61
 61	{
+0x080490f0 in __x86.get_pc_thunk.bx ()
+Single stepping until exit from function __x86.get_pc_thunk.bx,
+which has no line number information.
+rfx_calloc (size=size@entry=32) at mem.c:63
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe1f8) at rfxswf.c:1205
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e61f8)
+    at rfxswf.c:1205
 1205	  t->len = len;
 1206	  t->id  = id;
 1208	  if (t->len)
 1209	  { t->data = (U8*)rfx_alloc(t->len);
-rfx_alloc (size=1) at mem.c:22
+rfx_alloc (size=size@entry=1) at mem.c:22
 22	{
+0x080490f0 in __x86.get_pc_thunk.bx ()
+Single stepping until exit from function __x86.get_pc_thunk.bx,
+which has no line number information.
+rfx_alloc (size=size@entry=1) at mem.c:24
 24	  if(size == 0) {
 30	  ptr = malloc(size);
 31	  if(!ptr) {
-36	  return ptr;
 37	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe1f8) at rfxswf.c:1210
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e61f8)
+    at rfxswf.c:1210
 1210	    t->memsize = t->len;
 1211	    if (reader->read(reader, t->data, t->len) != t->len) {
 1221	  if (prev)
 1223	    t->prev  = prev;
 1224	    prev->next = t;
-1227	  return t;
 1228	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1579
 1579	      if(t && t->id == ST_FILEATTRIBUTES) {
-1577	    while (t) {
 1578	      t = swf_ReadTag(reader,t);
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe230) at rfxswf.c:1184
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6230)
+    at rfxswf.c:1184
 1184	{ TAG * t;
 1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
 1190	  raw = LE_16_TO_NATIVE(raw);
@@ -653,27 +711,27 @@ swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe230) at rfxswf.c:1184
 1195	  if (len==0x3f)
 1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
 1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
-rfx_calloc (size=32) at mem.c:61
+rfx_calloc (size=size@entry=32) at mem.c:61
 61	{
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe230) at rfxswf.c:1205
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6230)
+    at rfxswf.c:1205
 1205	  t->len = len;
 1206	  t->id  = id;
 1208	  if (t->len)
 1221	  if (prev)
 1223	    t->prev  = prev;
 1224	    prev->next = t;
-1227	  return t;
 1228	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1579
 1579	      if(t && t->id == ST_FILEATTRIBUTES) {
-1577	    while (t) {
 1578	      t = swf_ReadTag(reader,t);
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe268) at rfxswf.c:1184
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6268)
+    at rfxswf.c:1184
 1184	{ TAG * t;
 1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
 1190	  raw = LE_16_TO_NATIVE(raw);
@@ -682,38 +740,38 @@ swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe268) at rfxswf.c:1184
 1195	  if (len==0x3f)
 1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
 1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
-rfx_calloc (size=32) at mem.c:61
+rfx_calloc (size=size@entry=32) at mem.c:61
 61	{
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe268) at rfxswf.c:1205
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6268)
+    at rfxswf.c:1205
 1205	  t->len = len;
 1206	  t->id  = id;
 1208	  if (t->len)
 1209	  { t->data = (U8*)rfx_alloc(t->len);
-rfx_alloc (size=1) at mem.c:22
+rfx_alloc (size=size@entry=1) at mem.c:22
 22	{
 24	  if(size == 0) {
 30	  ptr = malloc(size);
 31	  if(!ptr) {
-36	  return ptr;
 37	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe268) at rfxswf.c:1210
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6268)
+    at rfxswf.c:1210
 1210	    t->memsize = t->len;
 1211	    if (reader->read(reader, t->data, t->len) != t->len) {
 1221	  if (prev)
 1223	    t->prev  = prev;
 1224	    prev->next = t;
-1227	  return t;
 1228	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1579
 1579	      if(t && t->id == ST_FILEATTRIBUTES) {
-1577	    while (t) {
 1578	      t = swf_ReadTag(reader,t);
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe290) at rfxswf.c:1184
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6290)
+    at rfxswf.c:1184
 1184	{ TAG * t;
 1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
 1190	  raw = LE_16_TO_NATIVE(raw);
@@ -722,27 +780,31 @@ swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe290) at rfxswf.c:1184
 1195	  if (len==0x3f)
 1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
 1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
-rfx_calloc (size=32) at mem.c:61
+rfx_calloc (size=size@entry=32) at mem.c:61
 61	{
+0x080490f0 in __x86.get_pc_thunk.bx ()
+Single stepping until exit from function __x86.get_pc_thunk.bx,
+which has no line number information.
+rfx_calloc (size=size@entry=32) at mem.c:63
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe290) at rfxswf.c:1205
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6290)
+    at rfxswf.c:1205
 1205	  t->len = len;
 1206	  t->id  = id;
 1208	  if (t->len)
 1221	  if (prev)
 1223	    t->prev  = prev;
 1224	    prev->next = t;
-1227	  return t;
 1228	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1579
 1579	      if(t && t->id == ST_FILEATTRIBUTES) {
-1577	    while (t) {
 1578	      t = swf_ReadTag(reader,t);
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe2c8) at rfxswf.c:1184
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e62c8)
+    at rfxswf.c:1184
 1184	{ TAG * t;
 1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
 1190	  raw = LE_16_TO_NATIVE(raw);
@@ -751,27 +813,27 @@ swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe2c8) at rfxswf.c:1184
 1195	  if (len==0x3f)
 1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
 1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
-rfx_calloc (size=32) at mem.c:61
+rfx_calloc (size=size@entry=32) at mem.c:61
 61	{
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe2c8) at rfxswf.c:1205
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e62c8)
+    at rfxswf.c:1205
 1205	  t->len = len;
 1206	  t->id  = id;
 1208	  if (t->len)
 1221	  if (prev)
 1223	    t->prev  = prev;
 1224	    prev->next = t;
-1227	  return t;
 1228	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1579
 1579	      if(t && t->id == ST_FILEATTRIBUTES) {
-1577	    while (t) {
 1578	      t = swf_ReadTag(reader,t);
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe2f0) at rfxswf.c:1184
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e62f0)
+    at rfxswf.c:1184
 1184	{ TAG * t;
 1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
 1190	  raw = LE_16_TO_NATIVE(raw);
@@ -780,38 +842,38 @@ swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe2f0) at rfxswf.c:1184
 1195	  if (len==0x3f)
 1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
 1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
-rfx_calloc (size=32) at mem.c:61
+rfx_calloc (size=size@entry=32) at mem.c:61
 61	{
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe2f0) at rfxswf.c:1205
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e62f0)
+    at rfxswf.c:1205
 1205	  t->len = len;
 1206	  t->id  = id;
 1208	  if (t->len)
 1209	  { t->data = (U8*)rfx_alloc(t->len);
-rfx_alloc (size=44) at mem.c:22
+rfx_alloc (size=size@entry=44) at mem.c:22
 22	{
 24	  if(size == 0) {
 30	  ptr = malloc(size);
 31	  if(!ptr) {
-36	  return ptr;
 37	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe2f0) at rfxswf.c:1210
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e62f0)
+    at rfxswf.c:1210
 1210	    t->memsize = t->len;
 1211	    if (reader->read(reader, t->data, t->len) != t->len) {
 1221	  if (prev)
 1223	    t->prev  = prev;
 1224	    prev->next = t;
-1227	  return t;
 1228	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1579
 1579	      if(t && t->id == ST_FILEATTRIBUTES) {
-1577	    while (t) {
 1578	      t = swf_ReadTag(reader,t);
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe318) at rfxswf.c:1184
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6318)
+    at rfxswf.c:1184
 1184	{ TAG * t;
 1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
 1190	  raw = LE_16_TO_NATIVE(raw);
@@ -820,38 +882,38 @@ swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe318) at rfxswf.c:1184
 1195	  if (len==0x3f)
 1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
 1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
-rfx_calloc (size=32) at mem.c:61
+rfx_calloc (size=size@entry=32) at mem.c:61
 61	{
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe318) at rfxswf.c:1205
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6318)
+    at rfxswf.c:1205
 1205	  t->len = len;
 1206	  t->id  = id;
 1208	  if (t->len)
 1209	  { t->data = (U8*)rfx_alloc(t->len);
-rfx_alloc (size=3) at mem.c:22
+rfx_alloc (size=size@entry=3) at mem.c:22
 22	{
 24	  if(size == 0) {
 30	  ptr = malloc(size);
 31	  if(!ptr) {
-36	  return ptr;
 37	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe318) at rfxswf.c:1210
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6318)
+    at rfxswf.c:1210
 1210	    t->memsize = t->len;
 1211	    if (reader->read(reader, t->data, t->len) != t->len) {
 1221	  if (prev)
 1223	    t->prev  = prev;
 1224	    prev->next = t;
-1227	  return t;
 1228	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1579
 1579	      if(t && t->id == ST_FILEATTRIBUTES) {
-1577	    while (t) {
 1578	      t = swf_ReadTag(reader,t);
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe370) at rfxswf.c:1184
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6370)
+    at rfxswf.c:1184
 1184	{ TAG * t;
 1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
 1190	  raw = LE_16_TO_NATIVE(raw);
@@ -860,38 +922,38 @@ swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe370) at rfxswf.c:1184
 1195	  if (len==0x3f)
 1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
 1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
-rfx_calloc (size=32) at mem.c:61
+rfx_calloc (size=size@entry=32) at mem.c:61
 61	{
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe370) at rfxswf.c:1205
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6370)
+    at rfxswf.c:1205
 1205	  t->len = len;
 1206	  t->id  = id;
 1208	  if (t->len)
 1209	  { t->data = (U8*)rfx_alloc(t->len);
-rfx_alloc (size=35) at mem.c:22
+rfx_alloc (size=size@entry=35) at mem.c:22
 22	{
 24	  if(size == 0) {
 30	  ptr = malloc(size);
 31	  if(!ptr) {
-36	  return ptr;
 37	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe370) at rfxswf.c:1210
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6370)
+    at rfxswf.c:1210
 1210	    t->memsize = t->len;
 1211	    if (reader->read(reader, t->data, t->len) != t->len) {
 1221	  if (prev)
 1223	    t->prev  = prev;
 1224	    prev->next = t;
-1227	  return t;
 1228	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1579
 1579	      if(t && t->id == ST_FILEATTRIBUTES) {
-1577	    while (t) {
 1578	      t = swf_ReadTag(reader,t);
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe3a8) at rfxswf.c:1184
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e63a8)
+    at rfxswf.c:1184
 1184	{ TAG * t;
 1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
 1190	  raw = LE_16_TO_NATIVE(raw);
@@ -900,38 +962,38 @@ swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe3a8) at rfxswf.c:1184
 1195	  if (len==0x3f)
 1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
 1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
-rfx_calloc (size=32) at mem.c:61
+rfx_calloc (size=size@entry=32) at mem.c:61
 61	{
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe3a8) at rfxswf.c:1205
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e63a8)
+    at rfxswf.c:1205
 1205	  t->len = len;
 1206	  t->id  = id;
 1208	  if (t->len)
 1209	  { t->data = (U8*)rfx_alloc(t->len);
-rfx_alloc (size=37) at mem.c:22
+rfx_alloc (size=size@entry=37) at mem.c:22
 22	{
 24	  if(size == 0) {
 30	  ptr = malloc(size);
 31	  if(!ptr) {
-36	  return ptr;
 37	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe3a8) at rfxswf.c:1210
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e63a8)
+    at rfxswf.c:1210
 1210	    t->memsize = t->len;
 1211	    if (reader->read(reader, t->data, t->len) != t->len) {
 1221	  if (prev)
 1223	    t->prev  = prev;
 1224	    prev->next = t;
-1227	  return t;
 1228	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1579
 1579	      if(t && t->id == ST_FILEATTRIBUTES) {
-1577	    while (t) {
 1578	      t = swf_ReadTag(reader,t);
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe3f8) at rfxswf.c:1184
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e63f8)
+    at rfxswf.c:1184
 1184	{ TAG * t;
 1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
 1190	  raw = LE_16_TO_NATIVE(raw);
@@ -940,38 +1002,38 @@ swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe3f8) at rfxswf.c:1184
 1195	  if (len==0x3f)
 1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
 1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
-rfx_calloc (size=32) at mem.c:61
+rfx_calloc (size=size@entry=32) at mem.c:61
 61	{
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe3f8) at rfxswf.c:1205
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e63f8)
+    at rfxswf.c:1205
 1205	  t->len = len;
 1206	  t->id  = id;
 1208	  if (t->len)
 1209	  { t->data = (U8*)rfx_alloc(t->len);
-rfx_alloc (size=35) at mem.c:22
+rfx_alloc (size=size@entry=35) at mem.c:22
 22	{
 24	  if(size == 0) {
 30	  ptr = malloc(size);
 31	  if(!ptr) {
-36	  return ptr;
 37	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe3f8) at rfxswf.c:1210
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e63f8)
+    at rfxswf.c:1210
 1210	    t->memsize = t->len;
 1211	    if (reader->read(reader, t->data, t->len) != t->len) {
 1221	  if (prev)
 1223	    t->prev  = prev;
 1224	    prev->next = t;
-1227	  return t;
 1228	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1579
 1579	      if(t && t->id == ST_FILEATTRIBUTES) {
-1577	    while (t) {
 1578	      t = swf_ReadTag(reader,t);
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe450) at rfxswf.c:1184
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6450)
+    at rfxswf.c:1184
 1184	{ TAG * t;
 1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
 1190	  raw = LE_16_TO_NATIVE(raw);
@@ -980,38 +1042,38 @@ swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe450) at rfxswf.c:1184
 1195	  if (len==0x3f)
 1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
 1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
-rfx_calloc (size=32) at mem.c:61
+rfx_calloc (size=size@entry=32) at mem.c:61
 61	{
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe450) at rfxswf.c:1205
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6450)
+    at rfxswf.c:1205
 1205	  t->len = len;
 1206	  t->id  = id;
 1208	  if (t->len)
 1209	  { t->data = (U8*)rfx_alloc(t->len);
-rfx_alloc (size=39) at mem.c:22
+rfx_alloc (size=size@entry=39) at mem.c:22
 22	{
 24	  if(size == 0) {
 30	  ptr = malloc(size);
 31	  if(!ptr) {
-36	  return ptr;
 37	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe450) at rfxswf.c:1210
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6450)
+    at rfxswf.c:1210
 1210	    t->memsize = t->len;
 1211	    if (reader->read(reader, t->data, t->len) != t->len) {
 1221	  if (prev)
 1223	    t->prev  = prev;
 1224	    prev->next = t;
-1227	  return t;
 1228	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1579
 1579	      if(t && t->id == ST_FILEATTRIBUTES) {
-1577	    while (t) {
 1578	      t = swf_ReadTag(reader,t);
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe4a0) at rfxswf.c:1184
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e64a0)
+    at rfxswf.c:1184
 1184	{ TAG * t;
 1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
 1190	  raw = LE_16_TO_NATIVE(raw);
@@ -1020,38 +1082,38 @@ swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe4a0) at rfxswf.c:1184
 1195	  if (len==0x3f)
 1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
 1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
-rfx_calloc (size=32) at mem.c:61
+rfx_calloc (size=size@entry=32) at mem.c:61
 61	{
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe4a0) at rfxswf.c:1205
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e64a0)
+    at rfxswf.c:1205
 1205	  t->len = len;
 1206	  t->id  = id;
 1208	  if (t->len)
 1209	  { t->data = (U8*)rfx_alloc(t->len);
-rfx_alloc (size=39) at mem.c:22
+rfx_alloc (size=size@entry=39) at mem.c:22
 22	{
 24	  if(size == 0) {
 30	  ptr = malloc(size);
 31	  if(!ptr) {
-36	  return ptr;
 37	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe4a0) at rfxswf.c:1210
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e64a0)
+    at rfxswf.c:1210
 1210	    t->memsize = t->len;
 1211	    if (reader->read(reader, t->data, t->len) != t->len) {
 1221	  if (prev)
 1223	    t->prev  = prev;
 1224	    prev->next = t;
-1227	  return t;
 1228	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1579
 1579	      if(t && t->id == ST_FILEATTRIBUTES) {
-1577	    while (t) {
 1578	      t = swf_ReadTag(reader,t);
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe4f8) at rfxswf.c:1184
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e64f8)
+    at rfxswf.c:1184
 1184	{ TAG * t;
 1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
 1190	  raw = LE_16_TO_NATIVE(raw);
@@ -1060,38 +1122,38 @@ swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe4f8) at rfxswf.c:1184
 1195	  if (len==0x3f)
 1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
 1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
-rfx_calloc (size=32) at mem.c:61
+rfx_calloc (size=size@entry=32) at mem.c:61
 61	{
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe4f8) at rfxswf.c:1205
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e64f8)
+    at rfxswf.c:1205
 1205	  t->len = len;
 1206	  t->id  = id;
 1208	  if (t->len)
 1209	  { t->data = (U8*)rfx_alloc(t->len);
-rfx_alloc (size=39) at mem.c:22
+rfx_alloc (size=size@entry=39) at mem.c:22
 22	{
 24	  if(size == 0) {
 30	  ptr = malloc(size);
 31	  if(!ptr) {
-36	  return ptr;
 37	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe4f8) at rfxswf.c:1210
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e64f8)
+    at rfxswf.c:1210
 1210	    t->memsize = t->len;
 1211	    if (reader->read(reader, t->data, t->len) != t->len) {
 1221	  if (prev)
 1223	    t->prev  = prev;
 1224	    prev->next = t;
-1227	  return t;
 1228	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1579
 1579	      if(t && t->id == ST_FILEATTRIBUTES) {
-1577	    while (t) {
 1578	      t = swf_ReadTag(reader,t);
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe550) at rfxswf.c:1184
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6550)
+    at rfxswf.c:1184
 1184	{ TAG * t;
 1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
 1190	  raw = LE_16_TO_NATIVE(raw);
@@ -1100,38 +1162,38 @@ swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe550) at rfxswf.c:1184
 1195	  if (len==0x3f)
 1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
 1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
-rfx_calloc (size=32) at mem.c:61
+rfx_calloc (size=size@entry=32) at mem.c:61
 61	{
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe550) at rfxswf.c:1205
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6550)
+    at rfxswf.c:1205
 1205	  t->len = len;
 1206	  t->id  = id;
 1208	  if (t->len)
 1209	  { t->data = (U8*)rfx_alloc(t->len);
-rfx_alloc (size=5) at mem.c:22
+rfx_alloc (size=size@entry=5) at mem.c:22
 22	{
 24	  if(size == 0) {
 30	  ptr = malloc(size);
 31	  if(!ptr) {
-36	  return ptr;
 37	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe550) at rfxswf.c:1210
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6550)
+    at rfxswf.c:1210
 1210	    t->memsize = t->len;
 1211	    if (reader->read(reader, t->data, t->len) != t->len) {
 1221	  if (prev)
 1223	    t->prev  = prev;
 1224	    prev->next = t;
-1227	  return t;
 1228	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1579
 1579	      if(t && t->id == ST_FILEATTRIBUTES) {
-1577	    while (t) {
 1578	      t = swf_ReadTag(reader,t);
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe5a8) at rfxswf.c:1184
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e65a8)
+    at rfxswf.c:1184
 1184	{ TAG * t;
 1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
 1190	  raw = LE_16_TO_NATIVE(raw);
@@ -1140,38 +1202,38 @@ swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe5a8) at rfxswf.c:1184
 1195	  if (len==0x3f)
 1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
 1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
-rfx_calloc (size=32) at mem.c:61
+rfx_calloc (size=size@entry=32) at mem.c:61
 61	{
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe5a8) at rfxswf.c:1205
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e65a8)
+    at rfxswf.c:1205
 1205	  t->len = len;
 1206	  t->id  = id;
 1208	  if (t->len)
 1209	  { t->data = (U8*)rfx_alloc(t->len);
-rfx_alloc (size=9) at mem.c:22
+rfx_alloc (size=size@entry=9) at mem.c:22
 22	{
 24	  if(size == 0) {
 30	  ptr = malloc(size);
 31	  if(!ptr) {
-36	  return ptr;
 37	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe5a8) at rfxswf.c:1210
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e65a8)
+    at rfxswf.c:1210
 1210	    t->memsize = t->len;
 1211	    if (reader->read(reader, t->data, t->len) != t->len) {
 1221	  if (prev)
 1223	    t->prev  = prev;
 1224	    prev->next = t;
-1227	  return t;
 1228	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1579
 1579	      if(t && t->id == ST_FILEATTRIBUTES) {
-1577	    while (t) {
 1578	      t = swf_ReadTag(reader,t);
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe5e0) at rfxswf.c:1184
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e65e0)
+    at rfxswf.c:1184
 1184	{ TAG * t;
 1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
 1190	  raw = LE_16_TO_NATIVE(raw);
@@ -1180,38 +1242,38 @@ swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe5e0) at rfxswf.c:1184
 1195	  if (len==0x3f)
 1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
 1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
-rfx_calloc (size=32) at mem.c:61
+rfx_calloc (size=size@entry=32) at mem.c:61
 61	{
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe5e0) at rfxswf.c:1205
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e65e0)
+    at rfxswf.c:1205
 1205	  t->len = len;
 1206	  t->id  = id;
 1208	  if (t->len)
 1209	  { t->data = (U8*)rfx_alloc(t->len);
-rfx_alloc (size=30) at mem.c:22
+rfx_alloc (size=size@entry=30) at mem.c:22
 22	{
 24	  if(size == 0) {
 30	  ptr = malloc(size);
 31	  if(!ptr) {
-36	  return ptr;
 37	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe5e0) at rfxswf.c:1210
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e65e0)
+    at rfxswf.c:1210
 1210	    t->memsize = t->len;
 1211	    if (reader->read(reader, t->data, t->len) != t->len) {
 1221	  if (prev)
 1223	    t->prev  = prev;
 1224	    prev->next = t;
-1227	  return t;
 1228	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1579
 1579	      if(t && t->id == ST_FILEATTRIBUTES) {
-1577	    while (t) {
 1578	      t = swf_ReadTag(reader,t);
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe618) at rfxswf.c:1184
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6618)
+    at rfxswf.c:1184
 1184	{ TAG * t;
 1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
 1190	  raw = LE_16_TO_NATIVE(raw);
@@ -1220,38 +1282,38 @@ swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe618) at rfxswf.c:1184
 1195	  if (len==0x3f)
 1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
 1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
-rfx_calloc (size=32) at mem.c:61
+rfx_calloc (size=size@entry=32) at mem.c:61
 61	{
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe618) at rfxswf.c:1205
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6618)
+    at rfxswf.c:1205
 1205	  t->len = len;
 1206	  t->id  = id;
 1208	  if (t->len)
 1209	  { t->data = (U8*)rfx_alloc(t->len);
-rfx_alloc (size=41) at mem.c:22
+rfx_alloc (size=size@entry=41) at mem.c:22
 22	{
 24	  if(size == 0) {
 30	  ptr = malloc(size);
 31	  if(!ptr) {
-36	  return ptr;
 37	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe618) at rfxswf.c:1210
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6618)
+    at rfxswf.c:1210
 1210	    t->memsize = t->len;
 1211	    if (reader->read(reader, t->data, t->len) != t->len) {
 1221	  if (prev)
 1223	    t->prev  = prev;
 1224	    prev->next = t;
-1227	  return t;
 1228	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1579
 1579	      if(t && t->id == ST_FILEATTRIBUTES) {
-1577	    while (t) {
 1578	      t = swf_ReadTag(reader,t);
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe668) at rfxswf.c:1184
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6668)
+    at rfxswf.c:1184
 1184	{ TAG * t;
 1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
 1190	  raw = LE_16_TO_NATIVE(raw);
@@ -1260,38 +1322,38 @@ swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe668) at rfxswf.c:1184
 1195	  if (len==0x3f)
 1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
 1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
-rfx_calloc (size=32) at mem.c:61
+rfx_calloc (size=size@entry=32) at mem.c:61
 61	{
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe668) at rfxswf.c:1205
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6668)
+    at rfxswf.c:1205
 1205	  t->len = len;
 1206	  t->id  = id;
 1208	  if (t->len)
 1209	  { t->data = (U8*)rfx_alloc(t->len);
-rfx_alloc (size=5) at mem.c:22
+rfx_alloc (size=size@entry=5) at mem.c:22
 22	{
 24	  if(size == 0) {
 30	  ptr = malloc(size);
 31	  if(!ptr) {
-36	  return ptr;
 37	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe668) at rfxswf.c:1210
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6668)
+    at rfxswf.c:1210
 1210	    t->memsize = t->len;
 1211	    if (reader->read(reader, t->data, t->len) != t->len) {
 1221	  if (prev)
 1223	    t->prev  = prev;
 1224	    prev->next = t;
-1227	  return t;
 1228	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1579
 1579	      if(t && t->id == ST_FILEATTRIBUTES) {
-1577	    while (t) {
 1578	      t = swf_ReadTag(reader,t);
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe6c0) at rfxswf.c:1184
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e66c0)
+    at rfxswf.c:1184
 1184	{ TAG * t;
 1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
 1190	  raw = LE_16_TO_NATIVE(raw);
@@ -1300,27 +1362,27 @@ swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe6c0) at rfxswf.c:1184
 1195	  if (len==0x3f)
 1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
 1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
-rfx_calloc (size=32) at mem.c:61
+rfx_calloc (size=size@entry=32) at mem.c:61
 61	{
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe6c0) at rfxswf.c:1205
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e66c0)
+    at rfxswf.c:1205
 1205	  t->len = len;
 1206	  t->id  = id;
 1208	  if (t->len)
 1221	  if (prev)
 1223	    t->prev  = prev;
 1224	    prev->next = t;
-1227	  return t;
 1228	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1579
 1579	      if(t && t->id == ST_FILEATTRIBUTES) {
-1577	    while (t) {
 1578	      t = swf_ReadTag(reader,t);
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe6f8) at rfxswf.c:1184
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e66f8)
+    at rfxswf.c:1184
 1184	{ TAG * t;
 1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
 1190	  raw = LE_16_TO_NATIVE(raw);
@@ -1329,52 +1391,58 @@ swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe6f8) at rfxswf.c:1184
 1195	  if (len==0x3f)
 1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
 1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
-rfx_calloc (size=32) at mem.c:61
+rfx_calloc (size=size@entry=32) at mem.c:61
 61	{
+0x080490f0 in __x86.get_pc_thunk.bx ()
+Single stepping until exit from function __x86.get_pc_thunk.bx,
+which has no line number information.
+rfx_calloc (size=size@entry=32) at mem.c:63
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe6f8) at rfxswf.c:1205
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e66f8)
+    at rfxswf.c:1205
 1205	  t->len = len;
 1206	  t->id  = id;
 1208	  if (t->len)
 1221	  if (prev)
 1223	    t->prev  = prev;
 1224	    prev->next = t;
-1227	  return t;
 1228	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1579
 1579	      if(t && t->id == ST_FILEATTRIBUTES) {
-1577	    while (t) {
 1578	      t = swf_ReadTag(reader,t);
-swf_ReadTag (reader=0xbfffe3d4, prev=0x80fe720) at rfxswf.c:1184
+swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0x80e6720)
+    at rfxswf.c:1184
 1184	{ TAG * t;
 1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
 1228	}
-swf_ReadSWF2 (reader=0xbfffe3d4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+swf_ReadSWF2 (reader=reader@entry=0xbfffe4b4, swf=<optimized out>, 
+    swf@entry=0x80d18e0 <swf>) at rfxswf.c:1579
 1579	      if(t && t->id == ST_FILEATTRIBUTES) {
-1577	    while (t) {
 1584	    swf->firstTag = t1.next;
 1585	    if(t1.next)
 1586	      t1.next->prev = NULL;
 1589	  return reader->pos;
 1590	}
-swf_ReadSWF (handle=3, swf=0x80f9ce0 <swf>) at rfxswf.c:1610
+swf_ReadSWF (handle=handle@entry=3, swf=swf@entry=0x80d18e0 <swf>)
+    at rfxswf.c:1610
 1610	}
-main (argc=3, argv=0xbfffe7c4) at swfdump.c:1170
+main (argc=4, argv=0xbfffe844) at swfdump.c:1170
 1170	        fstat(f, &statbuf);
 1171	        if(statbuf.st_size != swf.fileSize && !compressed)
 1172	            dumperror("Real Filesize (%d) doesn't match header Filesize (%d)",
-dumperror (format=0xb7fdcd7c "libc.so.6") at swfdump.c:1088
+dumperror (
+    format=format@entry=0x8094998 "Real Filesize (%d) doesn't match header Filesize (%d)") at swfdump.c:1088
 1088	{
 1092	    va_start(arglist, format);
 1093	    vsnprintf(buf, sizeof(buf)-1, format, arglist);
 1096	    if(!html && !xy)
 1097		printf("==== Error: %s ====\n", buf);
 1098	}
-main (argc=3, argv=0xbfffe7c4) at swfdump.c:1174
+main (argc=4, argv=0xbfffe844) at swfdump.c:1174
 1174	        filesize = statbuf.st_size;
 1176	        close(f);
 1184	    xsize = (swf.movieSize.xmax-swf.movieSize.xmin)/20;
@@ -1396,528 +1464,425 @@ main (argc=3, argv=0xbfffe7c4) at swfdump.c:1174
 1276	    if(showtext) {
 1277		fontnum = 0;
 1278		swf_FontEnumerate(&swf,&fontcallback1, 0);
-swf_FontEnumerate (swf=0x80484fc, FontCallback=0xbfffe330, 
-    self=0xb7fe77aa <_dl_lookup_symbol_x+266>) at modules/swftext.c:107
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:107
 107	{
 110	    if (!swf)
 112	    t = swf->firstTag;
+115	    while (t) {
 113	    n = 0;
-115	    while (t) {
+133			(FontCallback) (self, id, s);
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe008) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e6008) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe008) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6008) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe030) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e6030) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe030) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6030) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe080) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e6080) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe080) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6080) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe0a8) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e60a8) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe0a8) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e60a8) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe0d0) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e60d0) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe0d0) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e60d0) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe0f8) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e60f8) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe0f8) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e60f8) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe120) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e6120) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe120) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6120) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe148) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e6148) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe148) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6148) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe170) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e6170) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe170) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6170) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe1c0) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e61c0) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe1c0) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e61c0) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe1f8) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e61f8) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe1f8) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e61f8) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe230) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e6230) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe230) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6230) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe268) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e6268) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe268) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6268) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe290) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e6290) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe290) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6290) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe2c8) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e62c8) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe2c8) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e62c8) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe2f0) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e62f0) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe2f0) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e62f0) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe318) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e6318) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe318) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6318) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe370) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e6370) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe370) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6370) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe3a8) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e63a8) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe3a8) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e63a8) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe3f8) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e63f8) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe3f8) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e63f8) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe450) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e6450) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe450) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6450) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe4a0) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e64a0) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe4a0) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e64a0) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe4f8) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e64f8) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe4f8) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e64f8) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe550) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e6550) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe550) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6550) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe5a8) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e65a8) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe5a8) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e65a8) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe5e0) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e65e0) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe5e0) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e65e0) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe618) at modules/swftools.c:1169
-1169	    if(tag->id == ST_DEFINEFONT ||
-1170	       tag->id == ST_DEFINEFONT2 ||
+swf_isFontTag (tag=tag@entry=0x80e6618) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1173	        return 1;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:117
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:117
 117		    n++;
 118		    if (FontCallback) {
 122			s[0] = 0;
 123			swf_SetTagPos(t, 0);
-swf_SetTagPos (t=0x80fe618, pos=0) at rfxswf.c:67
+swf_SetTagPos (t=t@entry=0x80e6618, pos=pos@entry=0) at rfxswf.c:67
 67	{ swf_ResetReadBits(t);
 68	  if (pos<=t->len) t->pos = pos;
 74	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:125
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:125
 125			id = swf_GetU16(t);
-swf_GetU16 (t=0x80fe618) at rfxswf.c:105
+swf_GetU16 (t=t@entry=0x80e6618) at rfxswf.c:105
 105	{ U16 res;
 106	  swf_ResetReadBits(t);
 108	    if ((int)t->pos>((int)t->len-2)) 
@@ -1925,15 +1890,17 @@ swf_GetU16 (t=0x80fe618) at rfxswf.c:105
 114	  t->pos+=2;
 115	  return res;
 116	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:126
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:126
 126			if (swf_GetTagID(t) == ST_DEFINEFONT2 || swf_GetTagID(t) == ST_DEFINEFONTINFO || swf_GetTagID(t) == ST_DEFINEFONTINFO2) {
-swf_GetTagID (t=0x80fe618) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e6618) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:127
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:127
 127			    swf_GetU16(t);
-swf_GetU16 (t=0x80fe618) at rfxswf.c:105
+swf_GetU16 (t=t@entry=0x80e6618) at rfxswf.c:105
 105	{ U16 res;
 106	  swf_ResetReadBits(t);
 108	    if ((int)t->pos>((int)t->len-2)) 
@@ -1941,644 +1908,528 @@ swf_GetU16 (t=0x80fe618) at rfxswf.c:105
 114	  t->pos+=2;
 115	  return res;
 116	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:128
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:128
 128			    l = swf_GetU8(t);
-swf_GetU8 (t=0x80fe618) at rfxswf.c:93
+swf_GetU8 (t=t@entry=0x80e6618) at rfxswf.c:93
 93	{ swf_ResetReadBits(t);
 95	    if ((int)t->pos>=(int)t->len) 
 101	  return t->data[t->pos++];
 102	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:129
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:129
 129			    swf_GetBlock(t, s, l);
-swf_GetBlock (t=0x80fe618, b=0xbfffe2eb "", l=15) at rfxswf.c:136
+swf_GetBlock (t=t@entry=0x80e6618, b=b@entry=0xbfffe3bb "", l=l@entry=15)
+    at rfxswf.c:136
 136	{ swf_ResetReadBits(t);
 137	  if ((t->len-t->pos)<l) l=t->len-t->pos;
 138	  if (b && l) memcpy(b,&t->data[t->pos],l);
 139	  t->pos+=l;
-140	  return l;
 141	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:130
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:130
 130			    s[l] = 0;
 133			(FontCallback) (self, id, s);
-fontcallback1 (self=0x0, id=16384, name=0xbfffe2eb "Times New Roman")
+fontcallback1 (self=0x0, id=118, name=0xbfffe3bb "Times New Roman")
     at swfdump.c:921
 921	{ fontnum++;
-922	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe618) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6618) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe668) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e6668) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe668) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6668) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe6c0) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e66c0) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe6c0) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e66c0) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe6f8) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e66f8) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe6f8) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e66f8) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe720) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e6720) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe720) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6720) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x80491c0 <fontcallback1>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
-138	    return n;
 139	}
-main (argc=3, argv=0xbfffe7c4) at swfdump.c:1279
+main (argc=4, argv=0xbfffe844) at swfdump.c:1279
 1279		fonts = (SWFFONT**)malloc(fontnum*sizeof(SWFFONT*));
 1280		fontnum = 0;
 1281		swf_FontEnumerate(&swf,&fontcallback2, 0);
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc06 <fontcallback1>, self=0x0) at modules/swftext.c:107
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:107
 107	{
 110	    if (!swf)
 112	    t = swf->firstTag;
+115	    while (t) {
 113	    n = 0;
-115	    while (t) {
+133			(FontCallback) (self, id, s);
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe008) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e6008) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe008) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6008) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe030) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e6030) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe030) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6030) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe080) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e6080) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe080) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6080) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe0a8) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e60a8) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe0a8) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e60a8) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe0d0) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e60d0) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe0d0) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e60d0) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe0f8) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e60f8) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe0f8) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e60f8) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe120) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e6120) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe120) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6120) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe148) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e6148) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe148) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6148) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe170) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e6170) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe170) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6170) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe1c0) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e61c0) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe1c0) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e61c0) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe1f8) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e61f8) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe1f8) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e61f8) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe230) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e6230) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe230) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6230) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe268) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e6268) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe268) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6268) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe290) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e6290) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe290) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6290) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe2c8) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e62c8) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe2c8) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e62c8) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe2f0) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e62f0) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe2f0) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e62f0) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe318) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e6318) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe318) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6318) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe370) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e6370) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe370) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6370) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe3a8) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e63a8) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe3a8) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e63a8) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe3f8) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e63f8) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe3f8) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e63f8) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe450) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e6450) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe450) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6450) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe4a0) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e64a0) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe4a0) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e64a0) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe4f8) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e64f8) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe4f8) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e64f8) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe550) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e6550) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe550) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6550) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe5a8) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e65a8) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe5a8) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e65a8) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe5e0) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e65e0) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe5e0) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e65e0) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe618) at modules/swftools.c:1169
-1169	    if(tag->id == ST_DEFINEFONT ||
-1170	       tag->id == ST_DEFINEFONT2 ||
+swf_isFontTag (tag=tag@entry=0x80e6618) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1173	        return 1;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:117
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:117
 117		    n++;
 118		    if (FontCallback) {
 122			s[0] = 0;
 123			swf_SetTagPos(t, 0);
-swf_SetTagPos (t=0x80fe618, pos=0) at rfxswf.c:67
+swf_SetTagPos (t=t@entry=0x80e6618, pos=pos@entry=0) at rfxswf.c:67
 67	{ swf_ResetReadBits(t);
 68	  if (pos<=t->len) t->pos = pos;
 74	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:125
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:125
 125			id = swf_GetU16(t);
-swf_GetU16 (t=0x80fe618) at rfxswf.c:105
+swf_GetU16 (t=t@entry=0x80e6618) at rfxswf.c:105
 105	{ U16 res;
 106	  swf_ResetReadBits(t);
 108	    if ((int)t->pos>((int)t->len-2)) 
@@ -2586,15 +2437,17 @@ swf_GetU16 (t=0x80fe618) at rfxswf.c:105
 114	  t->pos+=2;
 115	  return res;
 116	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:126
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:126
 126			if (swf_GetTagID(t) == ST_DEFINEFONT2 || swf_GetTagID(t) == ST_DEFINEFONTINFO || swf_GetTagID(t) == ST_DEFINEFONTINFO2) {
-swf_GetTagID (t=0x80fe618) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e6618) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:127
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:127
 127			    swf_GetU16(t);
-swf_GetU16 (t=0x80fe618) at rfxswf.c:105
+swf_GetU16 (t=t@entry=0x80e6618) at rfxswf.c:105
 105	{ U16 res;
 106	  swf_ResetReadBits(t);
 108	    if ((int)t->pos>((int)t->len-2)) 
@@ -2602,405 +2455,406 @@ swf_GetU16 (t=0x80fe618) at rfxswf.c:105
 114	  t->pos+=2;
 115	  return res;
 116	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:128
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:128
 128			    l = swf_GetU8(t);
-swf_GetU8 (t=0x80fe618) at rfxswf.c:93
+swf_GetU8 (t=t@entry=0x80e6618) at rfxswf.c:93
 93	{ swf_ResetReadBits(t);
 95	    if ((int)t->pos>=(int)t->len) 
 101	  return t->data[t->pos++];
 102	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:129
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:129
 129			    swf_GetBlock(t, s, l);
-swf_GetBlock (t=0x80fe618, b=0xbfffe2eb "", l=15) at rfxswf.c:136
+swf_GetBlock (t=t@entry=0x80e6618, b=b@entry=0xbfffe3bb "", l=l@entry=15)
+    at rfxswf.c:136
 136	{ swf_ResetReadBits(t);
 137	  if ((t->len-t->pos)<l) l=t->len-t->pos;
 138	  if (b && l) memcpy(b,&t->data[t->pos],l);
 139	  t->pos+=l;
-140	  return l;
 141	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:130
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:130
 130			    s[l] = 0;
 133			(FontCallback) (self, id, s);
-fontcallback2 (self=0x0, id=37944, name=0xbfffe2eb "Times New Roman")
+fontcallback2 (self=0x0, id=118, name=0xbfffe3bb "Times New Roman")
     at swfdump.c:925
 925	{ 
 926	  swf_FontExtract(&swf,id,&fonts[fontnum]);
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:582
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:582
 582	{
 586	    if ((!swf) || (!font))
 589	    f = (SWFFONT *) rfx_calloc(sizeof(SWFFONT));
-rfx_calloc (size=60) at mem.c:61
+rfx_calloc (size=size@entry=60) at mem.c:61
 61	{
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:591
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:591
 591	    t = swf->firstTag;
 593	    while (t) {
-594		int nid = 0;
 595		switch (swf_GetTagID(t)) {
-swf_GetTagID (t=0x80fe008) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e6008) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:627
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:594
+594		int nid = 0;
 627		if (nid > 0)
 629		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe008) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6008) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:593
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:593
 593	    while (t) {
-594		int nid = 0;
 595		switch (swf_GetTagID(t)) {
-swf_GetTagID (t=0x80fe030) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e6030) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:627
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:594
+594		int nid = 0;
 627		if (nid > 0)
 629		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe030) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6030) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:593
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:593
 593	    while (t) {
-594		int nid = 0;
 595		switch (swf_GetTagID(t)) {
-swf_GetTagID (t=0x80fe080) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e6080) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:627
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:594
+594		int nid = 0;
 627		if (nid > 0)
 629		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe080) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6080) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:593
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:593
 593	    while (t) {
-594		int nid = 0;
 595		switch (swf_GetTagID(t)) {
-swf_GetTagID (t=0x80fe0a8) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e60a8) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:627
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:594
+594		int nid = 0;
 627		if (nid > 0)
 629		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe0a8) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e60a8) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:593
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:593
 593	    while (t) {
-594		int nid = 0;
 595		switch (swf_GetTagID(t)) {
-swf_GetTagID (t=0x80fe0d0) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e60d0) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:627
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:594
+594		int nid = 0;
 627		if (nid > 0)
 629		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe0d0) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e60d0) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:593
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:593
 593	    while (t) {
-594		int nid = 0;
 595		switch (swf_GetTagID(t)) {
-swf_GetTagID (t=0x80fe0f8) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e60f8) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:627
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:594
+594		int nid = 0;
 627		if (nid > 0)
 629		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe0f8) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e60f8) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:593
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:593
 593	    while (t) {
-594		int nid = 0;
 595		switch (swf_GetTagID(t)) {
-swf_GetTagID (t=0x80fe120) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e6120) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:627
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:594
+594		int nid = 0;
 627		if (nid > 0)
 629		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe120) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6120) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:593
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:593
 593	    while (t) {
-594		int nid = 0;
 595		switch (swf_GetTagID(t)) {
-swf_GetTagID (t=0x80fe148) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e6148) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:627
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:594
+594		int nid = 0;
 627		if (nid > 0)
 629		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe148) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6148) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:593
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:593
 593	    while (t) {
-594		int nid = 0;
 595		switch (swf_GetTagID(t)) {
-swf_GetTagID (t=0x80fe170) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e6170) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:627
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:594
+594		int nid = 0;
 627		if (nid > 0)
 629		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe170) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6170) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:593
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:593
 593	    while (t) {
-594		int nid = 0;
 595		switch (swf_GetTagID(t)) {
-swf_GetTagID (t=0x80fe1c0) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e61c0) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:627
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:594
+594		int nid = 0;
 627		if (nid > 0)
 629		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe1c0) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e61c0) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:593
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:593
 593	    while (t) {
-594		int nid = 0;
 595		switch (swf_GetTagID(t)) {
-swf_GetTagID (t=0x80fe1f8) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e61f8) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:627
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:594
+594		int nid = 0;
 627		if (nid > 0)
 629		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe1f8) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e61f8) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:593
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:593
 593	    while (t) {
-594		int nid = 0;
 595		switch (swf_GetTagID(t)) {
-swf_GetTagID (t=0x80fe230) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e6230) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:627
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:594
+594		int nid = 0;
 627		if (nid > 0)
 629		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe230) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6230) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:593
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:593
 593	    while (t) {
-594		int nid = 0;
 595		switch (swf_GetTagID(t)) {
-swf_GetTagID (t=0x80fe268) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e6268) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:627
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:594
+594		int nid = 0;
 627		if (nid > 0)
 629		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe268) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6268) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:593
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:593
 593	    while (t) {
-594		int nid = 0;
 595		switch (swf_GetTagID(t)) {
-swf_GetTagID (t=0x80fe290) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e6290) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:627
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:594
+594		int nid = 0;
 627		if (nid > 0)
 629		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe290) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6290) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:593
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:593
 593	    while (t) {
-594		int nid = 0;
 595		switch (swf_GetTagID(t)) {
-swf_GetTagID (t=0x80fe2c8) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e62c8) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:627
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:594
+594		int nid = 0;
 627		if (nid > 0)
 629		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe2c8) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e62c8) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:593
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:593
 593	    while (t) {
-594		int nid = 0;
 595		switch (swf_GetTagID(t)) {
-swf_GetTagID (t=0x80fe2f0) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e62f0) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:627
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:594
+594		int nid = 0;
 627		if (nid > 0)
 629		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe2f0) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e62f0) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:593
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:593
 593	    while (t) {
-594		int nid = 0;
 595		switch (swf_GetTagID(t)) {
-swf_GetTagID (t=0x80fe318) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e6318) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:627
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:594
+594		int nid = 0;
 627		if (nid > 0)
 629		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe318) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6318) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:593
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:593
 593	    while (t) {
-594		int nid = 0;
 595		switch (swf_GetTagID(t)) {
-swf_GetTagID (t=0x80fe370) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e6370) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:627
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:594
+594		int nid = 0;
 627		if (nid > 0)
 629		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe370) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6370) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:593
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:593
 593	    while (t) {
-594		int nid = 0;
 595		switch (swf_GetTagID(t)) {
-swf_GetTagID (t=0x80fe3a8) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e63a8) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:627
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:594
+594		int nid = 0;
 627		if (nid > 0)
 629		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe3a8) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e63a8) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:593
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:593
 593	    while (t) {
-594		int nid = 0;
 595		switch (swf_GetTagID(t)) {
-swf_GetTagID (t=0x80fe3f8) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e63f8) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:627
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:594
+594		int nid = 0;
 627		if (nid > 0)
 629		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe3f8) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e63f8) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:593
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:593
 593	    while (t) {
-594		int nid = 0;
 595		switch (swf_GetTagID(t)) {
-swf_GetTagID (t=0x80fe450) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e6450) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:627
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:594
+594		int nid = 0;
 627		if (nid > 0)
 629		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe450) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6450) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:593
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:593
 593	    while (t) {
-594		int nid = 0;
 595		switch (swf_GetTagID(t)) {
-swf_GetTagID (t=0x80fe4a0) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e64a0) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:627
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:594
+594		int nid = 0;
 627		if (nid > 0)
 629		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe4a0) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e64a0) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:593
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:593
 593	    while (t) {
-594		int nid = 0;
 595		switch (swf_GetTagID(t)) {
-swf_GetTagID (t=0x80fe4f8) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e64f8) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:627
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:594
+594		int nid = 0;
 627		if (nid > 0)
 629		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe4f8) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e64f8) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:593
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:593
 593	    while (t) {
-594		int nid = 0;
 595		switch (swf_GetTagID(t)) {
-swf_GetTagID (t=0x80fe550) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e6550) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:627
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:594
+594		int nid = 0;
 627		if (nid > 0)
 629		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe550) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6550) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:593
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:593
 593	    while (t) {
-594		int nid = 0;
 595		switch (swf_GetTagID(t)) {
-swf_GetTagID (t=0x80fe5a8) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e65a8) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:627
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:594
+594		int nid = 0;
 627		if (nid > 0)
 629		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe5a8) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e65a8) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:593
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:593
 593	    while (t) {
-594		int nid = 0;
 595		switch (swf_GetTagID(t)) {
-swf_GetTagID (t=0x80fe5e0) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e65e0) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:627
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:594
+594		int nid = 0;
 627		if (nid > 0)
 629		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe5e0) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e65e0) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:593
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:593
 593	    while (t) {
-594		int nid = 0;
 595		switch (swf_GetTagID(t)) {
-swf_GetTagID (t=0x80fe618) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e6618) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:602
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:602
 602		    nid = swf_FontExtract_DefineFont2(id, f, t);
-swf_FontExtract_DefineFont2 (id=118, font=0x80fe758, tag=0x80fe618)
-    at modules/swftext.c:257
+swf_FontExtract_DefineFont2 (id=id@entry=118, font=font@entry=0x80e6758, 
+    tag=tag@entry=0x80e6618) at modules/swftext.c:257
 257	    swf_SetTagPos(tag, 0);
-swf_SetTagPos (t=0x80fe618, pos=0) at rfxswf.c:67
+swf_SetTagPos (t=t@entry=0x80e6618, pos=pos@entry=0) at rfxswf.c:67
 67	{ swf_ResetReadBits(t);
 68	  if (pos<=t->len) t->pos = pos;
 74	}
-swf_FontExtract_DefineFont2 (id=118, font=0x80fe758, tag=0x80fe618)
-    at modules/swftext.c:258
+swf_FontExtract_DefineFont2 (id=id@entry=118, font=font@entry=0x80e6758, 
+    tag=tag@entry=0x80e6618) at modules/swftext.c:258
 258	    font->version = tag->id==ST_DEFINEFONT3?3:2;
 259	    fid = swf_GetU16(tag);
-swf_GetU16 (t=0x80fe618) at rfxswf.c:105
+swf_GetU16 (t=t@entry=0x80e6618) at rfxswf.c:105
 105	{ U16 res;
 106	  swf_ResetReadBits(t);
 108	    if ((int)t->pos>((int)t->len-2)) 
@@ -3008,26 +2862,26 @@ swf_GetU16 (t=0x80fe618) at rfxswf.c:105
 114	  t->pos+=2;
 115	  return res;
 116	}
-swf_FontExtract_DefineFont2 (id=118, font=0x80fe758, tag=0x80fe618)
-    at modules/swftext.c:260
+swf_FontExtract_DefineFont2 (id=id@entry=118, font=font@entry=0x80e6758, 
+    tag=tag@entry=0x80e6618) at modules/swftext.c:260
 260	    if (id && id != fid)
 262	    font->id = fid;
 263	    flags1 = swf_GetU8(tag);
-swf_GetU8 (t=0x80fe618) at rfxswf.c:93
+swf_GetU8 (t=t@entry=0x80e6618) at rfxswf.c:93
 93	{ swf_ResetReadBits(t);
 95	    if ((int)t->pos>=(int)t->len) 
 101	  return t->data[t->pos++];
 102	}
-swf_FontExtract_DefineFont2 (id=118, font=0x80fe758, tag=0x80fe618)
-    at modules/swftext.c:264
+swf_FontExtract_DefineFont2 (id=id@entry=118, font=font@entry=0x80e6758, 
+    tag=tag@entry=0x80e6618) at modules/swftext.c:264
 264	    langcode = swf_GetU8(tag);	//reserved flags
-swf_GetU8 (t=0x80fe618) at rfxswf.c:93
+swf_GetU8 (t=t@entry=0x80e6618) at rfxswf.c:93
 93	{ swf_ResetReadBits(t);
 95	    if ((int)t->pos>=(int)t->len) 
 101	  return t->data[t->pos++];
 102	}
-swf_FontExtract_DefineFont2 (id=118, font=0x80fe758, tag=0x80fe618)
-    at modules/swftext.c:266
+swf_FontExtract_DefineFont2 (id=id@entry=118, font=font@entry=0x80e6758, 
+    tag=tag@entry=0x80e6618) at modules/swftext.c:266
 266	    if (flags1 & 1)
 268	    if (flags1 & 2)
 270	    if (flags1 & 16)
@@ -3035,36 +2889,35 @@ swf_FontExtract_DefineFont2 (id=118, font=0x80fe758, tag=0x80fe618)
 272	    if (flags1 & 32)
 274	    if (flags1 & 64)
 277	    namelen = swf_GetU8(tag);
-swf_GetU8 (t=0x80fe618) at rfxswf.c:93
+swf_GetU8 (t=t@entry=0x80e6618) at rfxswf.c:93
 93	{ swf_ResetReadBits(t);
 95	    if ((int)t->pos>=(int)t->len) 
 101	  return t->data[t->pos++];
 102	}
-swf_FontExtract_DefineFont2 (id=118, font=0x80fe758, tag=0x80fe618)
-    at modules/swftext.c:278
+swf_FontExtract_DefineFont2 (id=id@entry=118, font=font@entry=0x80e6758, 
+    tag=tag@entry=0x80e6618) at modules/swftext.c:278
 278	    font->name = (U8 *) rfx_alloc(namelen + 1);
-rfx_alloc (size=16) at mem.c:22
+rfx_alloc (size=size@entry=16) at mem.c:22
 22	{
 24	  if(size == 0) {
 30	  ptr = malloc(size);
 31	  if(!ptr) {
-36	  return ptr;
 37	}
-swf_FontExtract_DefineFont2 (id=118, font=0x80fe758, tag=0x80fe618)
-    at modules/swftext.c:279
+swf_FontExtract_DefineFont2 (id=id@entry=118, font=font@entry=0x80e6758, 
+    tag=tag@entry=0x80e6618) at modules/swftext.c:279
 279	    font->name[namelen] = 0;
 280	    swf_GetBlock(tag, font->name, namelen);
-swf_GetBlock (t=0x80fe618, b=0x80fe798 "", l=15) at rfxswf.c:136
+swf_GetBlock (t=t@entry=0x80e6618, b=0x80e6798 "", l=l@entry=15)
+    at rfxswf.c:136
 136	{ swf_ResetReadBits(t);
 137	  if ((t->len-t->pos)<l) l=t->len-t->pos;
 138	  if (b && l) memcpy(b,&t->data[t->pos],l);
 139	  t->pos+=l;
-140	  return l;
 141	}
-swf_FontExtract_DefineFont2 (id=118, font=0x80fe758, tag=0x80fe618)
-    at modules/swftext.c:281
+swf_FontExtract_DefineFont2 (id=id@entry=118, font=font@entry=0x80e6758, 
+    tag=tag@entry=0x80e6618) at modules/swftext.c:281
 281	    glyphcount = swf_GetU16(tag);
-swf_GetU16 (t=0x80fe618) at rfxswf.c:105
+swf_GetU16 (t=t@entry=0x80e6618) at rfxswf.c:105
 105	{ U16 res;
 106	  swf_ResetReadBits(t);
 108	    if ((int)t->pos>((int)t->len-2)) 
@@ -3072,112 +2925,65 @@ swf_GetU16 (t=0x80fe618) at rfxswf.c:105
 114	  t->pos+=2;
 115	  return res;
 116	}
-swf_FontExtract_DefineFont2 (id=118, font=0x80fe758, tag=0x80fe618)
-    at modules/swftext.c:282
+swf_FontExtract_DefineFont2 (id=id@entry=118, font=font@entry=0x80e6758, 
+    tag=tag@entry=0x80e6618) at modules/swftext.c:282
 282	    font->numchars = glyphcount;
 284	    font->glyph = (SWFGLYPH *) rfx_calloc(sizeof(SWFGLYPH) * glyphcount);
-rfx_calloc (size=0) at mem.c:61
+rfx_calloc (size=size@entry=0) at mem.c:61
 61	{
 63	  if(size == 0) {
 66	    return 0;
 82	}
-swf_FontExtract_DefineFont2 (id=118, font=0x80fe758, tag=0x80fe618)
-    at modules/swftext.c:285
+swf_FontExtract_DefineFont2 (id=id@entry=118, font=font@entry=0x80e6758, 
+    tag=tag@entry=0x80e6618) at modules/swftext.c:285
 285	    font->glyph2ascii = (U16 *) rfx_calloc(sizeof(U16) * glyphcount);
-rfx_calloc (size=0) at mem.c:61
+rfx_calloc (size=size@entry=0) at mem.c:61
 61	{
 63	  if(size == 0) {
 66	    return 0;
 82	}
-swf_FontExtract_DefineFont2 (id=118, font=0x80fe758, tag=0x80fe618)
-    at modules/swftext.c:287
+swf_FontExtract_DefineFont2 (id=id@entry=118, font=font@entry=0x80e6758, 
+    tag=tag@entry=0x80e6618) at modules/swftext.c:287
 287	    offset = (U32*)rfx_calloc(sizeof(U32)*(glyphcount+1));
-rfx_calloc (size=4) at mem.c:61
+rfx_calloc (size=size@entry=4) at mem.c:61
 61	{
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_FontExtract_DefineFont2 (id=118, font=0x80fe758, tag=0x80fe618)
-    at modules/swftext.c:288
+swf_FontExtract_DefineFont2 (id=id@entry=118, font=font@entry=0x80e6758, 
+    tag=tag@entry=0x80e6618) at modules/swftext.c:288
 288	    offset_start = tag->pos;
 290	    if (flags1 & 8) {		// wide offsets
 299		for (t = 0; t < glyphcount; t++)
 302		if (glyphcount)		/* this _if_ is not in the specs */
 305		    offset[glyphcount] = tag->pos;
-307	    for (t = 0; t < glyphcount; t++) {
 312	    if(glyphcount)
 315	    free(offset);
-__GI___libc_free (mem=0x80fe7b0) at malloc.c:2912
-2912	malloc.c: No such file or directory.
-2917	in malloc.c
-2918	in malloc.c
-2924	in malloc.c
-2927	in malloc.c
-2929	in malloc.c
-2945	in malloc.c
-2946	in malloc.c
-2947	in malloc.c
-2946	in malloc.c
-_int_free (av=0xb7fa7420 <main_arena>, p=0x80fe7a8, have_lock=0)
-    at malloc.c:3814
-3814	in malloc.c
-3827	in malloc.c
-3814	in malloc.c
-3827	in malloc.c
-3833	in malloc.c
-3834	in malloc.c
-3845	in malloc.c
-3858	in malloc.c
-3869	in malloc.c
-3870	in malloc.c
-3894	in malloc.c
-3896	in malloc.c
-3897	in malloc.c
-3901	in malloc.c
-3898	in malloc.c
-3897	in malloc.c
-3907	in malloc.c
-3902	in malloc.c
-3916	in malloc.c
-3918	in malloc.c
-3920	in malloc.c
-3922	in malloc.c
-4087	in malloc.c
-swf_FontExtract_DefineFont2 (id=118, font=0x80fe758, tag=0x80fe618)
-    at modules/swftext.c:317
-317	    maxcode = 0;
-318	    for (t = 0; t < glyphcount; t++) {
-328	    maxcode++;
-329	    if (maxcode < 256)
-330		maxcode = 256;
 331	    font->maxascii = maxcode;
 332	    font->ascii2glyph = (int *) rfx_alloc(sizeof(int) * maxcode);
-rfx_alloc (size=1024) at mem.c:22
+rfx_alloc (size=size@entry=1024) at mem.c:22
 22	{
 24	  if(size == 0) {
 30	  ptr = malloc(size);
 31	  if(!ptr) {
-36	  return ptr;
 37	}
-swf_FontExtract_DefineFont2 (id=118, font=0x80fe758, tag=0x80fe618)
-    at modules/swftext.c:333
+swf_FontExtract_DefineFont2 (id=id@entry=118, font=font@entry=0x80e6758, 
+    tag=tag@entry=0x80e6618) at modules/swftext.c:333
 333	    memset(font->ascii2glyph, -1, sizeof(int) * maxcode);
 334	    for (t = 0; t < glyphcount; t++) {
 338	    if (flags1 & 128) {		// has layout
 340		font->layout = (SWFLAYOUT *) rfx_alloc(sizeof(SWFLAYOUT));
-rfx_alloc (size=20) at mem.c:22
+rfx_alloc (size=size@entry=20) at mem.c:22
 22	{
 24	  if(size == 0) {
 30	  ptr = malloc(size);
 31	  if(!ptr) {
-36	  return ptr;
 37	}
-swf_FontExtract_DefineFont2 (id=118, font=0x80fe758, tag=0x80fe618)
-    at modules/swftext.c:341
+swf_FontExtract_DefineFont2 (id=id@entry=118, font=font@entry=0x80e6758, 
+    tag=tag@entry=0x80e6618) at modules/swftext.c:341
 341		font->layout->ascent = swf_GetU16(tag);
-swf_GetU16 (t=0x80fe618) at rfxswf.c:105
+swf_GetU16 (t=t@entry=0x80e6618) at rfxswf.c:105
 105	{ U16 res;
 106	  swf_ResetReadBits(t);
 108	    if ((int)t->pos>((int)t->len-2)) 
@@ -3185,10 +2991,10 @@ swf_GetU16 (t=0x80fe618) at rfxswf.c:105
 114	  t->pos+=2;
 115	  return res;
 116	}
-swf_FontExtract_DefineFont2 (id=118, font=0x80fe758, tag=0x80fe618)
-    at modules/swftext.c:342
+swf_FontExtract_DefineFont2 (id=id@entry=118, font=font@entry=0x80e6758, 
+    tag=tag@entry=0x80e6618) at modules/swftext.c:342
 342		font->layout->descent = swf_GetU16(tag);
-swf_GetU16 (t=0x80fe618) at rfxswf.c:105
+swf_GetU16 (t=t@entry=0x80e6618) at rfxswf.c:105
 105	{ U16 res;
 106	  swf_ResetReadBits(t);
 108	    if ((int)t->pos>((int)t->len-2)) 
@@ -3196,10 +3002,10 @@ swf_GetU16 (t=0x80fe618) at rfxswf.c:105
 114	  t->pos+=2;
 115	  return res;
 116	}
-swf_FontExtract_DefineFont2 (id=118, font=0x80fe758, tag=0x80fe618)
-    at modules/swftext.c:343
+swf_FontExtract_DefineFont2 (id=id@entry=118, font=font@entry=0x80e6758, 
+    tag=tag@entry=0x80e6618) at modules/swftext.c:343
 343		font->layout->leading = swf_GetU16(tag);
-swf_GetU16 (t=0x80fe618) at rfxswf.c:105
+swf_GetU16 (t=t@entry=0x80e6618) at rfxswf.c:105
 105	{ U16 res;
 106	  swf_ResetReadBits(t);
 108	    if ((int)t->pos>((int)t->len-2)) 
@@ -3207,20 +3013,19 @@ swf_GetU16 (t=0x80fe618) at rfxswf.c:105
 114	  t->pos+=2;
 115	  return res;
 116	}
-swf_FontExtract_DefineFont2 (id=118, font=0x80fe758, tag=0x80fe618)
-    at modules/swftext.c:344
+swf_FontExtract_DefineFont2 (id=id@entry=118, font=font@entry=0x80e6758, 
+    tag=tag@entry=0x80e6618) at modules/swftext.c:344
 344		for (t = 0; t < glyphcount; t++) {
 348		font->layout->bounds = (SRECT*)rfx_alloc(glyphcount * sizeof(SRECT));
-rfx_alloc (size=0) at mem.c:22
+rfx_alloc (size=size@entry=0) at mem.c:22
 22	{
 24	  if(size == 0) {
 27	    return 0;
 37	}
-swf_FontExtract_DefineFont2 (id=118, font=0x80fe758, tag=0x80fe618)
-    at modules/swftext.c:349
-349		for (t = 0; t < glyphcount; t++) {
+swf_FontExtract_DefineFont2 (id=id@entry=118, font=font@entry=0x80e6758, 
+    tag=tag@entry=0x80e6618) at modules/swftext.c:361
 361		kerningcount = swf_GetU16(tag);
-swf_GetU16 (t=0x80fe618) at rfxswf.c:105
+swf_GetU16 (t=0x80e6618) at rfxswf.c:105
 105	{ U16 res;
 106	  swf_ResetReadBits(t);
 108	    if ((int)t->pos>((int)t->len-2)) 
@@ -3228,221 +3033,207 @@ swf_GetU16 (t=0x80fe618) at rfxswf.c:105
 114	  t->pos+=2;
 115	  return res;
 116	}
-swf_FontExtract_DefineFont2 (id=118, font=0x80fe758, tag=0x80fe618)
-    at modules/swftext.c:362
+swf_FontExtract_DefineFont2 (id=id@entry=118, font=font@entry=0x80e6758, 
+    tag=tag@entry=0x80e6618) at modules/swftext.c:362
 362		font->layout->kerningcount = kerningcount;
 364		font->layout->kerning = (SWFKERNING *) rfx_alloc(sizeof(SWFKERNING) * kerningcount);
-rfx_alloc (size=0) at mem.c:22
+rfx_alloc (size=size@entry=0) at mem.c:22
 22	{
 24	  if(size == 0) {
 27	    return 0;
 37	}
-swf_FontExtract_DefineFont2 (id=118, font=0x80fe758, tag=0x80fe618)
-    at modules/swftext.c:365
+swf_FontExtract_DefineFont2 (id=id@entry=118, font=font@entry=0x80e6758, 
+    tag=tag@entry=0x80e6618) at modules/swftext.c:365
 365		if (kerningcount) {
 379	    return font->id;
 380	}
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:603
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:603
 603		    break;
 627		if (nid > 0)
-628		    id = nid;
 629		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe618) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6618) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:593
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:593
 593	    while (t) {
-594		int nid = 0;
 595		switch (swf_GetTagID(t)) {
-swf_GetTagID (t=0x80fe668) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e6668) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:627
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:594
+594		int nid = 0;
 627		if (nid > 0)
 629		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe668) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6668) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:593
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:593
 593	    while (t) {
-594		int nid = 0;
 595		switch (swf_GetTagID(t)) {
-swf_GetTagID (t=0x80fe6c0) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e66c0) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:627
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:594
+594		int nid = 0;
 627		if (nid > 0)
 629		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe6c0) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e66c0) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:593
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:593
 593	    while (t) {
-594		int nid = 0;
 595		switch (swf_GetTagID(t)) {
-swf_GetTagID (t=0x80fe6f8) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e66f8) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:627
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:594
+594		int nid = 0;
 627		if (nid > 0)
 629		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe6f8) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e66f8) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:593
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:593
 593	    while (t) {
-594		int nid = 0;
 595		switch (swf_GetTagID(t)) {
-swf_GetTagID (t=0x80fe720) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e6720) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:627
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:594
+594		int nid = 0;
 627		if (nid > 0)
 629		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe720) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6720) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontExtract (swf=0x80f9ce0 <swf>, id=118, font=0x80fe748)
-    at modules/swftext.c:593
+swf_FontExtract (swf=swf@entry=0x80d18e0 <swf>, id=id@entry=118, 
+    font=0x80e6748) at modules/swftext.c:593
 593	    while (t) {
 631	    if (f->id != id) {
 635	    font[0] = f;
 636	    return 0;
 637	}
-fontcallback2 (self=0x0, id=118, name=0xbfffe2eb "Times New Roman")
+fontcallback2 (self=0x0, id=118, name=0xbfffe3bb "Times New Roman")
     at swfdump.c:927
 927	  fontnum++;
 928	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe618) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6618) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe668) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e6668) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe668) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6668) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe6c0) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e66c0) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe6c0) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e66c0) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe6f8) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e66f8) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe6f8) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e66f8) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
 116		if (swf_isFontTag(t)) {
-swf_isFontTag (tag=0x80fe720) at modules/swftools.c:1169
+swf_isFontTag (tag=tag@entry=0x80e6720) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:136
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:136
 136		t = swf_NextTag(t);
-swf_NextTag (t=0x80fe720) at rfxswf.c:59
+swf_NextTag (t=t@entry=0x80e6720) at rfxswf.c:59
 59	TAG * swf_NextTag(TAG * t) { return t->next; }
-swf_FontEnumerate (swf=0x80f9ce0 <swf>, 
-    FontCallback=0x804cc2f <fontcallback2>, self=0x0) at modules/swftext.c:115
+swf_FontEnumerate (swf=swf@entry=0x80d18e0 <swf>, 
+    FontCallback=FontCallback@entry=0x8049373 <fontcallback2>, 
+    self=self@entry=0x0) at modules/swftext.c:115
 115	    while (t) {
-138	    return n;
 139	}
-main (argc=3, argv=0xbfffe7c4) at swfdump.c:1284
+main (argc=4, argv=0xbfffe844) at swfdump.c:1284
 1284	    while(tag) {
 1285	        char*name = swf_TagGetName(tag);
-swf_TagGetName (tag=0x80fe008) at modules/swfdump.c:121
+swf_TagGetName (tag=0x80e6008) at modules/swfdump.c:121
 121	{
 122	    switch(tag->id)
 133	            return "PLACEOBJECT";
+122	    switch(tag->id)
 275	}
-main (argc=3, argv=0xbfffe7c4) at swfdump.c:1287
+main (argc=4, argv=0xbfffe844) at swfdump.c:1287
 1287	        if(!name) {
-1292		if(!name) {
 1295		if(cumulative) {
 1299		    printf("[%03x] %9d %s%s", tag->id, tag->len, prefix, swf_TagGetName(tag));
 1302	        if(tag->id == ST_PLACEOBJECT) {
 1303	            printf(" places id %04d at depth %04x", swf_GetPlaceID(tag), swf_GetDepth(tag));
 1304	            if(swf_GetName(tag))
-swf_GetName (t=0x80fe008) at modules/swftools.c:386
+swf_GetName (t=t@entry=0x80e6008) at modules/swftools.c:386
 386	{
-387	    char* name = 0;
 391	    oldTagPos = swf_GetTagPos(t);
-swf_GetTagPos (t=0x80fe008) at rfxswf.c:64
+swf_GetTagPos (t=t@entry=0x80e6008) at rfxswf.c:64
 64	U32   swf_GetTagPos(TAG * t)   { return t->pos; }
-swf_GetName (t=0x80fe008) at modules/swftools.c:392
+swf_GetName (t=t@entry=0x80e6008) at modules/swftools.c:392
 392	    swf_SetTagPos(t,0);
-swf_SetTagPos (t=0x80fe008, pos=0) at rfxswf.c:67
+swf_SetTagPos (t=t@entry=0x80e6008, pos=pos@entry=0) at rfxswf.c:67
 67	{ swf_ResetReadBits(t);
 68	  if (pos<=t->len) t->pos = pos;
 74	}
-swf_GetName (t=0x80fe008) at modules/swftools.c:393
+swf_GetName (t=t@entry=0x80e6008) at modules/swftools.c:393
 393	    switch(swf_GetTagID(t))
-swf_GetTagID (t=0x80fe008) at rfxswf.c:61
+swf_GetTagID (t=t@entry=0x80e6008) at rfxswf.c:61
 61	U16   swf_GetTagID(TAG * t)    { return t->id; }
-swf_GetName (t=0x80fe008) at modules/swftools.c:421
+swf_GetName (t=t@entry=0x80e6008) at modules/swftools.c:387
+387	    char* name = 0;
+393	    switch(swf_GetTagID(t))
 421	    swf_SetTagPos(t,oldTagPos);
-swf_SetTagPos (t=0x80fe008, pos=0) at rfxswf.c:67
+swf_SetTagPos (t=t@entry=0x80e6008, pos=pos@entry=0) at rfxswf.c:67
 67	{ swf_ResetReadBits(t);
+0x080490f0 in __x86.get_pc_thunk.bx ()
+Single stepping until exit from function __x86.get_pc_thunk.bx,
+which has no line number information.
+swf_SetTagPos (t=t@entry=0x80e6008, pos=pos@entry=0) at rfxswf.c:68
 68	  if (pos<=t->len) t->pos = pos;
 74	}
-swf_GetName (t=0x80fe008) at modules/swftools.c:422
-422	    return name;
+swf_GetName (t=t@entry=0x80e6008) at modules/swftools.c:423
 423	}
-main (argc=3, argv=0xbfffe7c4) at swfdump.c:1478
-1478		if(tag->id == ST_DEFINEBITSLOSSLESS ||
-1479		   tag->id == ST_DEFINEBITSLOSSLESS2) {
+main (argc=4, argv=0xbfffe844) at swfdump.c:1478
 1478		if(tag->id == ST_DEFINEBITSLOSSLESS ||
 1483		else if(tag->id == ST_DEFINESOUND) {
 1487		else if(tag->id == ST_VIDEOFRAME) {
@@ -3465,87 +3256,79 @@ main (argc=3, argv=0xbfffe7c4) at swfdump.c:1478
 1566	        else if(tag->id == ST_DOINITACTION && action) {
 1572		else if(tag->id == ST_DEFINEBUTTON) {
 1580		else if(swf_isFontTag(tag) && showfonts) {
-swf_isFontTag (tag=0x80fe008) at modules/swftools.c:1169
+swf_isFontTag (tag=0x80e6008) at modules/swftools.c:1169
 1169	    if(tag->id == ST_DEFINEFONT ||
 1170	       tag->id == ST_DEFINEFONT2 ||
-1169	    if(tag->id == ST_DEFINEFONT ||
 1171	       tag->id == ST_DEFINEFONT3 ||
-1170	       tag->id == ST_DEFINEFONT2 ||
-1172	       tag->id == ST_DEFINEFONTINFO)
-1171	       tag->id == ST_DEFINEFONT3 ||
-1174	    return 0;
-1175	}
-main (argc=3, argv=0xbfffe7c4) at swfdump.c:1583
+main (argc=4, argv=0xbfffe844) at swfdump.c:1583
 1583		else if(tag->id == ST_DEFINEBUTTON2) {
 1588		else if(tag->id == ST_PLACEOBJECT) {
 1589		    handlePlaceObject(tag, myprefix);
-handlePlaceObject (tag=0x80fe008, prefix=0xbfffe5fc ' ' <repeats 16 times>)
-    at swfdump.c:807
+handlePlaceObject (tag=0x80e6008, 
+    prefix=prefix@entry=0xbfffe67c ' ' <repeats 16 times>) at swfdump.c:807
 807	{
 808	    TAG*tag2 = swf_InsertTag(0, ST_PLACEOBJECT2);
-swf_InsertTag (after=0x0, id=0) at rfxswf.c:1111
+swf_InsertTag (after=after@entry=0x0, id=id@entry=26) at rfxswf.c:1111
 1111	{ TAG * t;
 1113	  t = (TAG *)rfx_calloc(sizeof(TAG));
-rfx_calloc (size=32) at mem.c:61
+rfx_calloc (size=size@entry=32) at mem.c:61
 61	{
 63	  if(size == 0) {
 69	  ptr = calloc(1, size);
 73	  if(!ptr) {
-81	  return ptr;
 82	}
-swf_InsertTag (after=0x0, id=26) at rfxswf.c:1114
+swf_InsertTag (after=after@entry=0x0, id=id@entry=26) at rfxswf.c:1114
 1114	  t->id = id;
 1116	  if (after)
-1123	  return t;
 1124	}
-handlePlaceObject (tag=0x80fe008, prefix=0xbfffe5fc ' ' <repeats 16 times>)
-    at swfdump.c:813
+handlePlaceObject (tag=0x80e6008, 
+    prefix=prefix@entry=0xbfffe67c ' ' <repeats 16 times>) at swfdump.c:813
 813	    swf_SetTagPos(tag, 0);
-swf_SetTagPos (t=0x80fe008, pos=0) at rfxswf.c:67
+swf_SetTagPos (t=t@entry=0x80e6008, pos=pos@entry=0) at rfxswf.c:67
 67	{ swf_ResetReadBits(t);
 68	  if (pos<=t->len) t->pos = pos;
 74	}
-handlePlaceObject (tag=0x80fe008, prefix=0xbfffe5fc ' ' <repeats 16 times>)
-    at swfdump.c:814
+handlePlaceObject (tag=0x80e6008, 
+    prefix=prefix@entry=0xbfffe67c ' ' <repeats 16 times>) at swfdump.c:814
 814	    id = swf_GetU16(tag);
-swf_GetU16 (t=0x80fe008) at rfxswf.c:105
+swf_GetU16 (t=t@entry=0x80e6008) at rfxswf.c:105
 105	{ U16 res;
 106	  swf_ResetReadBits(t);
 108	    if ((int)t->pos>((int)t->len-2)) 
 109	    { fprintf(stderr,"GetU16() out of bounds: TagID = %i\n",t->id);
 110	      return 0;
 116	}
-handlePlaceObject (tag=0x80fe008, prefix=0xbfffe5fc ' ' <repeats 16 times>)
-    at swfdump.c:815
+handlePlaceObject (tag=0x80e6008, 
+    prefix=prefix@entry=0xbfffe67c ' ' <repeats 16 times>) at swfdump.c:815
 815	    depth = swf_GetU16(tag);
-swf_GetU16 (t=0x80fe008) at rfxswf.c:105
+swf_GetU16 (t=t@entry=0x80e6008) at rfxswf.c:105
 105	{ U16 res;
 106	  swf_ResetReadBits(t);
 108	    if ((int)t->pos>((int)t->len-2)) 
 109	    { fprintf(stderr,"GetU16() out of bounds: TagID = %i\n",t->id);
 110	      return 0;
 116	}
-handlePlaceObject (tag=0x80fe008, prefix=0xbfffe5fc ' ' <repeats 16 times>)
-    at swfdump.c:816
+handlePlaceObject (tag=0x80e6008, 
+    prefix=prefix@entry=0xbfffe67c ' ' <repeats 16 times>) at swfdump.c:816
 816	    swf_GetMatrix(tag, &matrix);
-swf_GetMatrix (t=0x80fe008, m=0xbfffe3d8) at rfxswf.c:834
+swf_GetMatrix (t=t@entry=0x80e6008, m=m@entry=0xbfffe4a8) at rfxswf.c:834
 834	{ MATRIX dummy;
 837	  if (!m) m = &dummy;
 839	  if (!t)
 846	  swf_ResetReadBits(t);
 848	  if (swf_GetBits(t,1))
-swf_GetBits (t=0x80fe008, nbits=1) at rfxswf.c:204
+swf_GetBits (t=t@entry=0x80e6008, nbits=nbits@entry=1) at rfxswf.c:204
 204	{ U32 res = 0;
 205	  if (!nbits) return 0;
 206	  if (!t->readBit) t->readBit = 0x80;
-207	  while (nbits)
-208	  { res<<=1;
 210	    if (t->pos>=t->len) 
+208	  { res<<=1;
 211	    { fprintf(stderr,"GetBits() out of bounds: TagID = %i, pos=%d, len=%d\n",t->id, t->pos, t->len);
 212	      int i,m=t->len>10?10:t->len;
 213	      for(i=-1;i<m;i++) {
 214	        fprintf(stderr, "(%d)%02x ", i, t->data[i]);
 
 Program received signal SIGSEGV, Segmentation fault.
-0x08064e35 in swf_GetBits (t=0x80fe008, nbits=1) at rfxswf.c:214
+0x0805e832 in swf_GetBits (t=t@entry=0x80e6008, nbits=<optimized out>, 
+    nbits@entry=1) at rfxswf.c:214
 214	        fprintf(stderr, "(%d)%02x ", i, t->data[i]);

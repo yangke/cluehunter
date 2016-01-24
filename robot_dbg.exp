@@ -12,15 +12,17 @@ if {$force_conservative} {
 }
 
 set timeout -1
-spawn gdb -q --args ./mcrypt -f key -d mcrypt_in_26.nc
+spawn gdb -q --args sndfile-info sndfile-infolog/exploit_0_0
 match_max 100000
 expect "Reading symbols from *done.\r
 (gdb) "
 send -- "set logging file ./gdb.txt\r"
 send -- "set logging on\r"
-send -- "start\r"
-expect -re "start\r\n\(.*\r\n)*\\(gdb\\) "
+
+send -- "start sndfile-infolog/exploit_0_0 >out\r"
+expect -re "start sndfile-infolog/exploit_0_0 >out\r\n\(.*\r\n)*\\(gdb\\) "
 send -- "n\r"
+
 set jump 0
 set memop "memcpy|memset|memchr|memmove|memcmp|malloc|calloc|alloca|realloc|free"
 set fileop "fopen|fclose|fwprintf|fprintf|vfprintf|fscanf|fread|fwrite|fgetc|fgets|fstat|fnmatch|real_fseek|fseeko64|isatty|fileno|umask"
@@ -29,10 +31,15 @@ set strop "atoi|strlen|strcat|strncat|strtol|strtok|strdup|strcmp|strncmp|strcpy
 set sig "signal|sigaction|sigprocmask|sigpending|sigsuspend|sigemptyset"
 set syscall "srand|gettimeofday|fork|syscall|textdomain|setlocale|getopt_long|ENOENT|bindtextdomain|non_fatal|nonfatal|exit_status|sbrk|CONST_STRNEQ"
 set warnings "Cannot find"
-set loglike ".*\(log|error|buildin).*\r\n"
-set esc ".*\[^A-Za-z0-9_]\($memop|$fileop|$stdop|$strop|$syscall|$sig)\s*\\(.*\r\n"
+set loglike ".*\(_buildin).*\r\n"
+#set loglike ".*\(log|error|buildin).*\r\n"
+set esc ".*\[^_A-Za-z0-9]\($memop|$fileop|$stdop|$strop|$syscall|$sig)\[ \t]*\\(.*\r\n"
 set error_info1 "\(.*\r\n)*\[0-9]+	.*: No such file or directory.\r\n"
 set error_info2 "\[0-9]+	in .*\r\n"
+set comment1 "//.*"
+set comment2 "/\\*.*\\*/"
+set comment "($comment1|comment2)"
+set last_bracket_line "\[0-9]+\[ \t]*\\}\[ \t]*($comment1|$comment2)\[ \t]*\r\n"
 #puts $esc
 set former "\(n|s\)\r\n"
 set latter "\\(gdb\\) "
@@ -41,6 +48,7 @@ expect {
 	-re ".*Program received signal.*$latter" { send -- "set logging off\r";}
 	-re ".*The program no longer exists.*$latter" { send -- "set logging off\r";}
 	-re ".*\r\n.*The program is not being run.*$latter" { exit }
+	-re "$last_bracket_line$latter" {send -- "n\r";exp_continue -continue_timer}
 	-re "$former$error_info1$latter" {send -- "finish\rn\r";exp_continue -continue_timer}
 	-re "$former$error_info2$latter" {send -- "finish\rn\r";exp_continue -continue_timer}
 	-re "$former$loglike$latter" {send -- "n\r";exp_continue -continue_timer}

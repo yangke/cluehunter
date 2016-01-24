@@ -6,12 +6,12 @@ Created on Dec 13, 2015
 import subprocess
 
 from parse.parse import LogParser
-from model.TaintVar import TaintVar
 from Tracker import Tracker
 import filecmp
 import time
 import os
 from parse.MacroInspector import MacroInspector
+from parse.RedundancyFixer import RedundancyFixer 
 
 class TraceTrackTest(object):
     
@@ -57,6 +57,8 @@ class TraceTrackTest(object):
                    
     def parse_list(self):
         parser=LogParser()
+        #parser.setRedundantLevel(RedundancyFixer.REMOVE_INLINE_REDUNDANT)
+        parser.setRedundantLevel(RedundancyFixer.REMOVE_INTERPROCEDURAL_REDUNDANT)
         l=parser.parse(self.logfile_path)
         return l
       

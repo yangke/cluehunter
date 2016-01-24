@@ -4,7 +4,6 @@ Created on Sep 23, 2015
 @author: yangke
 '''
 import re
-
 class Filter:
     @staticmethod
     def filterLibFunc(symbols):
@@ -58,7 +57,17 @@ class Filter:
         clean = Filter.removeStrings(e)
         cleaner = "".join(clean.split())
         cleanest=cleaner.replace("->", "@")
-        words=set(re.split(r"[^A-Za-z0-9_\.@]",cleanest))-set([''])
+        segs1=re.split(r"(?<=[_A-Za-z0-9])\s+(?=[_A-Za-z0-9])",cleanest)#To avoid the case:'int a'-->'inta' 
+        segs2=set()
+        for seg in segs1:
+            sgs=re.split(r"(?<=[_A-Za-z0-9\)])\*",''.join(seg.split()))
+            segs2|=set(sgs)
+        segs3=set()
+        for seg in segs2:
+            sgs=re.split(r"[^A-Za-z0-9_\.@\*]",seg)
+            segs3|=set(sgs)
+        words=segs3-set([''])
+        #words=set(re.split(r"[^A-Za-z0-9_\.@]",cleanest))-set([''])
         symbols=[w.replace("@","->") for w in words]
         return symbols
     @staticmethod

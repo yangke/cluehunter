@@ -7,12 +7,21 @@ import re
 class TaintVar:
     
     def __init__(self,s,p,rfl=0,varpart_ref=False):
+        if re.search(r"/|\+|\-(?!>)",s):
+            print "Wrong variable string! Expression detected! Please parse it to variable!"
+            print 1/0
         self.v="".join(s.split())
+        if self.v=='':
+            print "Variable initialization meet EMPTY STRING!"
+            print 1/0
         self.p=p   #data_access_pattern
         print "Init Variable:",self.v,self.p
         if "t1.next"==self.v:
             print "IJ"
-        self.ref_len=rfl
+        self.ref_len=rfl#for parameter 'prev', data access pattern '*(prev->next->data)'
+        #prev->next=... is valid assignment and prev=... is invalid assignment.
+        #why? because the valid modifation length for prev is 1
+        #Name this length as 'rfl' here        
         if rfl>0:
             varpart_ref=True
         self.make_match_easier(varpart_ref)
@@ -217,7 +226,7 @@ class TaintVar:
                     else:
                         return 0,[]
                 else:
-                    if not "." in x:
+                    if "." not in x:
                         rfl+=1
                     if identifier[0]=='&':
                         if '.' in x:# m=&(a.b)-------->m->b

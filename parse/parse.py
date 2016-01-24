@@ -23,20 +23,27 @@ class LogParser:
         normalLinePattern = re.compile(r'^[1-9][0-9]*.*\n')
         headInfoPattern = re.compile(r'^[A-Za-z_][A-Za-z0-9_]+.*\n')
         nullLinePattern = re.compile(r'^\s*\n')
-        valueReturnLinePattern=re.compile(r'^(Value returned is |Run till exit from ).*\n')
+        valueReturnLinePattern=re.compile(r'^(Value returned is |Run till exit from ).*')
+        no_such_file_or_directory=r'No such file or directory.'
         nullLineNum = 0
         l = []
         isFuncInfo=True
         funcInfoStr=''
-        funcInfo = None 
+        funcInfo = None
         errorInfo=[]
         meetBreakPoint = True
+        ignore=False
         blockOfNormalLines=[]
         for line in lines:
+            if 'rand () at rand.c:26' in line:
+                print "HEY"
+            if valueReturnLinePattern.match(line):
+                ignore=False
+                continue
+            if ignore:
+                continue
             if nullLinePattern.match(line):
                 nullLineNum+=1
-            if valueReturnLinePattern.match(line):
-                continue
             elif nullLineNum == 1:
                 #trace content
                 if normalLinePattern.match(line):
@@ -51,6 +58,10 @@ class LogParser:
                     print "find normal line:",line
                 else:
                     if headInfoPattern.match(line):
+                        if lines.index(line)+1<len(lines):
+                            if re.search(no_such_file_or_directory,lines[lines.index(line)+1]):
+                                ignore=True
+                                continue
                         listOfLines = fixBlock(blockOfNormalLines)
                         l.extend(listOfLines)
                         blockOfNormalLines=[]
