@@ -7,6 +7,7 @@ from Test_foomoo_a import Test_foomoo_a
 from Test_libsndfile_bytes import Test_libsndfile_bytes
 from Test_libsndfile_most import Test_libsndfile_most
 from test.Test_libsndfile_wav_fmt__min_blockalign import Test_libsndfile_wav_fmt__min_blockalign
+from Test_mcrypt_salt_size import Test_mcrypt_salt_size
 from Test_memcpy_dst import Test_memcpy_dst
 from Test_memcpy_src import Test_memcpy_src
 from Test_swfdump_i import Test_swfdump_i
@@ -31,6 +32,8 @@ class IntegrationTest:
         result_array.append(('libsndfile_most',test.test()))
         test=Test_libsndfile_wav_fmt__min_blockalign()
         result_array.append(('libsndfile_wav_fmt->min.blockalign',test.test()))
+        test=Test_mcrypt_salt_size()
+        result_array.append(('mcrypt *salt_size',test.test()))
         test=Test_memcpy_dst()
         result_array.append(('memcpy_dst',test.test()))
         test=Test_memcpy_src()
