@@ -15,7 +15,6 @@ from parse.RedundancyFixer import RedundancyFixer
 
 class TraceTrackTest(object):
     
-
     def __init__(self,answer_path,name,logfile_path,taintVars,passed_message,not_pass_message,outputdir='./testoutput/'):
         
         self.outputdir=outputdir

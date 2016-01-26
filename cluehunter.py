@@ -79,6 +79,16 @@ class ClueHunter:
                 help = """Redundancy level of the parsing.
 0 means just remove inline or innner function redundancy; 1 means remove  both of the inline and interprocedural reduandancy.""")
         self.arg_parser.add_argument(
+                '-i', '--index',
+                action = 'store',
+                default = -1,
+                type = int,
+                help = """The start trace line for tracking.
+Default value is -1 which means start from the last line.
+Positive integer means the {line number}-1 in the parsed result cluhunter/test/trace.txt. 
+Negative integer means the last but what line of the cluhunter/test/trace.txt.
+0 is useless, but it still can be regarded as the first line.""")
+        self.arg_parser.add_argument(
                 '-t', '--trace',
                 action = 'store',
                 dest='trace',
@@ -146,7 +156,9 @@ class ClueHunter:
             tracker=Tracker(l,macro_inspector)
         else:
             tracker=Tracker(l)
-        traceIndex=len(l)-1
+        for line in l:
+            print str(l.index(line))+"#"+str(line)
+        traceIndex=(len(l)+self.args.index)%len(l)
         vs=self.build_tiantvars_list()
         tracker.setStartJobs(traceIndex, vs)
         
@@ -155,7 +167,7 @@ class ClueHunter:
         print TG.serialize2dot()
         output.write(TG.serialize2dot())
         output.close()
-        subprocess.call("dot -Tpng "+self.args.output_path+"/"+self.args.name+".dot -o "+self.args.output_path+"/"+self.args.name+".png", shell = True)
+        subprocess.call("dot -Tsvg "+self.args.output_path+"/"+self.args.name+".dot -o "+self.args.output_path+"/"+self.args.name+".svg", shell = True)
         #print str(TG)
     def execute(self):
         self._analysis()
@@ -166,7 +178,6 @@ class ClueHunter:
             os.makedirs(output_path)
         self.logger.info('Output directory is %s.', os.path.abspath(output_path))
 
-    
     def _config_logger(self):
         self.logger = logging.getLogger('cluehunter')
         self.logger.setLevel('DEBUG')

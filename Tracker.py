@@ -295,6 +295,7 @@ class Tracker:
             i=indexes[0]-1
         else:
             i=job.trace_index-1
+        #l[i] must be an instance of FunctionCallInfo
         if i==0:#begin
             if job.var.v in self.l[i].param_list:
                 self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
@@ -304,11 +305,13 @@ class Tracker:
                 self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
                 return [TaintJob(i,job.var)]
             return []
-        elif i-2>0 and isinstance(self.l[i-2], LineOfCode) and self.l[i].get_func_name().split("::")[-1] in self.l[i-2].codestr and self.l[i]==self.l[job.trace_index].get_func_call_info():#call point
-            if job.var.v in self.l[i].param_list:
-                self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
-                return [TaintJob(i,job.var)]
-            return []
+        #=======================================================================
+        # elif i-2>0 and isinstance(self.l[i-2], LineOfCode) and self.l[i].get_func_name().split("::")[-1] in self.l[i-2].codestr and self.l[i]==self.l[job.trace_index].get_func_call_info():#call point
+        #     if job.var.v in self.l[i].param_list:
+        #         self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
+        #         return [TaintJob(i,job.var)]
+        #     return []
+        #=======================================================================
         elif self.isMacroCall(i-1):
             if job.var.v in self.l[i].param_list:
                 self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
