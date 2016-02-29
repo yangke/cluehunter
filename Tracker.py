@@ -48,7 +48,7 @@ class Tracker:
             findIt=False
             print "param var:",p
             for i,param in enumerate(funcInfo.param_list.split(',')):
-                print "index,paramstr:",i,param
+                print "index, paramstr:",i,param
                 if "=" not in param:
                     find_this+=1
                 if "this=this@entry" not in param:#param is like:m=m@entry=0xbfffe4a8
@@ -65,10 +65,12 @@ class Tracker:
         for pos in positions:print str(pos[0])
         return positions
     
-    def normal_right_str(self,upperIndex,funcInfo):#
+    def normal_right_str(self,upperIndex,funcInfo):
+        #right_str is the string in the right of "(" which contains the argument list.
         func_name_to_search=funcInfo.get_func_name().split("::")[-1].strip()
         p=r"^.*"+func_name_to_search+r"\s*\("
         print "The function name to search:",func_name_to_search
+        print "The under check line:",self.l[upperIndex].codestr
         # Need Fix:
         # func(a,b\
         #    c,d,e)
@@ -91,7 +93,9 @@ class Tracker:
         print filename,linenum
         expanded_str=self.macro_inspector.getExpanded(filename,linenum)
         print "expanded str:",expanded_str
-        call_patttern=Syntax.lt+Syntax.identifier+Syntax.water+r"\)*"+Syntax.water+r"\("
+        if "temp = (((abfd)->xvec->_bfd_check_format[(int) ((abfd)->format)]) (abfd));" in expanded_str:
+            print "Find It!"
+        call_patttern=Syntax.lt+Syntax.identifier+Syntax.water+r"[\)\]]*"+Syntax.water+r"\("
         for m in re.finditer(call_patttern,expanded_str):
             print "matched candidate function name:",m.group(1)
             if not Syntax.isKeyWord(m.group(1)) and not Syntax.isLibFuncName(m.group(1)):
@@ -99,16 +103,21 @@ class Tracker:
                 #FIX ME this is wrong when handling cases like: MAZE(a,b)-->'call1(a)+call2(b)".
                 #Then when handling the second call site, it returns 'a' as the detected argument.  
                 return expanded_str[span[1]:]
-        print "Fatal Error treat 'sizeof' as a function call or other ERROR!! Please check the lastModification()"
+        print "Fatal Error treat 'sizeof' as a function call or other ERROR!! Please check the macro_call_right_str()"
         x=1/0
         
     def isMacroCall(self,callsite_index):
         if self.macro_inspector is None:
             return False
+        if self.macro_inspector.project_dir is None:
+            return False
         print "Checking Macro Call..."
         print "UPPER:",self.l[callsite_index]
         print "CALLINFO:",self.l[callsite_index+1]
-        if re.search(r"[_A-Z0-9]+\s*\(",self.l[callsite_index].codestr):
+        for m in re.finditer(Syntax.lt+Syntax.identifier+Syntax.water+r"\(",self.l[callsite_index].codestr):
+            funcname=m.group().rstrip("(").strip()
+            if Syntax.isKeyWord(funcname):
+                continue
             #Note that the second argument of getExpanded is the line_num of the call site code.
             #So should be callsite_index+1
             print "Find Macro Call:",self.l[callsite_index]
@@ -116,16 +125,22 @@ class Tracker:
             linenum=self.l[callsite_index].get_linenum()
             print filename,linenum
             expanded_str=self.macro_inspector.getExpanded(filename,linenum)
+            if expanded_str is None:
+                return False
             print "expanded str:",expanded_str
-            call_patttern=Syntax.lt+Syntax.identifier+Syntax.water+r"\)*"+Syntax.water+r"\("
+            if "temp = (((abfd)->xvec->_bfd_check_format[(int) ((abfd)->format)]) (abfd));" in expanded_str:
+                print "Find IT!"
+            call_patttern=Syntax.lt+Syntax.identifier+Syntax.water+r"[\)\]]*"+Syntax.water+r"\("
             for m in re.finditer(call_patttern,expanded_str):
+                if ']' in m.group():
+                    return True
                 cleaner=''.join(m.group().split())
                 clean=cleaner.rstrip('(').rstrip(')')
                 if not Syntax.isKeyWord(clean) and not Syntax.isLibFuncName(m.group(1)):
                     return True
         return False
     def taintUp(self,jobs):
-        if jobs ==[]:return []
+        if len(jobs) ==0 :return []
         P=[]
         paramJobs,newJobs=self.taintOneStepUp(jobs)
         P.extend(paramJobs)
@@ -138,15 +153,18 @@ class Tracker:
             traceIndex=P[0].trace_index
             if traceIndex==0:return []
             funcInfo=self.l[traceIndex]
-            print "****",funcInfo
+            print "FunctionCallInfo:",funcInfo
             positions=self.findPositions(P,funcInfo)
             print "The inter point and the old line:",self.l[traceIndex]
             upperIndex=traceIndex-1#try to find last call site
-            if self.isMacroCall(upperIndex):
+            funcname=self.l[traceIndex].get_func_name().split("::")[-1].strip()
+            if re.search(Syntax.lt+funcname+r"\s*\(",self.l[upperIndex].codestr):
+                rightstr,upperIndex=self.normal_right_str(upperIndex, funcInfo)
+            elif self.isMacroCall(upperIndex):
                 rightstr=self.macro_call_right_str(upperIndex)
             else:
-                rightstr,upperIndex=self.normal_right_str(upperIndex, funcInfo)
-            #rightstr,upperIndex=self.normal_right_str(upperIndex, funcInfo)
+                print "Malformed call site! Cannot find the arglist of the call site!"
+                print 1/0
             args = ArgHandler.arglist(rightstr)
             cjobs=set()
             for pos,param in positions:
@@ -227,7 +245,7 @@ class Tracker:
             i-=1
         return indexes
     def lastModification(self,job):
-        if job.trace_index==10:#1293:
+        if job.trace_index==13050:#1293:
             print "FInd you!"
         if job.trace_index==0:
             return []
@@ -415,7 +433,6 @@ class Tracker:
                     result=Syntax.isPossibleArgumentDefinition(self.l[i],job.var)
                     if result is not None:
                         rfl,p,childnum,callee,arg=result
-                        ###########################################################
                         #jobs,findIt=self.checkArgDef(i,job.trace_index,lowerBound,p,rfl,childnum,callee)
                         jobs,findIt=self.checkArgDef(i,job.trace_index,job.trace_index,p,rfl,childnum,callee)
                         if findIt:return jobs
@@ -473,7 +490,7 @@ class Tracker:
                         jobs=map(lambda x : TaintJob(i,x), taintvars)
                         return jobs
                     elif def_type == Syntax.OP_ASSIGN:
-                        print "HANDLE NORMAL_ASSIGN!"
+                        print "HANDLE OP_ASSIGN!"
                         print "taintvar:",job.var.simple_access_str()
                         print "line:",self.l[i]
                         self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
@@ -555,29 +572,30 @@ class Tracker:
             print 1/0       
     def handleReturnAssgin(self,job_trace_index,i,accesspattern,var):
         if i+2+1<len(self.l) and isinstance(self.l[i+1],FunctionCallInfo) and isinstance(self.l[i+2],LineOfCode):
-            if self.l[i+1].get_func_name().split("::")[-1].strip() in self.l[i].codestr:
+            if self.l[i+1].get_func_name().split("::")[-1].strip() in self.l[i].codestr or self.isMacroCall(i):
                 indexes=self.slice_same_func_lines(i+2, job_trace_index)
                 count=0
                 print "accesspattern:",accesspattern
                 for idx in indexes[::-1]:
                     print "check return line:",self.l[idx]
                     if 'return ' in self.l[idx].codestr:
-                        self.TG.linkExpandEdges(job_trace_index,idx,"return by edge:"+var.simple_access_str())
-                        start=re.search(r'return ',self.l[idx].codestr).span()[1]
+                        self.TG.linkExpandEdges(job_trace_index,idx,"return dependency:"+var.simple_access_str())
+                        self.TG.linkTraverseEdges(i,idx,"ref:"+var.simple_access_str())
+                        start=re.search(r'return\s*',self.l[idx].codestr).span()[1]
                         rightpart=self.l[idx].codestr[start:].strip().rstrip(';').strip()
                         if Syntax.isUniqueNonLibCall(rightpart):
                             jobs=self.handleReturnAssgin(job_trace_index,idx,accesspattern,var)
-                            return jobs
+                            return self.taintUp(jobs)
                         else:
                             variable_pat=re.compile('^'+Syntax.variable+'$')
                             m=variable_pat.match(rightpart)
                             if m:
                                 rfl,p=accesspattern
-                                return [TaintJob(idx,TaintVar(rightpart,p,rfl))]
+                                return self.taintUp([TaintJob(idx,TaintVar(rightpart,p,rfl))])
                             else:
                                 taint_v_strs = Filter.expression2vars(rightpart)
                                 jobs=map(lambda x : TaintJob(idx,x),[TaintVar(tv,[]) for tv in taint_v_strs])
-                                return jobs
+                                return self.taintUp(jobs)
                     count+=1
                     if count == 3:break
                 return []
@@ -591,7 +609,7 @@ class Tracker:
             return re.search("\(.*&\s*"+v.accessStr()+".*\)", codestr)
                         
     def getDefs(self,pairs,indexes,uppdefindex=-1):
-        if indexes==[]:#BUUUUUUUUUUUUUG:please check this situation
+        if indexes==[]:#BUG:please check this situation
             return []
         if uppdefindex==-1:
             uppdefindex=indexes[0]-1
@@ -602,11 +620,18 @@ class Tracker:
             #Or it will be aborted as it matched the "=".
             if indexes[low-1]<=uppdefindex:continue
             for i in indexes[up:low][::-1]:
-                print "Checking Def",self.l[i]
-                if '&chan' in self.l[i].codestr:
-                    print "HEY"
+                print "getDefs():Checking Def:",self.l[i]
                 access=v.accessStr()
                 if re.search(access, self.l[i].codestr):
+                    maybe_def=True
+                else:
+                    maybe_def=False
+                    pointerstr=v.pointerStr()
+                    if pointerstr is not None:
+                        if re.search(pointerstr, self.l[i].codestr):
+                            maybe_def=True
+                    
+                if maybe_def:
                     def_type=self.matchDefinitionType(i,v)
                     #if def_type==Syntax.FOR or def_type==Syntax.NORMAL_ASSIGN or def_type==Syntax.OP_ASSIGN or def_type==Syntax.INC or def_type==Syntax.RAW_DEF or def_type==Syntax.SYS_LIB_DEF:#ASSIGN
                     if def_type!=Syntax.NODEF:
@@ -630,7 +655,20 @@ class Tracker:
         defs.sort(key=lambda x:x[0],reverse=True)#index reversed order
         return defs
     
-    def findAllReferences(self,var,indexrange,left_propa):
+    def isLeftPropagate(self,v,codestr):
+        declare_pat=Syntax.declaration_left_propagate_pattern(v)
+        variable_pat=Syntax.variable_left_propagate_pattern(v)
+        print "Left Propagation Pattern:\n",declare_pat,'\n',variable_pat
+        vp_m=re.search(variable_pat,codestr)
+        if vp_m:
+            return vp_m
+        else:
+            dp_m=re.search(declare_pat,codestr)
+            if dp_m:
+                return dp_m
+            else:
+                return None
+    def findAllReferences(self, var, indexrange, left_propa):
         visited=set()
         pairs=set()
         if indexrange==[]:return []
@@ -657,27 +695,43 @@ class Tracker:
             A=set()
             for index,v,left_p,upperbound,lowerbound in V:
                 #if not v.pointerStr():continue
-                lp=Syntax.left_ref_propagate_pattern(v)
+                #lp=Syntax.left_ref_propagate_pattern(v)
                 rp=Syntax.right_ref_propagate_pattern(v)
                 print "Continue Check bellow the first found assignment:",self.l[index]
                 for idx in range(upperbound,lowerbound):
                     aIndex=indexrange[idx]
                     if left_p and aIndex<index:
-                        print "pass",v.simple_access_str()
+                        print "pass(accelerate)",v.simple_access_str()
                     elif aIndex in visited:
-                        print "pass",v.simple_access_str()
+                        print "pass(accelerate)",v.simple_access_str()
                     elif re.search(r"[^=]=[^=]",self.l[aIndex].codestr) is None:
                         print "pass",v.simple_access_str()
                         visited.add(aIndex) 
                     else:
-                        print self.l[aIndex]
-                        m_left_propgate=re.search(lp,self.l[aIndex].codestr)
-                        if m_left_propgate:
-                            print "left propagate:",self.l[aIndex]
+                        print "Line Under Check:",self.l[aIndex]
+                        if "&hdr;" in self.l[aIndex].codestr:
+                                print "Find IT!"
+                        match=self.isLeftPropagate(v,self.l[aIndex].codestr)
+                        if match is not None:
+                            m_left_propgate=match
+                            print "find left propagate:",self.l[aIndex]
                             array=m_left_propgate.group().split("=")
-                            leftpart=array[0].strip()
+                            leftpart=array[0].split()[-1].lstrip("*")
                             rightpart=array[1].strip()
                             rightvar=rightpart.rstrip(";").strip()
+                            if rightvar[0]=="(":
+                                stack=[]
+                                i=1
+                                while i<len(rightvar):
+                                    if rightvar[i]=="(":
+                                        stack.append("(")
+                                    elif rightvar[i]==")":
+                                        if len(stack)>0:
+                                            stack.pop()
+                                        else:
+                                            rightvar=rightvar[i+1:].strip().lstrip("(").rstrip(")").strip()
+                                            break
+                                    i+=1
                             rfl,pat=v.matchAccessPattern(rightvar)
                             if "*"==pat[-1] or "->" in pat[-1] and aIndex>index:
                                 if rfl<=0:rfl=1
@@ -689,7 +743,7 @@ class Tracker:
                                     print v.pointerStr()
                                     print q.pointerStr()
                                     print temp_index,self.l[temp_index]
-                                    if re.search(q.pointerStr()+r"\s*=(?!=)",self.l[temp_index].codestr):
+                                    if re.search(q.pointerStr()+r"\s*[^=]=[^=]",self.l[temp_index].codestr):
                                         result=Syntax.isPossibleArgumentDefinition(self.l[temp_index],q)
                                         if result is not None:
                                             lb=temp_lb+1
@@ -769,6 +823,7 @@ class Tracker:
             print "Now lowerBound is unlimited."
         else:
             print "lowerBound line is:",self.l[lowerBound]
+        indexes=list(set(indexes))
         indexes.sort()
         return indexes#[i for i in indexes if i!=index]
     
@@ -787,18 +842,15 @@ class Tracker:
     def checkArgDef(self,callsiteIndex,beginIndex,lowerBound,p,rfl,childnum,callee):
         if p==[] or isinstance(self.l[callsiteIndex+1],LineOfCode):#Abort non-pointer variable.
             return [],False
-        if callee.strip()!=self.l[callsiteIndex+1].get_func_name().strip(): #function name of callsite and callee must match.
-            return [],False
-        if callsiteIndex==474:#2716:
-            print "FIND GAGAG!",self.l[callsiteIndex+1].get_param_list()
-         
+        #Note: funciton name and callee name may not be equal as there exist macro and function pointer
+        #e.g. nread = abfd->iovec->bread (abfd, ptr, size);          
         indexes=self.slice_same_func_lines(callsiteIndex+2,lowerBound)#PlUS TWO("callsiteIndex+2")means start from the first line of callee function.
         params=self.l[callsiteIndex+1].get_param_list().split(",")
         if len(params)-1<childnum:
             skip_va_arg_nums=childnum-len(params)
             res=self.check_va_arg_style(skip_va_arg_nums,indexes)
             if not res:
-                print "BAD arg--->param number match!"
+                print "BAD arg-->param number match!"
                 print 1/0
             varname,indexes=res
             var= TaintVar(varname,p,rfl)
@@ -809,8 +861,6 @@ class Tracker:
             #handle "=" cases like:
             #args_callback_command (name=0xbfffeb26 "swfdump0.9.2log/exploit_0_0", val=val@entry=0x0) at swfdump.c:200
             print self.l[callsiteIndex+1]
-            if rfl==1 or varname=="swf":
-                print "yesss"
             var=TaintVar(varname,p,rfl)
             #---------------------------------------------------------------------------------------#
         
@@ -820,7 +870,7 @@ class Tracker:
         for d,v in defs:
             print "%%%",self.l[d]
         for d,v in defs:
-            ####BUUUUUUUUUUUUUUUUUUUG
+            #BUG
             def_type=self.matchDefinitionType(d,v)
             if def_type==Syntax.FOR:
                 self.TG.linkCrossEdges(beginIndex,d,v.simple_access_str())
@@ -863,8 +913,6 @@ class Tracker:
                 result=Syntax.isPossibleArgumentDefinition(self.l[d],v)
                 if result is not None:
                     rfl,p,childnum,callee,arg=result
-                    if "->headindex" in p and "header_read"==callee:
-                        print callee
                     jobs,b=self.checkArgDef(d,beginIndex,lowerBound,p,rfl,childnum,callee)
                     if b:
                         return self.taintUp(jobs),True
@@ -898,13 +946,15 @@ class Tracker:
                 if i+2+1<len(self.l) and isinstance(self.l[i+1],FunctionCallInfo) and isinstance(self.l[i+2],LineOfCode):
                     if self.l[i+1].get_func_name().split("::")[-1].strip() in self.l[i].codestr:
                         return Syntax.RETURN_VALUE_ASSIGN
+                    elif self.isMacroCall(i):
+                        return Syntax.RETURN_VALUE_ASSIGN
             return Syntax.NORMAL_ASSIGN
         op_assignment=Syntax.op_assignment_pattern(access)
         if re.search(op_assignment,codestr):
             return Syntax.OP_ASSIGN
         raw_definition=r"^\s*\{\s*[A-Za-z_][A-Za-z0-9_]+\s+(\*\s*)*([A-Za-z_][A-Za-z0-9_]+\s*,\s*)*"+var.v+"\s*;"
         if re.search(raw_definition, codestr):
-            print "We got the raw definition!"
+            print "We got the raw definition!",codestr
             return Syntax.RAW_DEF
         if Syntax.isLibArgDef(var,codestr):
             return Syntax.SYS_LIB_DEF

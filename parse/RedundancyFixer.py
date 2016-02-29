@@ -89,7 +89,8 @@ class RedundancyFixer(object):
         if i+1<len(self.l):
             newlist.append(self.l[i+1])
         self.l=newlist    
-                  
+    
+    #Only check for FunctionCallInfo          
     def check_I(self,i):
         m=1
         while i+m<len(self.l) and str(self.l[i])!=str(self.l[i+m]):
@@ -110,4 +111,4 @@ class RedundancyFixer(object):
                             if re.sub(r'0x[a-fA-F0-9]+','',str(self.l[i+j]))==re.sub(r'0x[a-fA-F0-9]+','',str(self.l[i+m+j])):
                                 continue
                     return i
-            return i+m
+            return i+m 

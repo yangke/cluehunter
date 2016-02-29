@@ -12,7 +12,7 @@ class Test_swfmill_length:
         not_pass_message="ERRORS FOUND IN SWFMILL-0.3.3 'length' TEST!"
         answer_path='answers/swfmill/'
         name='swfmill-0.3.3_length'
-        logfile_path="gdb_logs/swfmill-0.3.3/gdb-swfmill-0.3.3_length.txt"
+        logfile_path="gdb_logs/swfmill-0.3.3/gdb-swfmill-0.3.3__new_unsigned_char[length]_exploit_0_0.txt"
         c_proj_path='gdb_logs/swfmill-0.3.3/swfmill-0.3.3'
         taintVars=[TaintVar("length",[''])]
         test=TraceTrackTest(answer_path,name,logfile_path,taintVars,passed_message,not_pass_message)

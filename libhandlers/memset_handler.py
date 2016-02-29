@@ -15,7 +15,9 @@ class memset_handler(object):
         access=variable.accessStr()
         if '|' not in access:
             return r"(?<![_A-Za-z0-9])memset\s*\(\s*&\s*"+access+r"\s*,"
-        return r"(?<![_A-Za-z0-9])memset\s*\(\s*"+access+r"\s*,"
+        else:
+            pointerstr=variable.pointerStr()
+            return r"(?<![_A-Za-z0-9])memset\s*\(\s*"+pointerstr+r"\s*,"
     @staticmethod
     def isArgDef(variable,codestr):
         lib_definition=memset_handler.gen_match_str(variable)

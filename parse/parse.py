@@ -20,11 +20,14 @@ class LogParser:
     def parse(self,log_file_path='../gdb.txt'):
         logFile=file(log_file_path, 'r')
         lines = logFile.readlines()
-        normalLinePattern = re.compile(r'^[1-9][0-9]*.*\n')
+        normalLinePattern = re.compile(r'^[0-9]+\s+.*\n')
         headInfoPattern = re.compile(r'^[A-Za-z_][A-Za-z0-9_]+.*\n')
         nullLinePattern = re.compile(r'^\s*\n')
         valueReturnLinePattern=re.compile(r'^(Value returned is |Run till exit from ).*')
         no_such_file_or_directory=r'No such file or directory.'
+        hexHeadPattern=re.compile(r'^0x[0-9a-f]+ in .*$')
+        #singleStepPattern=re.compile(r'^Single stepping until exit from function .*$')
+        
         nullLineNum = 0
         l = []
         isFuncInfo=True
@@ -33,6 +36,7 @@ class LogParser:
         errorInfo=[]
         meetBreakPoint = True
         ignore=False
+        ignoreNext=False
         blockOfNormalLines=[]
         for line in lines:
             if 'rand () at rand.c:26' in line:
@@ -41,6 +45,14 @@ class LogParser:
                 ignore=False
                 continue
             if ignore:
+                continue
+            if ignoreNext:
+                if normalLinePattern.match(line):
+                    ignoreNext=False
+                else:
+                    continue
+            if hexHeadPattern.match(line):
+                ignoreNext=True
                 continue
             if nullLinePattern.match(line):
                 nullLineNum+=1
@@ -53,8 +65,6 @@ class LogParser:
                         l.append(funcInfo)
                         funcInfoStr=''
                     blockOfNormalLines.append(LineOfCode(line,funcInfo))
-                    #print '***'+lineNumStr,codeline
-                    #l.append(line)
                     print "find normal line:",line
                 else:
                     if headInfoPattern.match(line):

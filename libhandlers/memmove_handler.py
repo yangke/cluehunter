@@ -15,7 +15,9 @@ class memmove_handler(object):
         access=variable.accessStr()
         if '|' not in access:
             return r"(?<![_A-Za-z0-9])memmove\s*\(\s*&\s*"+access+r"\s*,"
-        return r"(?<![_A-Za-z0-9])memmove\s*\(\s*"+access+r"\s*,"
+        else:
+            pointerstr=variable.pointerStr()
+            return r"(?<![_A-Za-z0-9])memmove\s*\(\s*"+pointerstr+r"\s*,"
     @staticmethod
     def isArgDef(variable,codestr):
         lib_definition=memmove_handler.gen_match_str(variable)

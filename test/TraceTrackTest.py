@@ -8,7 +8,7 @@ import subprocess
 from parse.parse import LogParser
 from Tracker import Tracker
 import filecmp
-import time
+import datetime
 import os
 from parse.MacroInspector import MacroInspector
 from parse.RedundancyFixer import RedundancyFixer 
@@ -62,18 +62,18 @@ class TraceTrackTest(object):
         return l
       
     def test(self,startindex=-1):
-        start = time.clock()
+        start = datetime.datetime.now()#time.clock()
         l=self.parse_list()
-        t1 = time.clock()
+        t1 = datetime.datetime.now()
         macro_inspector=MacroInspector(self.c_proj_dir)
         tracker=Tracker(l,macro_inspector)
         traceIndex=startindex % len(l)
         passed=self.test_tracker(tracker,traceIndex)
-        end = time.clock()
+        end = datetime.datetime.now()
         print "LIST LENTH:",len(l)
-        print "PARSE: %f s" % (t1 - start)
-        print "ANALYSIS: %f s" % (end - t1)
-        print "finished: %f s" % (end - start)
+        print "PARSE: %s" % (t1 - start)
+        print "ANALYSIS: %s" % (end - t1)
+        print "finished: %s" % (end - start)
         return passed
     
     

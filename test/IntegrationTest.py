@@ -22,7 +22,7 @@ from Test_speexdec_mode import Test_speexdec_mode
 class IntegrationTest:
 
     def test(self):
-        print "Start integeration testing..."
+        print "Start integeration test ..."
         result_array=[]
         test=Test_foomoo_a()
         result_array.append(('foomoo',test.test()))
@@ -57,7 +57,7 @@ class IntegrationTest:
         
         for r in result_array:
             print r[0],":\t",r[1]
-        print "Integeration testing ended."
+        print "Integeration test ended."
         
         
         

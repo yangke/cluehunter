@@ -12,7 +12,7 @@ class Test_swfmill_data__pos:
         not_pass_message="ERRORS FOUND IN SWFMILL-0.3.3 'data' TEST!"
         answer_path='answers/swfmill/'
         name='swfmill-0.3.3_data__pos'
-        logfile_path="gdb_logs/swfmill-0.3.3/gdb-swfmill-0.3.3_data[pos++].txt"
+        logfile_path="gdb_logs/swfmill-0.3.3/gdb-swfmill-0.3.3_data[pos++]_exploit_13_0.txt"
         c_proj_path='gdb_logs/swfmill-0.3.3/swfmill-0.3.3'
         taintVars=[TaintVar("r",['->pos'])]
         test=TraceTrackTest(answer_path,name,logfile_path,taintVars,passed_message,not_pass_message)

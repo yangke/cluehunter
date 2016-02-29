@@ -11,6 +11,7 @@ from libhandlers.read_handler import read_handler
 from libhandlers.strcpy_handler import strcpy_handler
 from libhandlers.strncpy_handler import strncpy_handler
 from libhandlers.memmove_handler import memmove_handler
+from libhandlers.sscanf_handler import sscanf_handler
 from libhandlers.ArgHandler import ArgHandler
 from model.TaintJob import TaintJob
 from model.TaintVar import TaintVar
@@ -45,7 +46,6 @@ class Syntax(object):
     syscall="gettimeofday|fork|syscall|textdomain|setlocale|getopt_long|ENOENT|bindtextdomain|non_fatal|nonfatal|exit_status|sbrk|CONST_STRNEQ"
     other="log|error|buildin"
     lib_func_name=memop+'|'+fileop+'|'+stdop+'|'+strop+'|'+syscall+'|'+other
-    
     @staticmethod
     def normal_assignment_pattern(accessstr):
         return Syntax.lt+accessstr+Syntax.water+r"(\[[^\[\]]+\])?"+Syntax.water+Syntax.assign
@@ -54,7 +54,7 @@ class Syntax(object):
         return Syntax.lt+accessstr+Syntax.water+r"(\[[^\[\]]+\])?"+Syntax.water+r"[\+\-\*\/%\^\|&]"+Syntax.water+Syntax.assign
     @staticmethod
     def isKeyWord(codestr):
-        pattern=re.compile(Syntax.keyword)
+        pattern=re.compile("^("+Syntax.keyword+")$")
         if pattern.match(codestr.strip()):
             return True
         else:return False
@@ -64,6 +64,18 @@ class Syntax(object):
         if pattern.match(codestr.strip()):
             return True
         else:return False
+    @staticmethod
+    def declaration_left_propagate_pattern(v):
+        declare_pat=r"[A-Za-z_][A-Za-z0-9_]+\s+(\*\s*)*[A-Za-z_][A-Za-z0-9_]*"
+        vp=Syntax.left_ref_propagate_pattern(v)
+        tail=r"\s*=\s*(\([^\(\)]*\))?\s*"+vp+r"\s*;"
+        return Syntax.lt+declare_pat+tail
+    @staticmethod
+    def variable_left_propagate_pattern(v):
+        variable_pat=Syntax.variable
+        vp=Syntax.left_ref_propagate_pattern(v)
+        tail=r"\s*=\s*(\([^\(\)]*\))?\s*"+vp+r"\s*;"
+        return Syntax.lt+variable_pat+tail
     @staticmethod
     def left_ref_propagate_pattern(v):
         pstr=v.pointerStr()
@@ -76,7 +88,7 @@ class Syntax(object):
             print "Fatal Error! v.accessStr() return None"
             print 1/0
             return None
-        return Syntax.lt+Syntax.variable+Syntax.water+r"="+Syntax.water+pat+Syntax.water+r";"
+        return pat
     @staticmethod
     def right_ref_propagate_pattern(v):
         pstr=v.pointerStr()
@@ -137,6 +149,8 @@ class Syntax(object):
             return True
         elif memset_handler.isArgDef(varstr,codestr):
             return True
+        elif sscanf_handler.isArgDef(varstr,codestr):
+            return True
         return False
     
     @staticmethod
@@ -163,6 +177,9 @@ class Syntax(object):
         yes=memset_handler.isArgDef(variable, codestr)
         if yes:
             jobs=memset_handler.getJobs(i, variable, codestr)
+        yes=sscanf_handler.isArgDef(variable, codestr)
+        if yes:
+            jobs=sscanf_handler.getJobs(i, variable, codestr)
         return jobs#FIX ME: this should not happen
     
     @staticmethod
@@ -234,8 +251,14 @@ class Syntax(object):
     
     @staticmethod
     def vararg(codestr,start,end):
+        #=======================================================================
+        # cache_bread (...,(char *) buf + nread,...)
+        #                           ^  ^
+        #                           start end
+        #=======================================================================
         if start>=end or start<0 or end>len(codestr):
             return None
+        v_start=-1
         i=start
         j=end
         func_name=None
@@ -263,16 +286,28 @@ class Syntax(object):
                         j+=1
                         if j==len(codestr):
                             print "Fatal Error: bracket mismatch. May be like: &(a...."
-                    else:
-                        j=j+1
+                            print 1/0
                 continue
             elif codestr[i] == ",":
                 pos=1
                 break#second  exit port pos>1
+            elif codestr[i] == ")":#skip the "(char *)" in "(char *) buf + nread"
+                v_start=i+1
+                while codestr[i]!="(":
+                    i-=1
             else:
                 return None
-        var_name=codestr[i+1:j]
-        return pos,i,var_name,func_name
+        if v_start==-1:
+            var_name=codestr[i+1:j]
+        else:
+            var_name=codestr[v_start:j]
+        #=======================================================================
+        # cache_bread (...,(char *) buf + nread,...)
+        #             ^
+        #             i
+        #=======================================================================
+              
+        return pos,i,var_name,func_name,j
     @staticmethod
     def isPossibleArgumentDefinition(line,var):
         
@@ -289,10 +324,18 @@ class Syntax(object):
             print "Argument check: the  matched string is :",m.group()
             result=Syntax.vararg(codestr,start,end)
             if not result:continue
-            pos,index,arg,func_name=result
+            pos,index,arg,func_name,endIndex=result
             res=var.matchAccessPattern(arg)
             if not res:continue
             rfl,p=res
+            j=endIndex
+            while j<len(codestr) and re.search(r'\s',codestr[j]):
+                j+=1
+                if codestr[j]=='+':
+                    for pat in p:
+                        if '*' in pat or '->' in pat:
+                            p=['*']
+                            break
             if pos==0:
                 #OK arg
                 return rfl,p,pos,func_name,arg
@@ -329,9 +372,25 @@ class Syntax(object):
                             quotation=not quotation
         return None
     @staticmethod
+    def remove_left_type_coversion(callstr):
+        callstr=callstr.strip()
+        if callstr[0]=="(":
+            i=1
+            while callstr[i]!=")":
+                i+=1;
+                if i==len(callstr):
+                    return None
+            if len(callstr[i+1:].strip())==0:
+                return None
+            return callstr[i+1:].strip()
+        else:
+            return None
+    @staticmethod
     def isUniqueNonLibCall(callstr):
         callstr=' '.join(callstr.split()).rstrip(';')
         if callstr=='':return False
+        if callstr[0]=="(":#callstr: (struct areltdata *) _bfd_read_ar_hdr (abfd)
+            callstr=Syntax.remove_left_type_coversion(callstr)
         if re.search(r"[_A-Za-z0-9]",callstr[0]) is None:
             return False
         m=re.search(Syntax.identifier+r"\s*\(",callstr)
@@ -433,6 +492,7 @@ class Syntax(object):
         bound_var_strs=[]
         if right_vars_in_change is not None:
             bound_var_strs=Filter.expression2vars(cond)
+        bound_var_strs=[bv for bv in bound_var_strs if re.search(bv+r"\s*"+Syntax.assign,init) is None];
         #right vars in change part
         init_vars=Syntax.vars_in_for_init_part(v_access,init)
         right_var_strs_in_init=[]

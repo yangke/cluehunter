@@ -4,7 +4,7 @@ digraph tiantgraph{
 "365#241			fread(&sflag, 1, 1, fstream);";
 "374#244					*salt_size = m_setbit(0, sflag, 0);";
 edge [fontname = "Verdana", fontsize = 10, color="crimson", style="solid"];
-"376#246						fread(tmp_buf, 1, *salt_size,"->"374#244					*salt_size = m_setbit(0, sflag, 0);"[label="*(salt_size)|*salt_size|salt_size"];
-"365#241			fread(&sflag, 1, 1, fstream);"->"326#180			fstream = (FILE *) stdin;"[label="fstream"];
-"374#244					*salt_size = m_setbit(0, sflag, 0);"->"365#241			fread(&sflag, 1, 1, fstream);"[label="sflag"];
+"374#244					*salt_size = m_setbit(0, sflag, 0);"->"376#246						fread(tmp_buf, 1, *salt_size,"[label="*(salt_size)|*salt_size|salt_size"];
+"326#180			fstream = (FILE *) stdin;"->"365#241			fread(&sflag, 1, 1, fstream);"[label="fstream"];
+"365#241			fread(&sflag, 1, 1, fstream);"->"374#244					*salt_size = m_setbit(0, sflag, 0);"[label="sflag"];
 }

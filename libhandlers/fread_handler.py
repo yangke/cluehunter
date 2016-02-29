@@ -15,7 +15,9 @@ class fread_handler(object):
         access=variable.accessStr()
         if '|' not in access:
             return r"(?<![_A-Za-z0-9])fread\s*\(\s*&\s*"+access+r"([^,\(]*),"
-        return r"(?<![_A-Za-z0-9])fread\s*\(\s*"+access+r"([^,\(]*),"
+        else:
+            pointerstr=variable.pointerStr()
+            return r"(?<![_A-Za-z0-9])fread\s*\(\s*"+pointerstr+r"([^,\(]*),"
     @staticmethod
     def isArgDef(variable,codestr):
         lib_definition=fread_handler.gen_match_str(variable)

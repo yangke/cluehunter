@@ -14,6 +14,8 @@ class TaintGraph:
         self.outCrossEdges=dict()
         self.inExpandEdges=dict()
         self.outExpandEdges=dict()
+        self.inTraverseEdges=dict()
+        self.outTraverseEdges=dict()
         self.nodes=set()
         self.l=l
         
@@ -51,6 +53,16 @@ class TaintGraph:
         self.inExpandEdges[endIndex].add((startIndex,accessstr))
         self.nodes.add(startIndex)
         self.nodes.add(endIndex)
+    def linkTraverseEdges(self,startIndex,endIndex,accessstr):
+        print "TraverseEdge:"+str(self.l[startIndex]).rstrip()+"--->"+str(self.l[endIndex]).rstrip()+":"+accessstr+"\n"
+        if startIndex not in self.outTraverseEdges:
+            self.outTraverseEdges[startIndex]=set()
+        self.outTraverseEdges[startIndex].add((endIndex,accessstr))
+        if endIndex not in self.inTraverseEdges:
+            self.inTraverseEdges[endIndex]=set()
+        self.inTraverseEdges[endIndex].add((startIndex,accessstr))
+        self.nodes.add(startIndex)
+        self.nodes.add(endIndex)
             
     def linkInterEdges(self,startIndex,endIndex,param,arg,argpos):
         print "InterEdge:"+str(self.l[startIndex]).rstrip()+"--->"+str(self.l[endIndex]).rstrip()+":"+str(arg)+","+str(argpos)+"\n"
@@ -74,6 +86,9 @@ class TaintGraph:
         result="expand edges:\n"
         for key,value in self.outExpandEdges.items():
             result+=str(self.l[key]).rstrip()+"--->"+str(self.l[value[0]]).rstrip()+":"+str(value[1])+"\n"
+        result="traverse edges:\n"
+        for key,value in self.outTraverseEdges.items():
+            result+=str(self.l[key]).rstrip()+"--->"+str(self.l[value[0]]).rstrip()+":"+str(value[1])+"\n"
         result+="inter edges:\n"
         for key,value in self.outInterEdges.items():
             result+=str(self.l[key]).rstrip()+"--->"+str(self.l[value[0]]).rstrip()+":"+str(value[1])+","+str(value[2])+"\n"
@@ -88,22 +103,29 @@ class TaintGraph:
         result+='edge [fontname = "Verdana", fontsize = 10, color="crimson", style="solid"];\n'
         for key,values in self.outInnerEdges.items():
             for value in values:
-                result+="\""+self.linenum2DotStr(key)+"\"->\""+self.linenum2DotStr(value[0])+"\"[label=\""+self.handleDotKeywords(str(value[1]))+"\"];\n"
+                result+=self.dot_direction(key,value[0])+"\"[label=\""+self.handleDotKeywords(str(value[1]))+"\"];\n"
         for key,values in self.outCrossEdges.items():
             for value in values:
-                result+="\""+self.linenum2DotStr(key)+"\"->\""+self.linenum2DotStr(value[0])+"\"[label=\""+self.handleDotKeywords(str(value[1]))+"\","
-                result+='style="dashed", color="yellow"];\n'
+                result+=self.dot_direction(key,value[0])+"\"[label=\""+self.handleDotKeywords(str(value[1]))+"\","
+                result+='style="bold", color="yellow"];\n'
         for key,values in self.outExpandEdges.items():
             for value in values:
-                result+="\""+self.linenum2DotStr(key)+"\"->\""+self.linenum2DotStr(value[0])+"\"[label=\""+self.handleDotKeywords(str(value[1]))+"\","
+                result+=self.dot_direction(key,value[0])+"\"[label=\""+self.handleDotKeywords(str(value[1]))+"\","
                 result+='style="dashed", color="orange"];\n'
+        for key,values in self.outTraverseEdges.items():
+            for value in values:
+                result+=self.dot_direction(key,value[0])+"\"[label=\""+self.handleDotKeywords(str(value[1]))+"\","
+                result+='style="dashed", color="blue"];\n'
         for key,values in self.outInterEdges.items():
             for value in values:
-                result+="\""+self.linenum2DotStr(key)+"\"->\""+self.linenum2DotStr(value[0])+"\"[label=\""+self.handleDotKeywords(str(value[1]))+","+self.handleDotKeywords(str(value[2]))+"\","
-                result+='style="dashed", color="forestgreen"];\n'       
+                result+=self.dot_direction(key,value[0])+"\"[label=\""+self.handleDotKeywords(str(value[1]))+","+self.handleDotKeywords(str(value[2]))+"\","
+                result+='style="dotted", color="forestgreen"];\n'       
         result+="}"
         return result
-    
+    def dot_direction(self,s,t):
+        #flow_stle t->s
+        #dep_style s->t
+        return "\""+self.linenum2DotStr(t)+"\"->\""+self.linenum2DotStr(s)
     def handleDotKeywords(self,s):
         s=s.replace(r'"', r'\"')#.replace(r';', r'\;')
         s=s.replace(r'{', r'\{').replace(r'}', r'\}')

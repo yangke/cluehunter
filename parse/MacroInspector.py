@@ -25,11 +25,13 @@ class MacroInspector(object):
             elif (os.path.isfile(absPath) and os.path.split(absPath)[1]==fileName):
                 return absPath
                 #print('found %s '%absPath.decode('gbk').encode('utf-8'))
-
+        return None
+    
     def getExpanded(self,c_cpp_file_name, line_num):
         i_file_name=self.removeSuffix(c_cpp_file_name).strip()+".i"
         i_file_path=self.search(self.project_dir,i_file_name)
-        if i_file_path is None:return None 
+        if self.project_dir is None or i_file_path is None:
+            return None 
         i_file=open(i_file_path)
         lines=i_file.readlines()
         pat=re.compile('^# ([0-9]+) "'+c_cpp_file_name+'"$')#There are source line info in *.i files 
