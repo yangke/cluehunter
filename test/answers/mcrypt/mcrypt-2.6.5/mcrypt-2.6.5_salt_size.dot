@@ -1,10 +1,11 @@
 digraph tiantgraph{
-"376#246						fread(tmp_buf, 1, *salt_size,";
-"326#180			fstream = (FILE *) stdin;";
-"365#241			fread(&sflag, 1, 1, fstream);";
-"374#244					*salt_size = m_setbit(0, sflag, 0);";
+rankdir="BT";
+"325#180			fstream = (FILE *) stdin;";
+"364#241			fread(&sflag, 1, 1, fstream);";
+"373#244					*salt_size = m_setbit(0, sflag, 0);";
+"375#246						fread(tmp_buf, 1, *salt_size,";
 edge [fontname = "Verdana", fontsize = 10, color="crimson", style="solid"];
-"374#244					*salt_size = m_setbit(0, sflag, 0);"->"376#246						fread(tmp_buf, 1, *salt_size,"[label="*(salt_size)|*salt_size|salt_size"];
-"326#180			fstream = (FILE *) stdin;"->"365#241			fread(&sflag, 1, 1, fstream);"[label="fstream"];
-"365#241			fread(&sflag, 1, 1, fstream);"->"374#244					*salt_size = m_setbit(0, sflag, 0);"[label="sflag"];
+"364#241			fread(&sflag, 1, 1, fstream);"->"325#180			fstream = (FILE *) stdin;"[label="fstream"];
+"373#244					*salt_size = m_setbit(0, sflag, 0);"->"364#241			fread(&sflag, 1, 1, fstream);"[label="sflag"];
+"375#246						fread(tmp_buf, 1, *salt_size,"->"373#244					*salt_size = m_setbit(0, sflag, 0);"[label="*(salt_size)|*salt_size|salt_size"];
 }

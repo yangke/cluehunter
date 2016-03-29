@@ -1,7 +1,8 @@
 import re
 from FunctionCallInfo import FunctionCallInfo
 from LineOfCode import LineOfCode
-from RedundancyFixer import RedundancyFixer 
+from RedundancyFixer import RedundancyFixer
+import datetime
 def fixBlock(blockOfNormalLines):
     if blockOfNormalLines==[]:
         return []
@@ -16,8 +17,9 @@ class LogParser:
     def setRedundantLevel(self,redundant_level):
         if redundant_level==RedundancyFixer.REMOVE_INLINE_REDUNDANT or redundant_level==RedundancyFixer.REMOVE_INTERPROCEDURAL_REDUNDANT:
             self.redundant_level=redundant_level
-            
+
     def parse(self,log_file_path='../gdb.txt'):
+        now0 = datetime.datetime.now()
         logFile=file(log_file_path, 'r')
         lines = logFile.readlines()
         normalLinePattern = re.compile(r'^[0-9]+\s+.*\n')
@@ -33,46 +35,54 @@ class LogParser:
         isFuncInfo=True
         funcInfoStr=''
         funcInfo = None
-        errorInfo=[]
+        #errorInfo=[]
         meetBreakPoint = True
         ignore=False
         ignoreNext=False
         blockOfNormalLines=[]
         for line in lines:
-            if 'rand () at rand.c:26' in line:
-                print "HEY"
-            if valueReturnLinePattern.match(line):
-                ignore=False
-                continue
+            if line[0]=='V' or line[0]=='R':
+                if line[0:3]=='Val' or line[0:3]=='Run':
+                    if valueReturnLinePattern.match(line):
+                        ignore=False
+                        continue
             if ignore:
                 continue
             if ignoreNext:
-                if normalLinePattern.match(line):
+                #if normalLinePattern.match(line):
+                if re.search(r'[1-9][0-9]',line[0:2]) or re.search(r'[1-9]\s',line[0:2]) :#normal line
                     ignoreNext=False
                 else:
                     continue
-            if hexHeadPattern.match(line):
+            #if hexHeadPattern.match(line):
+            if '0x'==line[0:2]:#hex head line
                 ignoreNext=True
                 continue
-            if nullLinePattern.match(line):
+            #if nullLinePattern.match(line):
+            if line.strip()=='':#null line
                 nullLineNum+=1
             elif nullLineNum == 1:
                 #trace content
-                if normalLinePattern.match(line):
+                #if normalLinePattern.match(line):
+                if re.search(r'[1-9][0-9]',line[0:2]) or re.search(r'[1-9]\s',line[0:2]) :#normal line
                     if isFuncInfo:
                         isFuncInfo = False
                         funcInfo=FunctionCallInfo(funcInfoStr)
                         l.append(funcInfo)
                         funcInfoStr=''
                     blockOfNormalLines.append(LineOfCode(line,funcInfo))
+                    #LOG INFO
                     print "find normal line:",line
                 else:
-                    if headInfoPattern.match(line):
+                    #if headInfoPattern.match(line):
+                    if  ('a'<=line[0] and line[0]<='z') or ('A'<=line[0] and line[0]<'Z') or line[0]=='_':
                         if lines.index(line)+1<len(lines):
                             if re.search(no_such_file_or_directory,lines[lines.index(line)+1]):
                                 ignore=True
                                 continue
-                        listOfLines = fixBlock(blockOfNormalLines)
+                        #BUG
+                        #listOfLines = fixBlock(blockOfNormalLines)
+                        listOfLines = blockOfNormalLines
                         l.extend(listOfLines)
                         blockOfNormalLines=[]
                         if not meetBreakPoint:
@@ -85,28 +95,36 @@ class LogParser:
                             meetBreakPoint=False
                         funcInfoStr = line.strip('\n')
                         isFuncInfo=True
+                        #LOG INFO
                         print "find head info line:",line
                     else:
                         #Tail function call stack info 
                         funcInfoStr+=line.strip()
+                        #LOG INFO
                         print "find tail info line:",line
             elif nullLineNum == 2:
                 #Error info
-                listOfLines = fixBlock(blockOfNormalLines)
+                #FIXME
+                #listOfLines = fixBlock(blockOfNormalLines)
+                listOfLines = blockOfNormalLines
                 l.extend(listOfLines)
                 blockOfNormalLines=[]
-                errorInfo.append(line)
+                #errorInfo.append(line)
         print 'ALL PARSED\n============================================'
         fixer=RedundancyFixer(l,self.redundant_level)
+        now1 = datetime.datetime.now()
+        print "initial parse time:",now1-now0
         l=fixer.fix()
+        now2 = datetime.datetime.now()
+        print "filter complains time:",now2-now1
         write2File("trace.txt", l)
+        now3 = datetime.datetime.now()
+        print "write2File time:",now3-now2
         return l
-    
 def write2File(filepath,l):
     tra=file(filepath,"w")
     result=""
     for aline in l:
-        print str(aline).rstrip()
         result+=str(aline).rstrip()+"\n"
     tra.write(result)
     tra.close()      

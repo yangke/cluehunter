@@ -26,11 +26,13 @@ class FunctionCallInfo:
         self.param_list = str[i+1:j].strip().rstrip(')')
         self.listOfLines = []
         self.init_file_name_and_line_num_now()
-        #-------
-        print "init codestr:",str
-        print "function name:",self.func_name
-        print "position info",self.pos_info
-        print "param_list",self.param_list
+        #-------LOG INFO-------------
+        #=======================================================================
+        # print "init codestr:",str
+        # print "function name:",self.func_name
+        # print "position info",self.pos_info
+        # print "param_list",self.param_list
+        #=======================================================================
     def init_file_name_and_line_num_now(self):
         self.file_name=self.pos_info.split(":")[0]
         self.line_num_now=self.pos_info.split(":")[1]
@@ -59,6 +61,10 @@ class FunctionCallInfo:
     def set_file_name(self, value):
         self.__file_name = value
         
+    def ignore_param_value_str(self):
+        s1=re.sub(r'0x[a-fA-F0-9]+','',str(self))
+        return re.sub(r'=[0-9]+','',s1)
+    
     def __str__(self):
         #paramlist="format=format@".join(re.split(r'format.*format@',self.param_list))
         return self.func_name+' ('+self.param_list+')'+' at '+self.pos_info

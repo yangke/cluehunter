@@ -560,7 +560,7 @@ class Tracker:
                     jobs,b=self.checkArgDef(d,job.trace_index,lowerBound,p,rfl,childnum,callee)
                     if b:
                         return jobs
-                    
+                   
     def handleReturnAssignDirect(self,beginIndex,i,var):
         leftvar=self.l[i].codestr.split('=')[0].strip()
         variable_pat=re.compile(Syntax.variable)
@@ -580,7 +580,7 @@ class Tracker:
                     print "check return line:",self.l[idx]
                     if 'return ' in self.l[idx].codestr:
                         self.TG.linkExpandEdges(job_trace_index,idx,"return dependency:"+var.simple_access_str())
-                        self.TG.linkTraverseEdges(i,idx,"ref:"+var.simple_access_str())
+                        #self.TG.linkTraverseEdges(i,idx,"ref:"+var.simple_access_str())
                         start=re.search(r'return\s*',self.l[idx].codestr).span()[1]
                         rightpart=self.l[idx].codestr[start:].strip().rstrip(';').strip()
                         if Syntax.isUniqueNonLibCall(rightpart):

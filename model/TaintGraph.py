@@ -95,6 +95,7 @@ class TaintGraph:
         return result
     def serialize2dot(self):
         result="digraph tiantgraph{\n"
+        result+="rankdir=\"BT\";\n"
         for nodeIndex in self.nodes:
             if isinstance(self.l[nodeIndex], FunctionCallInfo):
                 result+="\""+self.linenum2DotStr(nodeIndex)+'\"[shape="record"];\n'
@@ -125,7 +126,7 @@ class TaintGraph:
     def dot_direction(self,s,t):
         #flow_stle t->s
         #dep_style s->t
-        return "\""+self.linenum2DotStr(t)+"\"->\""+self.linenum2DotStr(s)
+        return "\""+self.linenum2DotStr(s)+"\"->\""+self.linenum2DotStr(t)
     def handleDotKeywords(self,s):
         s=s.replace(r'"', r'\"')#.replace(r';', r'\;')
         s=s.replace(r'{', r'\{').replace(r'}', r'\}')
@@ -133,7 +134,7 @@ class TaintGraph:
         s=s.replace('\\','\\\\')
         return s
     def linenum2DotStr(self,num):
-        return self.handleDotKeywords(str(num)+"#"+str(self.l[num]).rstrip())
+        return self.handleDotKeywords(str(num+1)+"#"+str(self.l[num]).rstrip())
 class Node:
     def __init__(self,job):
         self.index=job.traceIndex

@@ -12,17 +12,20 @@ from Test_memcpy_dst import Test_memcpy_dst
 from Test_memcpy_src import Test_memcpy_src
 from Test_swfdump_i import Test_swfdump_i
 from Test_swfdump_t__data import  Test_swfdump_t__data
+from Test_swfdump_t__data_i import Test_swfdump_t__data_i
 from Test_swfmill_length import Test_swfmill_length
 from Test_objdump_addr import Test_objdump_addr
 from Test_swfmill_data__pos import Test_swfmill_data__pos
 from Test_png2swf_len import Test_png2swf_len
 from Test_speexenc_channel import Test_speexenc_channel
 from Test_speexdec_mode import Test_speexdec_mode
-
+from Test_speexdec_modeID import Test_speexdec_modeID
+import datetime
 class IntegrationTest:
 
     def test(self):
         print "Start integeration test ..."
+        t0=datetime.datetime.now()
         result_array=[]
         test=Test_foomoo_a()
         result_array.append(('foomoo',test.test()))
@@ -42,6 +45,8 @@ class IntegrationTest:
         result_array.append(('swfdump_i',test.test()))
         test=Test_swfdump_t__data()
         result_array.append(('swfdump_t->data',test.test()))
+        test=Test_swfdump_t__data_i()
+        result_array.append(('swfdump_t->data[i]',test.test()))
         test=Test_png2swf_len()
         result_array.append(('png2swf_len',test.test()))
         test=Test_swfmill_length()
@@ -52,12 +57,17 @@ class IntegrationTest:
         result_array.append(('speexenc_channel',test.test()))
         test=Test_speexdec_mode()
         result_array.append(('speexdec_mode',test.test()))
+        test=Test_speexdec_modeID()
+        result_array.append(('speexdec_modeID',test.test()))
         #test=Test_objdump_addr()
         #result_array.append(('objdump_addr',test.test()))
         
         for r in result_array:
             print r[0],":\t",r[1]
+        t1=datetime.datetime.now()
         print "Integeration test ended."
+        print "total time:",t1-t0
+        
         
         
         
