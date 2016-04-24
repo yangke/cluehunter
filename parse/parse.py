@@ -39,6 +39,7 @@ class LogParser:
         meetBreakPoint = True
         ignore=False
         ignoreNext=False
+        last_ignore=False
         blockOfNormalLines=[]
         for line in lines:
             if line[0]=='V' or line[0]=='R':
@@ -47,7 +48,29 @@ class LogParser:
                         ignore=False
                         continue
             if ignore:
-                continue
+                #if headInfoPattern.match(line):
+                if  ('a'<=line[0] and line[0]<='z') or ('A'<=line[0] and line[0]<'Z') or line[0]=='_':
+                    ignore=False
+                    last_ignore=True #the this line should  also be removed as 
+                    #===========================================================
+                    # rfx_free (ptr=0x81c3900) at mem.c:10
+                    # 10    {
+                    # 11      if(!ptr)
+                    # 13      free(ptr);
+                    # __GI___libc_free (mem=0x81c3900) at malloc.c:2912
+                    # 2912    malloc.c: No such file or directory.
+                    # 2917    in malloc.c
+                    # ...
+                    # 2946    in malloc.c
+                    # _int_free (av=0xb7fa7420 <main_arena>, p=0x81c38f8, have_lock=0) at malloc.c:3814
+                    # 3814    in malloc.c
+                    # ...
+                    # 3827    in malloc.c
+                    # rfx_free (ptr=0x81c3900) at mem.c:14   <---------this line should also be removed
+                    # 14    }
+                    #===========================================================
+                else:
+                    continue
             if ignoreNext:
                 #if normalLinePattern.match(line):
                 if re.search(r'[1-9][0-9]',line[0:2]) or re.search(r'[1-9]\s',line[0:2]) :#normal line
@@ -80,6 +103,9 @@ class LogParser:
                             if re.search(no_such_file_or_directory,lines[lines.index(line)+1]):
                                 ignore=True
                                 continue
+                            elif last_ignore:
+                                last_ignore=False
+                                continue  
                         #BUG
                         #listOfLines = fixBlock(blockOfNormalLines)
                         listOfLines = blockOfNormalLines

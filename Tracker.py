@@ -336,6 +336,7 @@ class Tracker:
                 return [TaintJob(i,job.var)]
             return []
         return []
+    
     def lastModification2(self,job):
         print "Now we are checking for last definition of ",job.var
         #=======================================================================
@@ -560,7 +561,7 @@ class Tracker:
                     jobs,b=self.checkArgDef(d,job.trace_index,lowerBound,p,rfl,childnum,callee)
                     if b:
                         return jobs
-                   
+               
     def handleReturnAssignDirect(self,beginIndex,i,var):
         leftvar=self.l[i].codestr.split('=')[0].strip()
         variable_pat=re.compile(Syntax.variable)
