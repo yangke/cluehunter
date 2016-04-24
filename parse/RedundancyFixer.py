@@ -146,7 +146,7 @@ class RedundancyFixer(object):
                 if j>index:
                     break 
             if j>index:
-                print "a jump from ",index, "to", j
+                print "jump from ",index, "to", j
                 for i in range(start,index):#start#...#index#......#j#......
                     new_list.append(self.l[i])
                 start=j

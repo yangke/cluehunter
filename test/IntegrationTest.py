@@ -20,6 +20,7 @@ from Test_png2swf_len import Test_png2swf_len
 from Test_speexenc_channel import Test_speexenc_channel
 from Test_speexdec_mode import Test_speexdec_mode
 from Test_speexdec_modeID import Test_speexdec_modeID
+from Test_catdvi_font import Test_catdvi_font
 import datetime
 class IntegrationTest:
 
@@ -59,6 +60,8 @@ class IntegrationTest:
         result_array.append(('speexdec_mode',test.test()))
         test=Test_speexdec_modeID()
         result_array.append(('speexdec_modeID',test.test()))
+        test=Test_catdvi_font()
+        result_array.append(('catdvi_font',test.test()))
         #test=Test_objdump_addr()
         #result_array.append(('objdump_addr',test.test()))
         
