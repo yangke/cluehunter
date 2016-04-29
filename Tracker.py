@@ -236,12 +236,6 @@ class Tracker:
                         break
                     elif self.isMacroCall(i-1):
                         break
-                elif i-2>=0 and isinstance(self.l[i-2], LineOfCode):
-                    if self.l[i].get_func_name().split("::")[-1] in self.l[i-2].codestr:
-                        break
-                    elif self.isMacroCall(i-1):
-                        break
-        
             i-=1
         return indexes
     def lastModification(self,job):
@@ -929,7 +923,8 @@ class Tracker:
         print "codestr:",codestr
         
         if Syntax.isForStatement(codestr):
-            return Syntax.FOR
+            if re.search(access+r"\s*=[^=]",codestr) or re.search(access+r"(\+\+|--)",codestr):
+                return Syntax.FOR
         if Syntax.isIncDef(var.v, codestr):
             return Syntax.INC
         
