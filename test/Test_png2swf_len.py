@@ -16,7 +16,7 @@ class Test_png2swf_len:
         taintVars=[TaintVar("len",[])]
         test=TraceTrackTest(answer_path,name,logfile_path,taintVars,passed_message,not_pass_message)
         test.set_c_proj_path(c_proj_path)
-        passed=test.test(-2)
+        passed=test.test(59)
         return passed
 
 if __name__ == '__main__':

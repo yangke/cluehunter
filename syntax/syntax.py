@@ -12,6 +12,7 @@ from libhandlers.strcpy_handler import strcpy_handler
 from libhandlers.strncpy_handler import strncpy_handler
 from libhandlers.memmove_handler import memmove_handler
 from libhandlers.sscanf_handler import sscanf_handler
+from libhandlers.fgetc_handler import fgetc_handler
 from libhandlers.ArgHandler import ArgHandler
 from model.TaintJob import TaintJob
 from model.TaintVar import TaintVar
@@ -135,7 +136,9 @@ class Syntax(object):
     
     @staticmethod
     def isLibArgDef(varstr,codestr):
-        if fread_handler.isArgDef(varstr,codestr):
+        if fgetc_handler.isArgDef(varstr,codestr):
+            return True
+        elif fread_handler.isArgDef(varstr,codestr):
             return True
         elif read_handler.isArgDef(varstr,codestr):
             return True
@@ -156,6 +159,9 @@ class Syntax(object):
     @staticmethod
     def handle_sys_lib_def(i,variable,codestr):
         jobs=[]
+        yes=fgetc_handler.isArgDef(variable,codestr)
+        if yes:
+            jobs=fgetc_handler.getJobs(i,variable, codestr)
         yes=fread_handler.isArgDef(variable,codestr)
         if yes:
             jobs=fread_handler.getJobs(i,variable, codestr)
@@ -182,59 +188,6 @@ class Syntax(object):
             jobs=sscanf_handler.getJobs(i, variable, codestr)
         return jobs#FIX ME: this should not happen
     
-    @staticmethod
-    def getVars(var,line):
-        codestr=line.codestr
-        str_pat=var.accessStr()+r"\s*(\[[^\[\]]+\])*\s*[\+\-\*/%&\|]?\s*=(?!=)"
-        print "CHECKING CODE:",codestr
-        m=re.search(str_pat,codestr)
-        if m:
-            span=m.span()
-            left=m.group()
-            i=0
-            while re.search(r"[A-Za-z0-9_\.\*\->\s]",left[i]):
-                i+=1
-            name="".join(left[:i].split())
-            rfl,pp=var.matchAccessPattern(name)
-            right=codestr[span[1]:]
-            right=right.split(';')[0].strip()
-            if Syntax.isVariable(right):
-                if pp is None:
-                    print "Fatal Error!!!"
-                    return None
-                else: 
-                    print pp
-                    return set([TaintVar(right, pp,rfl)])
-            elif re.search(r"\s*fopen\s*\(",right):
-                m_fopen=re.search(r"\s*fopen\s*\(",right)
-                start_pos=m_fopen.span()[1]
-                end_pos,reachend=ArgHandler.nextarg(right, start_pos)
-                if reachend:
-                    print "Fatal Error fopen() has only one argument!"
-                    1/0
-                if re.search("\[|\+|\-(?!>)", right):
-                    print "Fatal Error cannot handle expression filename now!"
-                    1/0
-                print right,right[start_pos:end_pos].strip()
-                return set([TaintVar(right[start_pos:end_pos].strip(), ['*'])])
-            else:
-                m_cond_exp=re.compile(r'^[^\?:]*\?[^\?:]*:[^\?:]*$').match(right)
-                if m_cond_exp:
-                    #FIX ME:
-                    #CAN HANDLE: int i,m=t->len>10?10:t->len;
-                    #CANNOT HANDLE: m=q+((t->len>10?10:t->len)?a:b);
-                    array=right.split('?')[1].split(':')
-                    choice1=Filter.expression2vars(array[0])
-                    choice2=Filter.expression2vars(array[1])
-                    symbols=choice1+choice2
-                else:    
-                    symbols=Filter.expression2vars(right)
-                print symbols
-                if "->id" in symbols:
-                    print "------------------------"
-                varstrs=Filter.filterOutFuncNames(symbols,line.codestr)
-                print "Right variables in assignment:",varstrs
-                return set(map(lambda x : TaintVar(x, []), varstrs))
     
     @staticmethod
     def extract_func_name(codestr,i):
@@ -408,35 +361,6 @@ class Syntax(object):
             return True
         return False
     
-
-    @staticmethod
-    def matchDefiniteDefinitionType(codestr,var):
-        if "fprintf" in codestr:
-            print "Got it!"
-        access=var.accessStr()
-        print "Checking Definition Type for:",access
-        normal_assginment=Syntax.normal_assignment_pattern(access)
-        if Syntax.isForStatement(codestr):
-            return Syntax.FOR
-        if Syntax.isIncDef(var.v, codestr):
-            return Syntax.INC
-        #inc operation detection must be before the assignment.
-        #because when detecting variable (i) in case such as: "for (int i=-1;i<m;i++){",
-        #INC result must be returned as ForJobGenerator is only called in handle branch of INC operation
-        #in "lastModification" and "CheckingArgDefinition" function.
-        #This weird behavior need be fixed in future. 
-        if re.search(normal_assginment,codestr):
-            return Syntax.NORMAL_ASSIGN
-        op_assignment=Syntax.op_assignment_pattern(access)
-        if re.search(op_assignment,codestr):
-            return Syntax.OP_ASSIGN
-        raw_definition=r"^\s*\{\s*[A-Za-z_][A-Za-z0-9_]+\s+(\*\s*)*([A-Za-z_][A-Za-z0-9_]+\s*,\s*)*"+var.v+"\s*;"
-        if re.search(raw_definition, codestr):
-            print "We got the raw definition!"
-            return Syntax.RAW_DEF
-        if Syntax.isLibArgDef(var,codestr):
-            return Syntax.SYS_LIB_DEF
-        return  Syntax.NODEF
     @staticmethod
     def vars_in_for_change_part(v_access,change_str):
         change_str=''.join(change_str.split())

@@ -1,0 +1,7 @@
+digraph tiantgraph{
+rankdir="BT";
+"1898#117	    for(t=0;t<fontnum;t++)";
+"1899#119		if(fonts[t]->id == fontid) \\{";
+edge [fontname = "Verdana", fontsize = 10, color="crimson", style="solid"];
+"1899#119		if(fonts[t]->id == fontid) \\{"->"1898#117	    for(t=0;t<fontnum;t++)"[label="t"];
+}

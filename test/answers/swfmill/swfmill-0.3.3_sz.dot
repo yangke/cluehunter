@@ -1,0 +1,4 @@
+digraph tiantgraph{
+rankdir="BT";
+edge [fontname = "Verdana", fontsize = 10, color="crimson", style="solid"];
+}

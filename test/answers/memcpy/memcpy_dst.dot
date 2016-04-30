@@ -1,11 +1,11 @@
 digraph tiantgraph{
 rankdir="BT";
-"4#12		char a[2]=\\"1\\";";
-"10#14		cpy_it(a,buffer,1000);";
-"11#cpy_it (dst=0xbfffe7c2 \\"1\\", src=0xbfffe828 \\"123456\\", '0' <repeats 59 times>, len=1000) at mmcpy.c:5"[shape="record"];
-"12#5		memcpy(dst,src,len);";
+"3#12		char a[2]=\\"1\\";";
+"10#cpy_it (dst=0xbfffe7c2 \\"1\\", src=0xbfffe828 \\"123456\\", '0' <repeats 59 times>,len=1000) at mmcpy.c:5"[shape="record"];
+"11#5		memcpy(dst,src,len);";
+"9#14		cpy_it(a,buffer,1000);";
 edge [fontname = "Verdana", fontsize = 10, color="crimson", style="solid"];
-"10#14		cpy_it(a,buffer,1000);"->"4#12		char a[2]=\\"1\\";"[label="*(a)|*a|a"];
-"12#5		memcpy(dst,src,len);"->"11#cpy_it (dst=0xbfffe7c2 \\"1\\", src=0xbfffe828 \\"123456\\", '0' <repeats 59 times>, len=1000) at mmcpy.c:5"[label="*(dst)|*dst|dst"];
-"11#cpy_it (dst=0xbfffe7c2 \\"1\\", src=0xbfffe828 \\"123456\\", '0' <repeats 59 times>, len=1000) at mmcpy.c:5"->"10#14		cpy_it(a,buffer,1000);"[label="a,0",style="dotted", color="forestgreen"];
+"9#14		cpy_it(a,buffer,1000);"->"3#12		char a[2]=\\"1\\";"[label="*(a)|*a|a"];
+"11#5		memcpy(dst,src,len);"->"10#cpy_it (dst=0xbfffe7c2 \\"1\\", src=0xbfffe828 \\"123456\\", '0' <repeats 59 times>,len=1000) at mmcpy.c:5"[label="*(dst)|*dst|dst"];
+"10#cpy_it (dst=0xbfffe7c2 \\"1\\", src=0xbfffe828 \\"123456\\", '0' <repeats 59 times>,len=1000) at mmcpy.c:5"->"9#14		cpy_it(a,buffer,1000);"[label="a,0",style="dotted", color="forestgreen"];
 }

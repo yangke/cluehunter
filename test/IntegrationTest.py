@@ -6,7 +6,7 @@ Created on Dec 13, 2015
 from Test_foomoo_a import Test_foomoo_a
 from Test_libsndfile_bytes import Test_libsndfile_bytes
 from Test_libsndfile_most import Test_libsndfile_most
-from test.Test_libsndfile_wav_fmt__min_blockalign import Test_libsndfile_wav_fmt__min_blockalign
+from Test_libsndfile_wav_fmt__min_blockalign import Test_libsndfile_wav_fmt__min_blockalign
 from Test_mcrypt_salt_size import Test_mcrypt_salt_size
 from Test_memcpy_dst import Test_memcpy_dst
 from Test_memcpy_src import Test_memcpy_src
@@ -21,11 +21,15 @@ from Test_speexenc_channel import Test_speexenc_channel
 from Test_speexdec_mode import Test_speexdec_mode
 from Test_speexdec_modeID import Test_speexdec_modeID
 from Test_catdvi_font import Test_catdvi_font
+from Test_swfstrings_t import Test_swfstrings_t
+from Test_swfstrings_fonts import Test_swfstrings_fonts
+from Test_swfmill_sz import Test_swfmill_sz
+
 import datetime
 class IntegrationTest:
 
     def test(self):
-        print "Start integeration test ..."
+        print "Start integeration tests ..."
         t0=datetime.datetime.now()
         result_array=[]
         test=Test_foomoo_a()
@@ -62,13 +66,19 @@ class IntegrationTest:
         result_array.append(('speexdec_modeID',test.test()))
         test=Test_catdvi_font()
         result_array.append(('catdvi_font',test.test()))
-        #test=Test_objdump_addr()
-        #result_array.append(('objdump_addr',test.test()))
+        test=Test_objdump_addr()
+        result_array.append(('objdump_addr',test.test()))
+        test=Test_swfstrings_t()
+        result_array.append(('swfstrings_t',test.test()))
+        test=Test_swfstrings_fonts()
+        result_array.append(('swfstrings_fonts',test.test()))
+        test=Test_swfmill_sz()
+        result_array.append(('swfmill_sz',test.test()))
         
         for r in result_array:
             print r[0],":\t",r[1]
         t1=datetime.datetime.now()
-        print "Integeration test ended."
+        print "Integeration tests ended."
         print "total time:",t1-t0
         
         

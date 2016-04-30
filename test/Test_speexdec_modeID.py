@@ -16,7 +16,7 @@ class Test_speexdec_modeID:
         taintVars=[TaintVar("modeID",[])]
         test=TraceTrackTest(answer_path,name,logfile_path,taintVars,passed_message,not_pass_message)
         test.set_c_proj_path(c_proj_path)
-        passed=test.test(-7)
+        passed=test.test(202)
         return passed
 if __name__ == '__main__':
     test=Test_speexdec_modeID()

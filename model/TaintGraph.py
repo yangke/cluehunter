@@ -5,7 +5,7 @@ Created on Sep 9, 2015
 '''
 from parse.FunctionCallInfo import FunctionCallInfo
 class TaintGraph:
-    def __init__(self,l):
+    def __init__(self,record_manager):
         self.inInnerEdges=dict()
         self.outInnerEdges=dict()
         self.inInterEdges=dict()
@@ -17,10 +17,13 @@ class TaintGraph:
         self.inTraverseEdges=dict()
         self.outTraverseEdges=dict()
         self.nodes=set()
-        self.l=l
+        self.record_manager=record_manager
         
+    def get(self,i):
+        return self.record_manager.l[i]
+    
     def linkInnerEdges(self,startIndex,endIndex,accessstr):
-        print "InnerEdge:"+str(self.l[startIndex]).rstrip()+"--->"+str(self.l[endIndex]).rstrip()+":"+accessstr+"\n"
+        print "InnerEdge:"+str(self.get(startIndex)).rstrip()+"--->"+str(self.get(endIndex)).rstrip()+":"+accessstr+"\n"
         if startIndex not in self.outInnerEdges:
             self.outInnerEdges[startIndex]=set()
         self.outInnerEdges[startIndex].add((endIndex,accessstr))
@@ -32,7 +35,7 @@ class TaintGraph:
         self.nodes.add(endIndex)
         
     def linkCrossEdges(self,startIndex,endIndex,accessstr):
-        print "CrossEdge:"+str(self.l[startIndex]).rstrip()+"--->"+str(self.l[endIndex]).rstrip()+":"+accessstr+"\n"
+        print "CrossEdge:"+str(self.get(startIndex)).rstrip()+"--->"+str(self.get(endIndex)).rstrip()+":"+accessstr+"\n"
         if startIndex not in self.outCrossEdges:
             self.outCrossEdges[startIndex]=set()
         self.outCrossEdges[startIndex].add((endIndex,accessstr))
@@ -44,7 +47,7 @@ class TaintGraph:
         self.nodes.add(endIndex)
           
     def linkExpandEdges(self,startIndex,endIndex,accessstr):
-        print "ExpandEdge:"+str(self.l[startIndex]).rstrip()+"--->"+str(self.l[endIndex]).rstrip()+":"+accessstr+"\n"
+        print "ExpandEdge:"+str(self.get(startIndex)).rstrip()+"--->"+str(self.get(endIndex)).rstrip()+":"+accessstr+"\n"
         if startIndex not in self.outExpandEdges:
             self.outExpandEdges[startIndex]=set()
         self.outExpandEdges[startIndex].add((endIndex,accessstr))
@@ -54,7 +57,7 @@ class TaintGraph:
         self.nodes.add(startIndex)
         self.nodes.add(endIndex)
     def linkTraverseEdges(self,startIndex,endIndex,accessstr):
-        print "TraverseEdge:"+str(self.l[startIndex]).rstrip()+"--->"+str(self.l[endIndex]).rstrip()+":"+accessstr+"\n"
+        print "TraverseEdge:"+str(self.get(startIndex)).rstrip()+"--->"+str(self.get(endIndex)).rstrip()+":"+accessstr+"\n"
         if startIndex not in self.outTraverseEdges:
             self.outTraverseEdges[startIndex]=set()
         self.outTraverseEdges[startIndex].add((endIndex,accessstr))
@@ -65,7 +68,7 @@ class TaintGraph:
         self.nodes.add(endIndex)
             
     def linkInterEdges(self,startIndex,endIndex,param,arg,argpos):
-        print "InterEdge:"+str(self.l[startIndex]).rstrip()+"--->"+str(self.l[endIndex]).rstrip()+":"+str(arg)+","+str(argpos)+"\n"
+        print "InterEdge:"+str(self.get(startIndex)).rstrip()+"--->"+str(self.get(endIndex)).rstrip()+":"+str(arg)+","+str(argpos)+"\n"
         if startIndex not in self.outInterEdges:
             self.outInterEdges[startIndex]=set()
         self.outInterEdges[startIndex].add((endIndex, arg, argpos))
@@ -97,7 +100,7 @@ class TaintGraph:
         result="digraph tiantgraph{\n"
         result+="rankdir=\"BT\";\n"
         for nodeIndex in self.nodes:
-            if isinstance(self.l[nodeIndex], FunctionCallInfo):
+            if isinstance(self.get(nodeIndex), FunctionCallInfo):
                 result+="\""+self.linenum2DotStr(nodeIndex)+'\"[shape="record"];\n'
             else:
                 result+="\""+self.linenum2DotStr(nodeIndex)+'\";\n'
@@ -134,7 +137,7 @@ class TaintGraph:
         s=s.replace('\\','\\\\')
         return s
     def linenum2DotStr(self,num):
-        return self.handleDotKeywords(str(num+1)+"#"+str(self.l[num]).rstrip())
+        return self.handleDotKeywords(str(num+len(self.record_manager.l))+"#"+str(self.get(num)).rstrip())
 class Node:
     def __init__(self,job):
         self.index=job.traceIndex

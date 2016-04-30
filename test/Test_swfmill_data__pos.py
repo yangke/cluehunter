@@ -17,7 +17,7 @@ class Test_swfmill_data__pos:
         taintVars=[TaintVar("r",['->pos'])]
         test=TraceTrackTest(answer_path,name,logfile_path,taintVars,passed_message,not_pass_message)
         test.set_c_proj_path(c_proj_path)
-        passed=test.test(-8)
+        passed=test.test(1679)
         return passed
 if __name__ == '__main__':
     test=Test_swfmill_data__pos()

@@ -9,32 +9,32 @@
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 124)">
 <title>tiantgraph</title>
 <polygon fill="white" stroke="none" points="-4,4 -4,-124 967,-124 967,4 -4,4"/>
-<!-- 168#719	 &#160;if (mode &lt; 0 || mode &gt; SPEEX_NB_MODES) return NULL; -->
-<g id="node1" class="node"><title>168#719	 &#160;if (mode &lt; 0 || mode &gt; SPEEX_NB_MODES) return NULL;</title>
-<ellipse fill="none" stroke="black" cx="272" cy="-18" rx="271.989" ry="18"/>
-<text text-anchor="middle" x="272" y="-14.3" font-family="Times,serif" font-size="14.00">168#719	 &#160;if (mode &lt; 0 || mode &gt; SPEEX_NB_MODES) return NULL;</text>
+<!-- 105#327	 &#160;&#160;mode = speex_lib_get_mode (modeID); -->
+<g id="node1" class="node"><title>105#327	 &#160;&#160;mode = speex_lib_get_mode (modeID);</title>
+<ellipse fill="none" stroke="black" cx="200" cy="-102" rx="200.365" ry="18"/>
+<text text-anchor="middle" x="200" y="-98.3" font-family="Times,serif" font-size="14.00">105#327	 &#160;&#160;mode = speex_lib_get_mode (modeID);</text>
 </g>
-<!-- 172#335	 &#160;&#160;if (mode&#45;&gt;bitstream_version &lt; header&#45;&gt;mode_bitstream_version) -->
-<g id="node2" class="node"><title>172#335	 &#160;&#160;if (mode&#45;&gt;bitstream_version &lt; header&#45;&gt;mode_bitstream_version)</title>
-<ellipse fill="none" stroke="black" cx="517" cy="-102" rx="291.237" ry="18"/>
-<text text-anchor="middle" x="517" y="-98.3" font-family="Times,serif" font-size="14.00">172#335	 &#160;&#160;if (mode&#45;&gt;bitstream_version &lt; header&#45;&gt;mode_bitstream_version)</text>
+<!-- 107#719	 &#160;if (mode &lt; 0 || mode &gt; SPEEX_NB_MODES) return NULL; -->
+<g id="node2" class="node"><title>107#719	 &#160;if (mode &lt; 0 || mode &gt; SPEEX_NB_MODES) return NULL;</title>
+<ellipse fill="none" stroke="black" cx="691" cy="-102" rx="272.152" ry="18"/>
+<text text-anchor="middle" x="691" y="-98.3" font-family="Times,serif" font-size="14.00">107#719	 &#160;if (mode &lt; 0 || mode &gt; SPEEX_NB_MODES) return NULL;</text>
 </g>
-<!-- 172#335	 &#160;&#160;if (mode&#45;&gt;bitstream_version &lt; header&#45;&gt;mode_bitstream_version)&#45;&gt;168#719	 &#160;if (mode &lt; 0 || mode &gt; SPEEX_NB_MODES) return NULL; -->
-<g id="edge2" class="edge"><title>172#335	 &#160;&#160;if (mode&#45;&gt;bitstream_version &lt; header&#45;&gt;mode_bitstream_version)&#45;&gt;168#719	 &#160;if (mode &lt; 0 || mode &gt; SPEEX_NB_MODES) return NULL;</title>
-<path fill="none" stroke="orange" stroke-dasharray="5,2" d="M466.829,-84.2082C427.688,-71.108 373.199,-52.8706 331.795,-39.0129"/>
-<polygon fill="orange" stroke="orange" points="332.697,-35.6243 322.104,-35.7693 330.476,-42.2623 332.697,-35.6243"/>
-<text text-anchor="middle" x="500.5" y="-57.5" font-family="Verdana" font-size="10.00">return by edge:*(mode)|*mode|mode</text>
+<!-- 111#335	 &#160;&#160;if (mode&#45;&gt;bitstream_version &lt; header&#45;&gt;mode_bitstream_version) -->
+<g id="node3" class="node"><title>111#335	 &#160;&#160;if (mode&#45;&gt;bitstream_version &lt; header&#45;&gt;mode_bitstream_version)</title>
+<ellipse fill="none" stroke="black" cx="445" cy="-18" rx="291.648" ry="18"/>
+<text text-anchor="middle" x="445" y="-14.3" font-family="Times,serif" font-size="14.00">111#335	 &#160;&#160;if (mode&#45;&gt;bitstream_version &lt; header&#45;&gt;mode_bitstream_version)</text>
 </g>
-<!-- 166#327	 &#160;&#160;mode = speex_lib_get_mode (modeID); -->
-<g id="node3" class="node"><title>166#327	 &#160;&#160;mode = speex_lib_get_mode (modeID);</title>
-<ellipse fill="none" stroke="black" cx="763" cy="-18" rx="200.273" ry="18"/>
-<text text-anchor="middle" x="763" y="-14.3" font-family="Times,serif" font-size="14.00">166#327	 &#160;&#160;mode = speex_lib_get_mode (modeID);</text>
+<!-- 111#335	 &#160;&#160;if (mode&#45;&gt;bitstream_version &lt; header&#45;&gt;mode_bitstream_version)&#45;&gt;105#327	 &#160;&#160;mode = speex_lib_get_mode (modeID); -->
+<g id="edge1" class="edge"><title>111#335	 &#160;&#160;if (mode&#45;&gt;bitstream_version &lt; header&#45;&gt;mode_bitstream_version)&#45;&gt;105#327	 &#160;&#160;mode = speex_lib_get_mode (modeID);</title>
+<path fill="none" stroke="crimson" d="M394.829,-35.7918C355.429,-48.9788 300.476,-67.3712 258.974,-81.2619"/>
+<polygon fill="crimson" stroke="crimson" points="257.638,-78.0179 249.266,-84.5109 259.86,-84.656 257.638,-78.0179"/>
+<text text-anchor="middle" x="392" y="-57.5" font-family="Verdana" font-size="10.00">*(mode)|*mode|mode</text>
 </g>
-<!-- 172#335	 &#160;&#160;if (mode&#45;&gt;bitstream_version &lt; header&#45;&gt;mode_bitstream_version)&#45;&gt;166#327	 &#160;&#160;mode = speex_lib_get_mode (modeID); -->
-<g id="edge1" class="edge"><title>172#335	 &#160;&#160;if (mode&#45;&gt;bitstream_version &lt; header&#45;&gt;mode_bitstream_version)&#45;&gt;166#327	 &#160;&#160;mode = speex_lib_get_mode (modeID);</title>
-<path fill="none" stroke="crimson" d="M567.375,-84.2082C606.936,-71.0212 662.114,-52.6288 703.786,-38.7381"/>
-<polygon fill="crimson" stroke="crimson" points="705.153,-41.9719 713.533,-35.4891 702.939,-35.3311 705.153,-41.9719"/>
-<text text-anchor="middle" x="709" y="-57.5" font-family="Verdana" font-size="10.00">*(mode)|*mode|mode</text>
+<!-- 111#335	 &#160;&#160;if (mode&#45;&gt;bitstream_version &lt; header&#45;&gt;mode_bitstream_version)&#45;&gt;107#719	 &#160;if (mode &lt; 0 || mode &gt; SPEEX_NB_MODES) return NULL; -->
+<g id="edge2" class="edge"><title>111#335	 &#160;&#160;if (mode&#45;&gt;bitstream_version &lt; header&#45;&gt;mode_bitstream_version)&#45;&gt;107#719	 &#160;if (mode &lt; 0 || mode &gt; SPEEX_NB_MODES) return NULL;</title>
+<path fill="none" stroke="orange" stroke-dasharray="5,2" d="M495.375,-35.7918C534.676,-48.892 589.388,-67.1294 630.961,-80.9871"/>
+<polygon fill="orange" stroke="orange" points="630.098,-84.3887 640.692,-84.2307 632.312,-77.7479 630.098,-84.3887"/>
+<text text-anchor="middle" x="683.5" y="-57.5" font-family="Verdana" font-size="10.00">return dependency:*(mode)|*mode|mode</text>
 </g>
 </g>
 </svg>

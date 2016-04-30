@@ -1,7 +1,7 @@
 digraph tiantgraph{
 rankdir="BT";
-"1275#122		memset (wav_fmt, 0, sizeof (WAV_FMT)) ;";
-"2644#200					if (wav_fmt->min.bytespersec / wav_fmt->min.blockalign != wav_fmt->min.samplerate)";
+"4#122		memset (wav_fmt, 0, sizeof (WAV_FMT)) ;";
+"1510#200					if (wav_fmt->min.bytespersec / wav_fmt->min.blockalign != wav_fmt->min.samplerate)";
 edge [fontname = "Verdana", fontsize = 10, color="crimson", style="solid"];
-"2644#200					if (wav_fmt->min.bytespersec / wav_fmt->min.blockalign != wav_fmt->min.samplerate)"->"1275#122		memset (wav_fmt, 0, sizeof (WAV_FMT)) ;"[label="wav_fmt->min.blockalign|wav_fmt->min|wav_fmt"];
+"1510#200					if (wav_fmt->min.bytespersec / wav_fmt->min.blockalign != wav_fmt->min.samplerate)"->"4#122		memset (wav_fmt, 0, sizeof (WAV_FMT)) ;"[label="wav_fmt->min.blockalign|wav_fmt->min|wav_fmt"];
 }

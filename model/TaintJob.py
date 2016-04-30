@@ -6,9 +6,10 @@ Created on Sep 9, 2015
 from parse.FunctionCallInfo import FunctionCallInfo
 class TaintJob:
     
-    def __init__(self,index,var):
+    def __init__(self,index,var,corresponding_arg_pos=None):
         self.trace_index=index
         self.var=var
+        self.corresponding_arg_pos=corresponding_arg_pos
     def __eq__(self,obj):
         return   str(self)==str(obj)
     def __hash__(self):
