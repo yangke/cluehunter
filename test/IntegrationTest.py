@@ -76,7 +76,7 @@ class IntegrationTest:
         result_array.append(('swfmill_sz',test.test()))
         
         for r in result_array:
-            print r[0],":\t",r[1]
+            print r[0],":\t",r[1][0],r[1][1]
         t1=datetime.datetime.now()
         print "Integeration tests ended."
         print "total time:",t1-t0

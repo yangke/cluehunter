@@ -14,8 +14,8 @@ class Test_foomoo_a:
         logfile_path="gdb_logs/foomoo/gdb-foomoo.txt"
         taintVars=[TaintVar("a",[])]
         test=TraceTrackTest(answer_path,name,logfile_path,taintVars,passed_message,not_pass_message)
-        passed=test.test()
-        return passed
+        passed,time_cost=test.test()
+        return passed,time_cost
            
 if __name__ == '__main__':
     test=Test_foomoo_a()

@@ -62,7 +62,8 @@ class TraceTrackTest(object):
         traceIndex=-1
         passed=self.test_tracker(tracker,traceIndex)
         end = datetime.datetime.now()
-        print "Time cost:",end-start
-        return passed
+        time_cost=end-start
+        print "Time cost:",time_cost
+        return passed,time_cost
     
     

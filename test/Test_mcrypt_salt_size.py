@@ -16,8 +16,8 @@ class Test_mcrypt_salt_size:
         taintVars=[TaintVar("salt_size",['*'])]
         test=TraceTrackTest(answer_path,name,logfile_path,taintVars,passed_message,not_pass_message)
         test.set_c_proj_path(c_proj_path)
-        passed=test.test()
-        return passed
+        passed,time_cost=test.test()
+        return passed,time_cost
 
 if __name__ == '__main__':
     test=Test_mcrypt_salt_size()
