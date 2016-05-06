@@ -102,10 +102,11 @@ class Syntax(object):
         p=re.compile(r'^'+Syntax.variable+r'$')
         return p.match(varstr.strip()) is not None
     @staticmethod
-    def isForStatement(codestr):
+    def isForStatement(codestr, access_pat):
         m=re.search(Syntax.for_pattern, codestr)
         if m is not None:
-            return True
+            if re.search(access_pat+r"\s*=[^=]",codestr) or re.search(access_pat+r"(\+\+|--)",codestr):
+                return True
         return False
     
     @staticmethod

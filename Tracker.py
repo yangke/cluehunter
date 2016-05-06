@@ -241,12 +241,6 @@ class Tracker:
                         break
                     elif self.isMacroCall(i-1):
                         break
-                elif i-2>=0 and isinstance(self.l[i-2], LineOfCode):
-                    if self.l[i].get_func_name().split("::")[-1] in self.l[i-2].codestr:
-                        break
-                    elif self.isMacroCall(i-1):
-                        break
-        
             i-=1
         return indexes
     def lastModification(self,job):
@@ -328,13 +322,7 @@ class Tracker:
                 self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
                 return [TaintJob(i,job.var)]
             return []
-        #=======================================================================
-        # elif i-2>0 and isinstance(self.l[i-2], LineOfCode) and self.l[i].get_func_name().split("::")[-1] in self.l[i-2].codestr and self.l[i]==self.l[job.trace_index].get_func_call_info():#call point
-        #     if job.var.v in self.l[i].param_list:
-        #         self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
-        #         return [TaintJob(i,job.var)]
-        #     return []
-        #=======================================================================
+        
         elif self.isMacroCall(i-1):
             if job.var.v in self.l[i].param_list:
                 self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
@@ -597,9 +585,6 @@ class Tracker:
                 if isinstance(self.l[i-1], LineOfCode):
                     if self.l[i].get_func_name().split("::")[-1] in self.l[i-1].codestr:
                         break
-                elif isinstance(self.l[i-2], LineOfCode):
-                    if self.l[i].get_func_name().split("::")[-1] in self.l[i-2].codestr:
-                        break
             i-=1
         if lowerBound==len(self.l):
             print "Now lowerBound is unlimited."
@@ -709,7 +694,7 @@ class Tracker:
         print "Checking Definition Type for:",access
         print "codestr:",codestr
         
-        if Syntax.isForStatement(codestr):
+        if Syntax.isForStatement(codestr, access):
             return Syntax.FOR
         if Syntax.isIncDef(var.v, codestr):
             return Syntax.INC
