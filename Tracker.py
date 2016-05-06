@@ -497,7 +497,7 @@ class Tracker:
                         print "pass",v.simple_access_str()
                         visited.add(aIndex) 
                     else:
-                        print "Line Under Check:",self.l[aIndex]
+                        print "Line Under Check:",aIndex,"#",self.l[aIndex]
                         if "&hdr;" in self.l[aIndex].codestr:
                                 print "Find IT!"
                         match=self.isLeftPropagate(v,self.l[aIndex].codestr)
