@@ -17,8 +17,8 @@ class Test_memcpy_dst:
         taintVars=[TaintVar("dst",['*'])]
         test=TraceTrackTest(answer_path,name,logfile_path,taintVars,passed_message,not_pass_message)
         test.set_c_proj_path(c_proj_path)
-        passed,time_cost=test.test()
-        return passed,time_cost
+        passed=test.test()
+        return passed
     
 if __name__ == '__main__':
     test=Test_memcpy_dst()

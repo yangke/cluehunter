@@ -1,17 +1,17 @@
 digraph tiantgraph{
 rankdir="BT";
-"115#161	        sint32 currfont = 0;";
-"217#203	                        output_glyph(currfont, b-DVI_set_char_0);";
-"218#output_glyph (font=font@entry=0, glyph=0) at readdvi.c:116"[shape="record"];
-"222#125	            currfont = font;";
-"767#152	                       font_char_depth(currfont, glyph),";
-"768#font_char_depth (font=0, glyph=glyph@entry=0) at fontinfo.c:489"[shape="record"];
-"773#508	        de = tfm_tbl[font].char_info[ugly - tfm_tbl[font].bc].depth_index;";
+"11842#161	        sint32 currfont = 0;";
+"11917#203	                        output_glyph(currfont, b-DVI_set_char_0);";
+"11918#output_glyph (font=font@entry=0, glyph=0) at readdvi.c:116"[shape="record"];
+"11921#125	            currfont = font;";
+"12085#152	                       font_char_depth(currfont, glyph),";
+"12086#font_char_depth (font=0, glyph=glyph@entry=0) at fontinfo.c:489"[shape="record"];
+"12091#508	        de = tfm_tbl[font].char_info[ugly - tfm_tbl[font].bc].depth_index;";
 edge [fontname = "Verdana", fontsize = 10, color="crimson", style="solid"];
-"222#125	            currfont = font;"->"218#output_glyph (font=font@entry=0, glyph=0) at readdvi.c:116"[label="font"];
-"767#152	                       font_char_depth(currfont, glyph),"->"222#125	            currfont = font;"[label="currfont"];
-"217#203	                        output_glyph(currfont, b-DVI_set_char_0);"->"115#161	        sint32 currfont = 0;"[label="currfont"];
-"773#508	        de = tfm_tbl[font].char_info[ugly - tfm_tbl[font].bc].depth_index;"->"768#font_char_depth (font=0, glyph=glyph@entry=0) at fontinfo.c:489"[label="font"];
-"768#font_char_depth (font=0, glyph=glyph@entry=0) at fontinfo.c:489"->"767#152	                       font_char_depth(currfont, glyph),"[label="currfont,0",style="dotted", color="forestgreen"];
-"218#output_glyph (font=font@entry=0, glyph=0) at readdvi.c:116"->"217#203	                        output_glyph(currfont, b-DVI_set_char_0);"[label="currfont,0",style="dotted", color="forestgreen"];
+"11921#125	            currfont = font;"->"11918#output_glyph (font=font@entry=0, glyph=0) at readdvi.c:116"[label="font"];
+"11917#203	                        output_glyph(currfont, b-DVI_set_char_0);"->"11842#161	        sint32 currfont = 0;"[label="currfont"];
+"12091#508	        de = tfm_tbl[font].char_info[ugly - tfm_tbl[font].bc].depth_index;"->"12086#font_char_depth (font=0, glyph=glyph@entry=0) at fontinfo.c:489"[label="font"];
+"12085#152	                       font_char_depth(currfont, glyph),"->"11921#125	            currfont = font;"[label="currfont"];
+"12086#font_char_depth (font=0, glyph=glyph@entry=0) at fontinfo.c:489"->"12085#152	                       font_char_depth(currfont, glyph),"[label="currfont,0",style="dotted", color="forestgreen"];
+"11918#output_glyph (font=font@entry=0, glyph=0) at readdvi.c:116"->"11917#203	                        output_glyph(currfont, b-DVI_set_char_0);"[label="currfont,0",style="dotted", color="forestgreen"];
 }

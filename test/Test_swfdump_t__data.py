@@ -16,8 +16,8 @@ class Test_swfdump_t__data:
         taintVars=[TaintVar("t->data",["*"])]
         test=TraceTrackTest(answer_path,name,logfile_path,taintVars,passed_message,not_pass_message)
         test.set_c_proj_path(c_proj_path)
-        passed,time_cost=test.test()
-        return passed,time_cost
+        passed=test.test()
+        return passed
 if __name__ == '__main__':
     test=Test_swfdump_t__data()
     test.test()

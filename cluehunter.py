@@ -8,10 +8,11 @@ import logging
 import argparse
 import os
 import subprocess
+from parse.parse import LogParser
 from model.TaintVar import TaintVar
 from Tracker import Tracker
+from parse.RedundancyFixer import RedundancyFixer
 from parse.MacroInspector import MacroInspector
-from parse.RecordManager import RecordManager
 
 DESCRIPTION = """ClueHunter is an auxiliary tool for crash point reverse data flow analysis.
 It generate data flow graph according to the gdb debug log(C program source code level).
@@ -41,6 +42,9 @@ class ClueHunter:
                 if p!='*' and p!='N':
                     err='The specified pattern must be "*" or "N".'
                     break
+        if self.args.level!=RedundancyFixer.REMOVE_INLINE_REDUNDANT and self.args.level!=RedundancyFixer.REMOVE_INTERPROCEDURAL_REDUNDANT:
+            err='Redundancy level should be 0 or 1'
+            
         if err!='':
             self.arg_parser.error(err)
             
@@ -69,13 +73,21 @@ class ClueHunter:
                 help='Specify the identifier name of the sink variable. Example:father->baby.toy')
         
         self.arg_parser.add_argument(
+                '-l', '--level',
+                action = 'store',
+                default = 1,
+                type = int,
+                help = """Redundancy level of the parsing.
+0 means just remove inline or innner function redundancy; 1 means remove  both of the inline and interprocedural reduandancy.""")
+        self.arg_parser.add_argument(
                 '-i', '--index',
                 action = 'store',
-                default = None,
+                default = -1,
                 type = int,
                 help = """The start trace line for tracking.
-Default value is None which means start from the last code line on the debugging list.
-Positive integer means the {line number}-1 in the parsed result cluehunter/test/trace.txt. 
+Default value is -1 which means start from the last line.
+Positive integer means the {line number}-1 in the parsed result cluhunter/test/trace.txt. 
+Negative integer means the last but what line of the cluhunter/test/trace.txt.
 0 is useless, but it still can be regarded as the first line.""")
         self.arg_parser.add_argument(
                 '-t', '--trace',
@@ -96,7 +108,7 @@ Positive integer means the {line number}-1 in the parsed result cluehunter/test/
                 dest="c_project_dir",
                 default = None,
                 help = """The C project directory with the .i files maked by  gcc '-save-temps' option. 
-                Usually the we add this flags during configuration: ./configure CFLAGS='-g -save-temps'.""")
+                Usually the we add this flags during configure: ./configure CFLAGS='-g -save-temps'.""")
         self.arg_parser.add_argument(
                 '-n', '--name',
                 action = 'store',
@@ -137,17 +149,18 @@ Positive integer means the {line number}-1 in the parsed result cluehunter/test/
         return vs
             
     def _analysis(self):
-        start_line_num=self.args.index
+        parser=LogParser()
+        parser.setRedundantLevel(self.args.level)
+        l=parser.parse(self.args.trace)
         if self.args.c_project_dir is not None:
             macro_inspector=MacroInspector(self.args.c_project_dir)
-            
+            tracker=Tracker(l,macro_inspector)
         else:
-            macro_inspector=None
-        rm=RecordManager(start_line_num,self.args.trace, macro_inspector)
-        rm.fetchSome()
-        tracker=Tracker(rm)
+            tracker=Tracker(l)
+        for line in l:
+            print str(l.index(line))+"#"+str(line)
+        traceIndex=(len(l)+self.args.index)%len(l)
         vs=self.build_tiantvars_list()
-        traceIndex=-1
         tracker.setStartJobs(traceIndex, vs)
         
         TG=tracker.track()

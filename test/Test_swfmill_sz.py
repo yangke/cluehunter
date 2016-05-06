@@ -6,7 +6,7 @@ Created on Oct 7, 2015
 from model.TaintVar import TaintVar
 from TraceTrackTest import TraceTrackTest
 
-class Test_swfmill_sz:
+class Test_swfmill_data__pos:
     def test(self):
         passed_message="SWFMILL-0.3.3 'sz' TEST PASSED!"
         not_pass_message="ERRORS FOUND IN SWFMILL-0.3.3 'sz' TEST!"
@@ -17,8 +17,8 @@ class Test_swfmill_sz:
         taintVars=[TaintVar("sz",[])]
         test=TraceTrackTest(answer_path,name,logfile_path,taintVars,passed_message,not_pass_message)
         test.set_c_proj_path(c_proj_path)
-        passed,time_cost=test.test()
-        return passed,time_cost
+        passed=test.test(-1)
+        return passed
 if __name__ == '__main__':
-    test=Test_swfmill_sz()
+    test=Test_swfmill_data__pos()
     test.test()

@@ -6,6 +6,7 @@ Created on Sep 9, 2015
 import re
 import subprocess
 from model.TaintGraph import TaintGraph
+from parse.parse import LogParser
 from model.TaintJob import TaintJob
 from model.TaintVar import TaintVar
 from parse.FunctionCallInfo import FunctionCallInfo
@@ -13,8 +14,6 @@ from parse.LineOfCode import LineOfCode
 from utils.Filter import Filter
 from syntax.syntax import Syntax
 from libhandlers.ArgHandler import ArgHandler
-from parse.RecordManager import RecordManager
-from parse.MacroInspector import MacroInspector
 from syntax.AssignmentHandler import AssignmentHandler
 #===============================================================================
 # FIX ME: We need to define two colors for control and data dependency:
@@ -27,16 +26,10 @@ from syntax.AssignmentHandler import AssignmentHandler
 
 class Tracker:
     def __init__(self,l,macro_inspector=None):
-        self.record_manager=l
-        self.l=self.record_manager.l
-        self.macro_inspector=self.record_manager.macro_inspector
-    def get(self,i):
-        self.record_manager.get(i)
-        self.l=self.record_manager.l
-        return self.l[i]
+        self.l=l 
+        self.macro_inspector=macro_inspector  
     def track(self):
         self.createTaintGraph()
-        self.record_manager.write2File()
         return self.TG
     
     def setStartJobs(self,traceIndex,varset):
@@ -45,10 +38,11 @@ class Tracker:
             self.start_jobs.append(TaintJob(traceIndex,var))
         
     def createTaintGraph(self):
-        self.TG=TaintGraph(self.record_manager)
+        self.TG=TaintGraph(self.l)
         c = self.taintUp(self.start_jobs)
         while(c!=[]):
             c = self.taintUp(c)
+            
     def findPositions(self,P,funcInfo):
         positions=set()#get param positions
         for p in P:
@@ -168,7 +162,6 @@ class Tracker:
             positions=self.findPositions(P,funcInfo)
             print "The inter point and the old line:",self.l[traceIndex]
             upperIndex=traceIndex-1#try to find last call site
-            self.get(upperIndex)
             funcname=self.l[traceIndex].get_func_name().split("::")[-1].strip()
             if re.search(Syntax.lt+funcname+r"\s*\(",self.l[upperIndex].codestr):
                 rightstr,upperIndex=self.normal_right_str(upperIndex, funcInfo)
@@ -237,11 +230,9 @@ class Tracker:
                 normaljobs.add(job)
         return paramjobs,normaljobs
     def up_slice(self,job):
-        #put the upper same function-surface statements together
         indexes=[]
         i=job.trace_index-1
-        while abs(i)<len(self.l):
-            self.get(i)
+        while i>0:
             if isinstance(self.l[i], LineOfCode) and self.l[i].get_func_call_info()==self.l[job.trace_index].get_func_call_info():
                 indexes.append(i)
             if isinstance(self.l[i], FunctionCallInfo) and self.l[i] == self.l[job.trace_index].get_func_call_info():
@@ -250,19 +241,11 @@ class Tracker:
                         break
                     elif self.isMacroCall(i-1):
                         break
-                elif i-2>=0 and isinstance(self.l[i-2], LineOfCode):
-                    if self.l[i].get_func_name().split("::")[-1] in self.l[i-2].codestr:
-                        break
-                    elif self.isMacroCall(i-2):
-                        break
             i-=1
         return indexes
-    
     def lastModification(self,job):
-        if job.trace_index==-2:#1293:
+        if job.trace_index==13050:#1293:
             print "FInd you!"
-        if "count = va_arg (argptr, int) ;" in str(self.l[job.trace_index]):
-            print "HEY"
         if job.trace_index==0:
             return []
         if isinstance(self.l[job.trace_index], FunctionCallInfo):
@@ -329,15 +312,12 @@ class Tracker:
             i=indexes[0]-1
         else:
             i=job.trace_index-1
-        
-        print self.l[i]
         #l[i] must be an instance of FunctionCallInfo
-        if abs(i) % len(self.l)==0 and abs(self.record_manager.i)==len(self.record_manager.lines):#begin
+        if i==0:#begin
             if job.var.v in self.l[i].param_list:
                 self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
             return []
-        print self.get(i-1) #fetchSome to contain i-1
-        if self.l[i].get_func_name().split("::")[-1].strip() in self.l[i-1].codestr and self.l[i]==self.l[job.trace_index].get_func_call_info():#call point
+        elif self.l[i].get_func_name().split("::")[-1].strip() in self.l[i-1].codestr and self.l[i]==self.l[job.trace_index].get_func_call_info():#call point
             if job.var.v in self.l[i].param_list:
                 self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
                 return [TaintJob(i,job.var)]
@@ -348,7 +328,8 @@ class Tracker:
                 return [TaintJob(i,job.var)]
             return []
         return []
-
+    
+        
     def handleReturnAssignDirect(self,beginIndex,i,var):
         leftvar=self.l[i].codestr.split('=')[0].strip()
         variable_pat=re.compile(Syntax.variable)
@@ -366,7 +347,7 @@ class Tracker:
                 count=0
                 print "accesspattern:",accesspattern
                 for idx in indexes[::-1]:
-                    print "check return line:",self.l[idx]
+                    print "Line Under Check:", aIndex, "#",self.l[aIndex]
                     if 'return ' in self.l[idx].codestr:
                         self.TG.linkExpandEdges(job_trace_index,idx,"return dependency:"+var.simple_access_str())
                         #self.TG.linkTraverseEdges(i,idx,"ref:"+var.simple_access_str())
@@ -497,7 +478,7 @@ class Tracker:
                         print "pass",v.simple_access_str()
                         visited.add(aIndex) 
                     else:
-                        print "Line Under Check:",aIndex,"#",self.l[aIndex]
+                        print "Line Under Check:",self.l[aIndex]
                         if "&hdr;" in self.l[aIndex].codestr:
                                 print "Find IT!"
                         match=self.isLeftPropagate(v,self.l[aIndex].codestr)
@@ -633,7 +614,7 @@ class Tracker:
             return [],False
         #Note: funciton name and callee name may not be equal as there exist macro and function pointer
         #e.g. nread = abfd->iovec->bread (abfd, ptr, size);          
-        indexes=self.slice_same_func_lines(callsiteIndex+2,lowerBound)#PlUS TWO("callsiteIndex+2")means 
+        indexes=self.slice_same_func_lines(callsiteIndex+2,lowerBound)#PlUS TWO("callsiteIndex+2")means
         #start from the first line of callee function.
         params=self.l[callsiteIndex+1].get_param_list().split(",")
         if len(params)-1<childnum:
@@ -717,9 +698,8 @@ class Tracker:
         print "Checking Definition Type for:",access
         print "codestr:",codestr
         
-        if Syntax.isForStatement(codestr):
-            if re.search(access+r"\s*=[^=]",codestr) or re.search(access+r"(\+\+|--)",codestr):
-                return Syntax.FOR
+        if Syntax.isForStatement(codestr,access):
+            return Syntax.FOR
         if Syntax.isIncDef(var.v, codestr):
             return Syntax.INC
         
@@ -745,23 +725,18 @@ class Tracker:
             return Syntax.OP_ASSIGN
         raw_definition=r"^\s*\{\s*[A-Za-z_][A-Za-z0-9_]+\s+(\*\s*)*([A-Za-z_][A-Za-z0-9_]+\s*,\s*)*"+var.v+"\s*;"
         if re.search(raw_definition, codestr):
-            print "Raw definition:",codestr
+            print "We got the raw definition!",codestr
             return Syntax.RAW_DEF
         if Syntax.isLibArgDef(var,codestr):
             return Syntax.SYS_LIB_DEF
         return  Syntax.NODEF
             
 if __name__=="__main__":
-    #m=MacroInspector("test/gdb_logs/swfmill-0.3.3/swfmill-0.3.3")
-    #rm=RecordManager("test/gdb_logs/swfmill-0.3.3/gdb-swfmill-0.3.3__new_unsigned_char[length]_exploit_0_0.txt")
-    m=MacroInspector("test/gdb_logs/swftools-0.9.2/swftools-0.9.2/")
-    rm=RecordManager("test/gdb_logs/swftools-0.9.2/swfstrings/gdb-swfstrings_fonts_t.txt",m)
-    rm.fetchSome()
-    tracker=Tracker(rm)
-    traceIndex=-1
-    #tracker.setStartJobs(traceIndex, [TaintVar("length",[])])
-    taintVars=[TaintVar("fonts",['*']),TaintVar("t",[])]
-    tracker.setStartJobs(traceIndex,taintVars)
+    parser=LogParser()
+    l=parser.parse("test/gdb_logs/swfmill-0.3.3/gdb-swfmill-0.3.3.txt")
+    tracker=Tracker(l)
+    traceIndex=len(l)-1
+    tracker.setStartJobs(traceIndex, [TaintVar("length",[])])
     TG=tracker.track()
     output=file("output.dot", 'w')
     print TG.serialize2dot()
@@ -769,3 +744,4 @@ if __name__=="__main__":
     output.close()
     subprocess.call("dot -Tpng output.dot -o output.png", shell = True)
     #print str(TG)
+    

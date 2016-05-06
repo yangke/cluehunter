@@ -5,12 +5,13 @@ Created on Dec 13, 2015
 '''
 import subprocess
 
-from parse.RecordManager import RecordManager
+from parse.parse import LogParser
 from Tracker import Tracker
 import filecmp
 import datetime
 import os
 from parse.MacroInspector import MacroInspector
+from parse.RedundancyFixer import RedundancyFixer 
 
 class TraceTrackTest(object):
     
@@ -52,18 +53,27 @@ class TraceTrackTest(object):
             print self.passed_message
         else:
             print self.not_pass_message
+                   
+    def parse_list(self):
+        parser=LogParser()
+        #parser.setRedundantLevel(RedundancyFixer.REMOVE_INLINE_REDUNDANT)
+        parser.setRedundantLevel(RedundancyFixer.REMOVE_INTERPROCEDURAL_REDUNDANT)
+        l=parser.parse(self.logfile_path)
+        return l
       
-    def test(self,start_line_num=None):
+    def test(self,startindex=-1):
         start = datetime.datetime.now()#time.clock()
+        l=self.parse_list()
+        t1 = datetime.datetime.now()
         macro_inspector=MacroInspector(self.c_proj_dir)
-        rm=RecordManager(start_line_num, self.logfile_path, macro_inspector)
-        rm.fetchSome()
-        tracker=Tracker(rm)
-        traceIndex=-1
+        tracker=Tracker(l,macro_inspector)
+        traceIndex=startindex % len(l)
         passed=self.test_tracker(tracker,traceIndex)
         end = datetime.datetime.now()
-        time_cost=end-start
-        print "Time cost:",time_cost
-        return passed,time_cost
+        print "LIST LENTH:",len(l)
+        print "PARSE: %s" % (t1 - start)
+        print "ANALYSIS: %s" % (end - t1)
+        print "finished: %s" % (end - start)
+        return passed
     
     
