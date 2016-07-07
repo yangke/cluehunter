@@ -20,7 +20,7 @@ $./configure CFLAGS="-g -save-temps" CXXFLAGS="-g -save-temps" --prefix=$YOUR_IN
 ```
 Otherwise you may have to change the `Makefile`.
 Then modify the 15 line in `cluehunter/robot_dbg.exp` to fit with your own debug scenarios.
-Here is an example for executable program `swf2xml` test in **swfmill-0.3.3**.
+Here is an example for executable program `swf2xml` test in [swfmill-0.3.3](http://swfmill.org/releases/).
 
 ```
 spawn gdb --args swfmill swf2xml exploit_it_to_crash
@@ -46,7 +46,7 @@ python cluehunter.py -t path_to/gdb.txt\
       -vs length -ps N -o . -n telescope -l 1
 ```
 This command will use the test trace located at gdb.txt to perform reverse data flow analysis for variable `length`. The sensitive crash data `length` itself are marked as tainted. The access pattern of `length`, `'N'`, means direct access. Another mark `'\*'` means we need to dereference this pointer to access sensitive sink data we cared about. Note that the `\*` must be quoted with `""` or `''` in command line.  
-This command will cause ClueHunter output `telescope.dot` and use **graphviz** to generate `telescope.svg` beside it.`-vs`, `-ps` and `-t` are three mandatory options which specify the names of sink variables, patterns and the trace to analysis respectively.
+This command will cause ClueHunter output `telescope.dot` and use [graphviz](http://www.graphviz.org/) to generate `telescope.svg` beside it.`-vs`, `-ps` and `-t` are three mandatory options which specify the names of sink variables, patterns and the trace to analysis respectively.
 `-o` option specified the output directory. `-l` specified the parsed trace redundancy level.
 `0` means only remove the line redundancy in same function and `1` means remove both the inner function and inter-function reduandancy.
 
