@@ -3,7 +3,7 @@
 
 ##Quick Start Cookbook
 ###Install
-ClueHunter depends on **graphviz** to generate the picture from the dot file.
+ClueHunter depends on [graphviz](http://www.graphviz.org/) to generate the picture from the dot file.
 ####For Ubuntu
 ```
 sudo apt-get install git
