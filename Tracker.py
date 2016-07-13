@@ -27,7 +27,8 @@ from syntax.AssignmentHandler import AssignmentHandler
 class Tracker:
     def __init__(self,l,macro_inspector=None):
         self.l=l 
-        self.macro_inspector=macro_inspector  
+        self.macro_inspector=macro_inspector
+          
     def track(self):
         self.createTaintGraph()
         return self.TG
@@ -109,7 +110,7 @@ class Tracker:
                 #Then when handling the second call site, it returns 'a' as the detected argument.  
                 return expanded_str[span[1]:]
         print "Fatal Error treat 'sizeof' as a function call or other ERROR!! Please check the macro_call_right_str()"
-        x=1/0
+        print 1/0
         
     def isMacroCall(self,callsite_index):
         if self.macro_inspector is None:
@@ -120,6 +121,8 @@ class Tracker:
         print "UPPER:",self.l[callsite_index]
         print "CALLINFO:",self.l[callsite_index+1]
         for m in re.finditer(Syntax.lt+Syntax.identifier+Syntax.water+r"\(",self.l[callsite_index].codestr):
+            if re.search(r"(.*)\s*{.*}",self.l[callsite_index].codestr):
+                continue;
             funcname=m.group().rstrip("(").strip()
             if Syntax.isKeyWord(funcname):
                 continue
@@ -347,7 +350,7 @@ class Tracker:
                 count=0
                 print "accesspattern:",accesspattern
                 for idx in indexes[::-1]:
-                    print "Line Under Check:", aIndex, "#",self.l[aIndex]
+                    print "Line Under Check:", idx, "#",self.l[idx]
                     if 'return ' in self.l[idx].codestr:
                         self.TG.linkExpandEdges(job_trace_index,idx,"return dependency:"+var.simple_access_str())
                         #self.TG.linkTraverseEdges(i,idx,"ref:"+var.simple_access_str())

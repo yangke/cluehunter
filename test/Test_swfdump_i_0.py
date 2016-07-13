@@ -5,19 +5,22 @@ Created on Oct 29, 2015
 '''
 from model.TaintVar import TaintVar
 from TraceTrackTest import TraceTrackTest
-class Test_swfdump_t__data:
+class Test_swfdump_i_0:
+    
     def test(self):
-        passed_message="SWFTOOLS-0.9.2 't->data' in 't->data[i]' TEST PASSED!"
-        not_pass_message="ERRORS FOUND DURING SWFTOOLS-0.9.2 't->data' in 't->data[i]' TEST!"
+        passed_message="SWFTOOLS-0.9.2 'i' in 't->data[i]' TEST PASSED!"
+        not_pass_message="ERRORS FOUND DURING SWFTOOLS-0.9.2 'i' in 't->data[i]' TEST!"
         answer_path='answers/swftools-0.9.2/swfdump/'
-        name='swftools-0.9.2_swfdump_t-data'
-        logfile_path="gdb_logs/swftools-0.9.2/swfdump/gdb-swfdump_t-data_i.txt"
+        name='swftools-0.9.2_swfdump_i_0'
+        logfile_path="gdb_logs/swftools-0.9.2/swfdump/gdb-swfdump_t-data_i_0.txt"
         c_proj_path='gdb_logs/swftools-0.9.2/swftools-0.9.2'
-        taintVars=[TaintVar("t->data",["*"])]
+        taintVars=[TaintVar("i",[])]
         test=TraceTrackTest(answer_path,name,logfile_path,taintVars,passed_message,not_pass_message)
         test.set_c_proj_path(c_proj_path)
         passed=test.test()
         return passed
+
 if __name__ == '__main__':
-    test=Test_swfdump_t__data()
+    test=Test_swfdump_i_0()
     test.test()
+

@@ -1,0 +1,596 @@
+Temporary breakpoint 1 at 0x804d725: file swfdump.c, line 1116.
+Starting program: /home/yangke/Program/Fabian-Yamaguchi/evdata/swftools/test-swftools-0.9.2/swftools-0.9.2/bin/bin/swfdump swfdump -D swfdump0.9.2log/exploit_135_0 >out
+
+Temporary breakpoint 1, main (argc=4, argv=0xbfffe7e4) at swfdump.c:1116
+1116	{ 
+1123	    char issprite = 0; // are we inside a sprite definition?
+1124	    int spriteframe = 0;
+1125	    int mainframe=0;
+1126	    char* spriteframelabel = 0;
+1127	    char* framelabel = 0;
+1129	    int filesize = 0;
+1130	    int filepos = 0;
+1131	    prefix[0] = 0;
+1132	    memset(idtab,0,65536);
+1134	    processargs(argc, argv);
+processargs (argn2=4, argv2=0xbfffe7e4) at ../lib/args.h:36
+36	{
+38	    if(argn2==1)
+43	    for(t=1;t<argn2;t++)
+46	        if(t<argn2-1) next=argv2[t+1];
+49	        if(argv2[t][0]=='-' && argv2[t][1])
+89		    int num = args_callback_command(argv2[t],next);
+args_callback_command (name=0xbfffeaa2 "swfdump", val=0xbfffeaaa "-D")
+    at swfdump.c:200
+200	{
+201	    if(filename) {
+205	    filename = name;
+206	    return 0;
+207	}
+processargs (argn2=4, argv2=0xbfffe7e4) at ../lib/args.h:90
+90		    if(num>2) {
+94	            t+=num;
+43	    for(t=1;t<argn2;t++)
+46	        if(t<argn2-1) next=argv2[t+1];
+49	        if(argv2[t][0]=='-' && argv2[t][1])
+51	            if(argv2[t][1]=='-')
+62	                if(strchr("?h",argv2[t][1]))
+67	                if(argv2[t][1]) // this might be something like e.g. -xvf
+70	                    int s=1;
+72	                    buf[1]=0;
+74	                        if(argv2[t][s+1]) {
+79	                          t+= args_callback_option(&argv2[t][s], next);
+args_callback_option (name=0xbfffeaab "D", 
+    val=0xbfffeaad "swfdump0.9.2log/exploit_135_0") at swfdump.c:89
+89	{
+90	    if(!strcmp(name, "V")) {
+94	    else if(name[0]=='a') {
+98	    else if(name[0]=='p') {
+102	    else if(name[0]=='t') {
+106	    else if(name[0]=='s') {
+110	    else if(name[0]=='e') {
+114	    else if(name[0]=='c') {
+118	    else if(name[0]=='E') {
+123	    else if(name[0]=='X') {
+127	    else if(name[0]=='Y') {
+131	    else if(name[0]=='r') {
+135	    else if(name[0]=='f') {
+139	    else if(name[0]=='F') {
+143	    else if(name[0]=='d') {
+147	    else if(name[0]=='u') {
+151	    else if(name[0]=='b') {
+155	    else if(name[0]=='B') {
+159	    else if(name[0]=='D') {
+160		showbuttons = action = placements = showtext = showshapes = 1;
+161		return 0;
+169	}
+processargs (argn2=4, argv2=0xbfffe7e4) at ../lib/args.h:80
+80	                          break;
+43	    for(t=1;t<argn2;t++)
+46	        if(t<argn2-1) next=argv2[t+1];
+47	        else        next=0;
+49	        if(argv2[t][0]=='-' && argv2[t][1])
+89		    int num = args_callback_command(argv2[t],next);
+args_callback_command (name=0xbfffeaad "swfdump0.9.2log/exploit_135_0", val=0x0)
+    at swfdump.c:200
+200	{
+201	    if(filename) {
+202	        fprintf(stderr, "Only one file allowed. You supplied at least two. (%s and %s)\n",
+205	    filename = name;
+206	    return 0;
+207	}
+processargs (argn2=4, argv2=0xbfffe7e4) at ../lib/args.h:90
+90		    if(num>2) {
+94	            t+=num;
+43	    for(t=1;t<argn2;t++)
+97	}
+main (argc=4, argv=0xbfffe7e4) at swfdump.c:1136
+1136	    if(!filename)
+1142	    f = open(filename,O_RDONLY|O_BINARY);
+1143	    if (f<0)
+1151	    read(f, header, 3);
+1152	    char compressed = (header[0]=='C');
+1153	    char isflash = (header[0]=='F' && header[1] == 'W' && header[2] == 'S') ||
+1155	    close(f);
+1157	    int fl=strlen(filename);
+1158	    if(!isflash && fl>3 && !strcmp(&filename[fl-4], ".abc")) {
+1161	        f = open(filename,O_RDONLY|O_BINARY);
+1162	        if FAILED(swf_ReadSWF(f,&swf))
+swf_ReadSWF (handle=3, swf=0x80f9ce0 <swf>) at rfxswf.c:1606
+1606	{
+1608	  reader_init_filereader(&reader, handle);
+reader_init_filereader (r=0xbfffe3f4, handle=3) at bitio.c:90
+90	{
+91	    r->read = reader_fileread;
+92	    r->seek = reader_fileread_seek;
+93	    r->dealloc = reader_fileread_dealloc;
+94	    r->internal = (void*)handle;
+95	    r->type = READER_TYPE_FILE;
+96	    r->mybyte = 0;
+97	    r->bitpos = 8;
+98	    r->pos = 0;
+99	}
+swf_ReadSWF (handle=3, swf=0x80f9ce0 <swf>) at rfxswf.c:1609
+1609	  return swf_ReadSWF2(&reader, swf);
+swf_ReadSWF2 (reader=0xb7fdcb10, swf=0xb7e02268) at rfxswf.c:1543
+1543	{     
+1544	  if (!swf) return -1;
+1545	  memset(swf,0x00,sizeof(SWF));
+1553	    if ((len = reader->read(reader ,b,8))<8) return -1;
+1555	    if (b[0]!='F' && b[0]!='C') return -1;
+1556	    if (b[1]!='W') return -1;
+1557	    if (b[2]!='S') return -1;
+1558	    swf->fileVersion = b[3];
+1559	    swf->compressed  = (b[0]=='C')?1:0;
+1560	    swf->fileSize    = GET32(&b[4]);
+1562	    if(swf->compressed) {
+1566	    swf->compressed = 0; // derive from version number from now on
+1568	    reader_GetRect(reader, &swf->movieSize);
+reader_GetRect (reader=0xbfffe3f4, r=0x80f9ce8 <swf+8>) at rfxswf.c:702
+702	{ int nbits;
+704	  if (!r) r = &dummy;
+705	  nbits = (int) reader_GetBits(reader,5);
+reader_GetBits (reader=0xbfffe3f4, nbits=5) at rfxswf.c:238
+238	{ return reader_readbits(reader, nbits);
+reader_readbits (r=0xbfffe3f4, num=5) at bitio.c:719
+719	{
+721	    int val = 0;
+722	    for(t=0;t<num;t++)
+724		val<<=1;
+725		val|=reader_readbit(r);
+reader_readbit (r=0xbfffe3f4) at bitio.c:710
+710	{
+711	    if(r->bitpos==8) 
+713		r->bitpos=0;
+714	        r->read(r, &r->mybyte, 1);
+716	    return (r->mybyte>>(7-r->bitpos++))&1;
+717	}
+reader_readbits (r=0xbfffe3f4, num=5) at bitio.c:722
+722	    for(t=0;t<num;t++)
+724		val<<=1;
+725		val|=reader_readbit(r);
+reader_readbit (r=0xbfffe3f4) at bitio.c:710
+710	{
+711	    if(r->bitpos==8) 
+716	    return (r->mybyte>>(7-r->bitpos++))&1;
+717	}
+reader_readbits (r=0xbfffe3f4, num=5) at bitio.c:722
+722	    for(t=0;t<num;t++)
+724		val<<=1;
+725		val|=reader_readbit(r);
+reader_readbit (r=0xbfffe3f4) at bitio.c:710
+710	{
+711	    if(r->bitpos==8) 
+716	    return (r->mybyte>>(7-r->bitpos++))&1;
+717	}
+reader_readbits (r=0xbfffe3f4, num=5) at bitio.c:722
+722	    for(t=0;t<num;t++)
+724		val<<=1;
+725		val|=reader_readbit(r);
+reader_readbit (r=0xbfffe3f4) at bitio.c:710
+710	{
+711	    if(r->bitpos==8) 
+716	    return (r->mybyte>>(7-r->bitpos++))&1;
+717	}
+reader_readbits (r=0xbfffe3f4, num=5) at bitio.c:722
+722	    for(t=0;t<num;t++)
+724		val<<=1;
+725		val|=reader_readbit(r);
+reader_readbit (r=0xbfffe3f4) at bitio.c:710
+710	{
+711	    if(r->bitpos==8) 
+716	    return (r->mybyte>>(7-r->bitpos++))&1;
+717	}
+reader_readbits (r=0xbfffe3f4, num=5) at bitio.c:722
+722	    for(t=0;t<num;t++)
+727	    return val;
+728	}
+reader_GetBits (reader=0xbfffe3f4, nbits=5) at rfxswf.c:239
+239	}
+reader_GetRect (reader=0xbfffe3f4, r=0x80f9ce8 <swf+8>) at rfxswf.c:706
+706	  r->xmin = reader_GetSBits(reader,nbits);
+reader_GetSBits (reader=0xbfffe3f4, nbits=0) at rfxswf.c:241
+241	{ U32 res = reader_readbits(reader, nbits);
+reader_readbits (r=0xbfffe3f4, num=0) at bitio.c:719
+719	{
+721	    int val = 0;
+722	    for(t=0;t<num;t++)
+727	    return val;
+728	}
+reader_GetSBits (reader=0xbfffe3f4, nbits=0) at rfxswf.c:242
+242	  if (res&(1<<(nbits-1))) res|=(0xffffffff<<nbits);  
+243	  return (S32)res;
+244	}
+reader_GetRect (reader=0xbfffe3f4, r=0x80f9ce8 <swf+8>) at rfxswf.c:707
+707	  r->xmax = reader_GetSBits(reader,nbits);
+reader_GetSBits (reader=0xbfffe3f4, nbits=0) at rfxswf.c:241
+241	{ U32 res = reader_readbits(reader, nbits);
+reader_readbits (r=0xbfffe3f4, num=0) at bitio.c:719
+719	{
+721	    int val = 0;
+722	    for(t=0;t<num;t++)
+727	    return val;
+728	}
+reader_GetSBits (reader=0xbfffe3f4, nbits=0) at rfxswf.c:242
+242	  if (res&(1<<(nbits-1))) res|=(0xffffffff<<nbits);  
+243	  return (S32)res;
+244	}
+reader_GetRect (reader=0xbfffe3f4, r=0x80f9ce8 <swf+8>) at rfxswf.c:708
+708	  r->ymin = reader_GetSBits(reader,nbits);
+reader_GetSBits (reader=0xbfffe3f4, nbits=0) at rfxswf.c:241
+241	{ U32 res = reader_readbits(reader, nbits);
+reader_readbits (r=0xbfffe3f4, num=0) at bitio.c:719
+719	{
+721	    int val = 0;
+722	    for(t=0;t<num;t++)
+727	    return val;
+728	}
+reader_GetSBits (reader=0xbfffe3f4, nbits=0) at rfxswf.c:242
+242	  if (res&(1<<(nbits-1))) res|=(0xffffffff<<nbits);  
+243	  return (S32)res;
+244	}
+reader_GetRect (reader=0xbfffe3f4, r=0x80f9ce8 <swf+8>) at rfxswf.c:709
+709	  r->ymax = reader_GetSBits(reader,nbits);
+reader_GetSBits (reader=0xbfffe3f4, nbits=0) at rfxswf.c:241
+241	{ U32 res = reader_readbits(reader, nbits);
+reader_readbits (r=0xbfffe3f4, num=0) at bitio.c:719
+719	{
+721	    int val = 0;
+722	    for(t=0;t<num;t++)
+727	    return val;
+728	}
+reader_GetSBits (reader=0xbfffe3f4, nbits=0) at rfxswf.c:242
+242	  if (res&(1<<(nbits-1))) res|=(0xffffffff<<nbits);  
+243	  return (S32)res;
+244	}
+reader_GetRect (reader=0xbfffe3f4, r=0x80f9ce8 <swf+8>) at rfxswf.c:710
+710	  return 0;
+711	}
+swf_ReadSWF2 (reader=0xbfffe3f4, swf=0x80f9ce0 <swf>) at rfxswf.c:1569
+1569	    reader->read(reader, &swf->frameRate, 2);
+1570	    swf->frameRate = LE_16_TO_NATIVE(swf->frameRate);
+1571	    reader->read(reader, &swf->frameCount, 2);
+1572	    swf->frameCount = LE_16_TO_NATIVE(swf->frameCount);
+1575	    t1.next = 0;
+1576	    t = &t1;
+1577	    while (t) {
+1578	      t = swf_ReadTag(reader,t);
+swf_ReadTag (reader=0xbfffe3f4, prev=0xbfffe38c) at rfxswf.c:1184
+1184	{ TAG * t;
+1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
+1190	  raw = LE_16_TO_NATIVE(raw);
+1192	  len = raw&0x3f;
+1193	  id  = raw>>6;
+1195	  if (len==0x3f)
+1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
+1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
+rfx_calloc (size=32) at mem.c:61
+61	{
+63	  if(size == 0) {
+69	  ptr = calloc(1, size);
+73	  if(!ptr) {
+81	  return ptr;
+82	}
+swf_ReadTag (reader=0xbfffe3f4, prev=0xbfffe38c) at rfxswf.c:1205
+1205	  t->len = len;
+1206	  t->id  = id;
+1208	  if (t->len)
+1221	  if (prev)
+1223	    t->prev  = prev;
+1224	    prev->next = t;
+1227	  return t;
+1228	}
+swf_ReadSWF2 (reader=0xbfffe3f4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+1579	      if(t && t->id == ST_FILEATTRIBUTES) {
+1577	    while (t) {
+1578	      t = swf_ReadTag(reader,t);
+swf_ReadTag (reader=0xbfffe3f4, prev=0x80fe008) at rfxswf.c:1184
+1184	{ TAG * t;
+1189	  if (reader->read(reader, &raw, 2) !=2 ) return NULL;
+1190	  raw = LE_16_TO_NATIVE(raw);
+1192	  len = raw&0x3f;
+1193	  id  = raw>>6;
+1195	  if (len==0x3f)
+1197	      len = reader_readU32(reader);
+reader_readU32 (r=0xbfffe3f4) at bitio.c:764
+764	{
+765	    U8 b1=0,b2=0,b3=0,b4=0;
+766	    if(r->read(r, &b1, 1)<1)
+768	    if(r->read(r, &b2, 1)<1)
+770	    if(r->read(r, &b3, 1)<1)
+772	    if(r->read(r, &b4, 1)<1)
+774	    return b1|b2<<8|b3<<16|b4<<24;
+775	}
+swf_ReadTag (reader=0xbfffe3f4, prev=0x80fe008) at rfxswf.c:1200
+1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
+1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
+rfx_calloc (size=32) at mem.c:61
+61	{
+63	  if(size == 0) {
+69	  ptr = calloc(1, size);
+73	  if(!ptr) {
+81	  return ptr;
+82	}
+swf_ReadTag (reader=0xbfffe3f4, prev=0x80fe008) at rfxswf.c:1205
+1205	  t->len = len;
+1206	  t->id  = id;
+1208	  if (t->len)
+1209	  { t->data = (U8*)rfx_alloc(t->len);
+rfx_alloc (size=66117) at mem.c:22
+22	{
+24	  if(size == 0) {
+30	  ptr = malloc(size);
+31	  if(!ptr) {
+36	  return ptr;
+37	}
+swf_ReadTag (reader=0xbfffe3f4, prev=0x80fe008) at rfxswf.c:1210
+1210	    t->memsize = t->len;
+1211	    if (reader->read(reader, t->data, t->len) != t->len) {
+1213	      fprintf(stderr, "rfxswf: Warning: Short read (tagid %d). File truncated?\n", t->id);
+1215	      free(t->data);t->data=0;
+1216	      free(t);
+1217	      return NULL;
+1228	}
+swf_ReadSWF2 (reader=0xbfffe3f4, swf=0x80f9ce0 <swf>) at rfxswf.c:1579
+1579	      if(t && t->id == ST_FILEATTRIBUTES) {
+1577	    while (t) {
+1584	    swf->firstTag = t1.next;
+1585	    if(t1.next)
+1586	      t1.next->prev = NULL;
+1589	  return reader->pos;
+1590	}
+swf_ReadSWF (handle=3, swf=0x80f9ce0 <swf>) at rfxswf.c:1610
+1610	}
+main (argc=4, argv=0xbfffe7e4) at swfdump.c:1170
+1170	        fstat(f, &statbuf);
+1171	        if(statbuf.st_size != swf.fileSize && !compressed)
+1172	            dumperror("Real Filesize (%d) doesn't match header Filesize (%d)",
+dumperror (format=0xb7fdcd7c "libc.so.6") at swfdump.c:1088
+1088	{
+1092	    va_start(arglist, format);
+1093	    vsnprintf(buf, sizeof(buf)-1, format, arglist);
+1096	    if(!html && !xy)
+1097		printf("==== Error: %s ====\n", buf);
+1098	}
+main (argc=4, argv=0xbfffe7e4) at swfdump.c:1174
+1174	        filesize = statbuf.st_size;
+1176	        close(f);
+1184	    xsize = (swf.movieSize.xmax-swf.movieSize.xmin)/20;
+1185	    ysize = (swf.movieSize.ymax-swf.movieSize.ymin)/20;
+1186	    if(xy)
+1212	    if(html)
+1252	    printf("[HEADER]        File version: %d\n", swf.fileVersion);
+1253	    if(compressed) {
+1260	    printf("[HEADER]        File size: %d%s\n", swf.fileSize, swf.compressed?" (Depacked)":"");
+1261	    printf("[HEADER]        Frame rate: %f\n",swf.frameRate/256.0);
+1262	    printf("[HEADER]        Frame count: %d\n",swf.frameCount);
+1263	    printf("[HEADER]        Movie width: %.2f",(swf.movieSize.xmax-swf.movieSize.xmin)/20.0);
+1264	    if(swf.movieSize.xmin)
+1267		printf("\n");
+1268	    printf("[HEADER]        Movie height: %.2f",(swf.movieSize.ymax-swf.movieSize.ymin)/20.0);
+1269	    if(swf.movieSize.ymin)
+1272		printf("\n");
+1274	    tag = swf.firstTag;
+1276	    if(showtext) {
+1277		fontnum = 0;
+1278		swf_FontEnumerate(&swf,&fontcallback1, 0);
+swf_FontEnumerate (swf=0x80484fc, FontCallback=0xbfffe350, 
+    self=0xb7fe77aa <_dl_lookup_symbol_x+266>) at modules/swftext.c:107
+107	{
+110	    if (!swf)
+112	    t = swf->firstTag;
+113	    n = 0;
+115	    while (t) {
+116		if (swf_isFontTag(t)) {
+swf_isFontTag (tag=0x80fe008) at modules/swftools.c:1169
+1169	    if(tag->id == ST_DEFINEFONT ||
+1170	       tag->id == ST_DEFINEFONT2 ||
+1169	    if(tag->id == ST_DEFINEFONT ||
+1171	       tag->id == ST_DEFINEFONT3 ||
+1170	       tag->id == ST_DEFINEFONT2 ||
+1172	       tag->id == ST_DEFINEFONTINFO)
+1171	       tag->id == ST_DEFINEFONT3 ||
+1174	    return 0;
+1175	}
+swf_FontEnumerate (swf=0x80f9ce0 <swf>, FontCallback=0x804cc06 <fontcallback1>, 
+    self=0x0) at modules/swftext.c:136
+136		t = swf_NextTag(t);
+swf_NextTag (t=0x80fe008) at rfxswf.c:59
+59	TAG * swf_NextTag(TAG * t) { return t->next; }
+swf_FontEnumerate (swf=0x80f9ce0 <swf>, FontCallback=0x804cc06 <fontcallback1>, 
+    self=0x0) at modules/swftext.c:115
+115	    while (t) {
+138	    return n;
+139	}
+main (argc=4, argv=0xbfffe7e4) at swfdump.c:1279
+1279		fonts = (SWFFONT**)malloc(fontnum*sizeof(SWFFONT*));
+1280		fontnum = 0;
+1281		swf_FontEnumerate(&swf,&fontcallback2, 0);
+swf_FontEnumerate (swf=0x80f9ce0 <swf>, FontCallback=0x804cc06 <fontcallback1>, 
+    self=0x0) at modules/swftext.c:107
+107	{
+110	    if (!swf)
+112	    t = swf->firstTag;
+113	    n = 0;
+115	    while (t) {
+116		if (swf_isFontTag(t)) {
+swf_isFontTag (tag=0x80fe008) at modules/swftools.c:1169
+1169	    if(tag->id == ST_DEFINEFONT ||
+1170	       tag->id == ST_DEFINEFONT2 ||
+1169	    if(tag->id == ST_DEFINEFONT ||
+1171	       tag->id == ST_DEFINEFONT3 ||
+1170	       tag->id == ST_DEFINEFONT2 ||
+1172	       tag->id == ST_DEFINEFONTINFO)
+1171	       tag->id == ST_DEFINEFONT3 ||
+1174	    return 0;
+1175	}
+swf_FontEnumerate (swf=0x80f9ce0 <swf>, FontCallback=0x804cc2f <fontcallback2>, 
+    self=0x0) at modules/swftext.c:136
+136		t = swf_NextTag(t);
+swf_NextTag (t=0x80fe008) at rfxswf.c:59
+59	TAG * swf_NextTag(TAG * t) { return t->next; }
+swf_FontEnumerate (swf=0x80f9ce0 <swf>, FontCallback=0x804cc2f <fontcallback2>, 
+    self=0x0) at modules/swftext.c:115
+115	    while (t) {
+138	    return n;
+139	}
+main (argc=4, argv=0xbfffe7e4) at swfdump.c:1284
+1284	    while(tag) {
+1285	        char*name = swf_TagGetName(tag);
+swf_TagGetName (tag=0x80fe008) at modules/swfdump.c:121
+121	{
+122	    switch(tag->id)
+185	            return "DEFINETEXT2";
+275	}
+main (argc=4, argv=0xbfffe7e4) at swfdump.c:1287
+1287	        if(!name) {
+1292		if(!name) {
+1295		if(cumulative) {
+1299		    printf("[%03x] %9d %s%s", tag->id, tag->len, prefix, swf_TagGetName(tag));
+1302	        if(tag->id == ST_PLACEOBJECT) {
+1307		else if(tag->id == ST_PLACEOBJECT2 || tag->id == ST_PLACEOBJECT3) {
+1334	        else if(tag->id == ST_REMOVEOBJECT) {
+1337	        else if(tag->id == ST_REMOVEOBJECT2) {
+1340	        else if(tag->id == ST_FREECHARACTER) {
+1343	        else if(tag->id == ST_FILEATTRIBUTES) {
+1354	        else if(tag->id == ST_DOABC) {
+1371		else if(tag->id == ST_STARTSOUND) {
+1390		else if(tag->id == ST_FRAMELABEL) {
+1406		else if(tag->id == ST_SHOWFRAME) {
+1430	        else if(tag->id == ST_SETBACKGROUNDCOLOR) {
+1436		else if(tag->id == ST_PROTECT) {
+1441		else if(tag->id == ST_DEFINEFONTALIGNZONES) {
+1444		else if(tag->id == ST_CSMTEXTSETTINGS) {
+1464		else if(swf_isDefiningTag(tag)) {
+swf_isDefiningTag (tag=0x80fe008) at modules/swftools.c:305
+305	{
+306	    int id = tag->id;
+307	    int t=0;
+308	    while(swf_definingtagids[t]>=0)
+310	        if(swf_definingtagids[t] == id) 
+312	        t++;
+308	    while(swf_definingtagids[t]>=0)
+310	        if(swf_definingtagids[t] == id) 
+312	        t++;
+308	    while(swf_definingtagids[t]>=0)
+310	        if(swf_definingtagids[t] == id) 
+312	        t++;
+308	    while(swf_definingtagids[t]>=0)
+310	        if(swf_definingtagids[t] == id) 
+312	        t++;
+308	    while(swf_definingtagids[t]>=0)
+310	        if(swf_definingtagids[t] == id) 
+312	        t++;
+308	    while(swf_definingtagids[t]>=0)
+310	        if(swf_definingtagids[t] == id) 
+312	        t++;
+308	    while(swf_definingtagids[t]>=0)
+310	        if(swf_definingtagids[t] == id) 
+312	        t++;
+308	    while(swf_definingtagids[t]>=0)
+310	        if(swf_definingtagids[t] == id) 
+312	        t++;
+308	    while(swf_definingtagids[t]>=0)
+310	        if(swf_definingtagids[t] == id) 
+312	        t++;
+308	    while(swf_definingtagids[t]>=0)
+310	        if(swf_definingtagids[t] == id) 
+312	        t++;
+308	    while(swf_definingtagids[t]>=0)
+310	        if(swf_definingtagids[t] == id) 
+311	            return 1;
+315	}
+main (argc=4, argv=0xbfffe7e4) at swfdump.c:1465
+1465	            U16 id = swf_GetDefineID(tag);
+swf_GetDefineID (t=0x80fe008) at modules/swftools.c:93
+93	{ U32 oldTagPos;
+94	  U16 id = 0;
+96	  oldTagPos = swf_GetTagPos(t);
+swf_GetTagPos (t=0x80fe008) at rfxswf.c:64
+64	U32   swf_GetTagPos(TAG * t)   { return t->pos; }
+swf_GetDefineID (t=0x80fe008) at modules/swftools.c:97
+97	  swf_SetTagPos(t,0);
+swf_SetTagPos (t=0x80fe008, pos=0) at rfxswf.c:67
+67	{ swf_ResetReadBits(t);
+68	  if (pos<=t->len) t->pos = pos;
+74	}
+swf_GetDefineID (t=0x80fe008) at modules/swftools.c:99
+99	  switch (swf_GetTagID(t))
+swf_GetTagID (t=0x80fe008) at rfxswf.c:61
+61	U16   swf_GetTagID(TAG * t)    { return t->id; }
+swf_GetDefineID (t=0x80fe008) at modules/swftools.c:136
+136	      id = swf_GetU16(t);
+swf_GetU16 (t=0x80fe008) at rfxswf.c:105
+105	{ U16 res;
+106	  swf_ResetReadBits(t);
+108	    if ((int)t->pos>((int)t->len-2)) 
+109	    { fprintf(stderr,"GetU16() out of bounds: TagID = %i\n",t->id);
+110	      return 0;
+116	}
+swf_GetDefineID (t=0x80fe008) at modules/swftools.c:137
+137	      break;
+142	  swf_SetTagPos(t,oldTagPos);
+swf_SetTagPos (t=0x80fe008, pos=0) at rfxswf.c:67
+67	{ swf_ResetReadBits(t);
+68	  if (pos<=t->len) t->pos = pos;
+74	}
+swf_GetDefineID (t=0x80fe008) at modules/swftools.c:144
+144	  return id;
+145	}
+main (argc=4, argv=0xbfffe7e4) at swfdump.c:1466
+1466	            printf(" defines id %04d", id);
+1467	            if(idtab[id])
+1469	            idtab[id] = 1;
+1478		if(tag->id == ST_DEFINEBITSLOSSLESS ||
+1479		   tag->id == ST_DEFINEBITSLOSSLESS2) {
+1478		if(tag->id == ST_DEFINEBITSLOSSLESS ||
+1483		else if(tag->id == ST_DEFINESOUND) {
+1487		else if(tag->id == ST_VIDEOFRAME) {
+1491		else if(tag->id == ST_DEFINEVIDEOSTREAM) {
+1495		else if(tag->id == ST_DEFINEEDITTEXT) {
+1499		else if(tag->id == ST_DEFINEMOVIE) {
+1504		else if(tag->id == ST_DEFINETEXT || tag->id == ST_DEFINETEXT2) {
+1505		    handleText(tag, myprefix);
+handleText (tag=0x80fe008, prefix=0xbfffe61c "\310\356߷\370{\340\267V-\377\267")
+    at swfdump.c:427
+427	{
+428	  printf("\n");
+429	  if(placements) {
+430	      swf_SetTagPos(tag, 0);
+swf_SetTagPos (t=0x80fe008, pos=0) at rfxswf.c:67
+67	{ swf_ResetReadBits(t);
+68	  if (pos<=t->len) t->pos = pos;
+74	}
+handleText (tag=0x80fe008, prefix=0xbfffe61c "\310\356߷\370{\340\267V-\377\267")
+    at swfdump.c:431
+431	      swf_GetU16(tag);
+swf_GetU16 (t=0x80fe008) at rfxswf.c:105
+105	{ U16 res;
+106	  swf_ResetReadBits(t);
+108	    if ((int)t->pos>((int)t->len-2)) 
+109	    { fprintf(stderr,"GetU16() out of bounds: TagID = %i\n",t->id);
+110	      return 0;
+116	}
+handleText (tag=0x80fe008, prefix=0xbfffe61c "\310\356߷\370{\340\267V-\377\267")
+    at swfdump.c:432
+432	      swf_GetRect(tag, 0);
+swf_GetRect (t=0x80fe008, r=0x0) at rfxswf.c:689
+689	{ int nbits;
+691	  if(!t) {r->xmin=r->xmax=r->ymin=r->ymax=0;return 0;}
+692	  if (!r) r = &dummy;
+693	  nbits = (int) swf_GetBits(t,5);
+swf_GetBits (t=0x80fe008, nbits=5) at rfxswf.c:204
+204	{ U32 res = 0;
+205	  if (!nbits) return 0;
+206	  if (!t->readBit) t->readBit = 0x80;
+207	  while (nbits)
+208	  { res<<=1;
+210	    if (t->pos>=t->len) 
+211	    { fprintf(stderr,"GetBits() out of bounds: TagID = %i, pos=%d, len=%d\n",t->id, t->pos, t->len);
+212	      int i,m=t->len>10?10:t->len;
+213	      for(i=-1;i<m;i++) {
+214	        fprintf(stderr, "(%d)%02x ", i, t->data[i]);
+
+Program received signal SIGSEGV, Segmentation fault.
+0x08064e35 in swf_GetBits (t=0x80fe008, nbits=5) at rfxswf.c:214
+214	        fprintf(stderr, "(%d)%02x ", i, t->data[i]);

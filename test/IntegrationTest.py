@@ -10,9 +10,12 @@ from test.Test_libsndfile_wav_fmt__min_blockalign import Test_libsndfile_wav_fmt
 from Test_mcrypt_salt_size import Test_mcrypt_salt_size
 from Test_memcpy_dst import Test_memcpy_dst
 from Test_memcpy_src import Test_memcpy_src
-from Test_swfdump_i import Test_swfdump_i
-from Test_swfdump_t__data import  Test_swfdump_t__data
-from Test_swfdump_t__data_i import Test_swfdump_t__data_i
+from Test_swfdump_i_0 import Test_swfdump_i_0
+from Test_swfdump_t__data_0 import  Test_swfdump_t__data_0
+from Test_swfdump_t__data_135 import  Test_swfdump_t__data_135
+from Test_swfdump_t__data_137 import  Test_swfdump_t__data_137
+from Test_swfdump_t__data_258 import  Test_swfdump_t__data_258
+from Test_swfdump_t__data_i_0 import Test_swfdump_t__data_i_0
 from Test_swfmill_length import Test_swfmill_length
 from Test_objdump_addr import Test_objdump_addr
 from Test_swfmill_data__pos import Test_swfmill_data__pos
@@ -42,12 +45,18 @@ class IntegrationTest:
         result_array.append(('memcpy_dst',test.test()))
         test=Test_memcpy_src()
         result_array.append(('memcpy_src',test.test()))
-        test=Test_swfdump_i()
-        result_array.append(('swfdump_i',test.test()))
-        test=Test_swfdump_t__data()
-        result_array.append(('swfdump_t->data',test.test()))
-        test=Test_swfdump_t__data_i()
-        result_array.append(('swfdump_t->data[i]',test.test()))
+        test=Test_swfdump_i_0()
+        result_array.append(('swfdump_i_0',test.test()))
+        test=Test_swfdump_t__data_0()
+        result_array.append(('swfdump_t->data_0',test.test()))
+        test=Test_swfdump_t__data_135()
+        result_array.append(('swfdump_t->data_135',test.test()))
+        test=Test_swfdump_t__data_137()
+        result_array.append(('swfdump_t->data_137',test.test()))
+        test=Test_swfdump_t__data_258()
+        result_array.append(('swfdump_t->data_258',test.test()))
+        test=Test_swfdump_t__data_i_0()
+        result_array.append(('swfdump_t->data[i]_0',test.test()))
         test=Test_png2swf_len()
         result_array.append(('png2swf_len',test.test()))
         test=Test_swfmill_length()
