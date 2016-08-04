@@ -73,10 +73,15 @@ Start Funny
 		python cluehunter.py -t path_to/gdb.txt\
 	      		-vs length -ps N -o . -n telescope -l 1
 
-	This command will use the test trace located at gdb.txt to perform reverse data flow analysis for variable ``length`` from the last parsed line(as the default). To specify the line number, you can use the option ``-i {line number in trace.txt}-1``. The sensitive crash data ``length`` itself are marked as tainted. The access pattern of ``length``, ``'N'``, means direct access. Another mark ``'*'`` means we need to dereference this pointer to access sensitive sink data we cared about. Note that the ``*`` must be quoted with `""` or `''` in command line.  
+	This command will use the test trace located at gdb.txt to perform reverse data flow analysis for variable ``length`` from the last parsed line(as the default). To specify the line number, you can use the option ``-i {line number in trace.txt}`` (see bellow for detail). The sensitive crash data ``length`` itself are marked as tainted. The access pattern of ``length``, ``'N'``, means direct access. Another mark ``'*'`` means we need to dereference this pointer to access sensitive sink data we cared about. Note that the ``*`` must be quoted with `""` or `''` in command line.  
 	This command will cause ClueHunter output ``telescope.dot`` and use `graphviz <http://www.graphviz.org/>`_ to generate ``telescope.svg`` beside it. ``-vs``, ``-ps`` and ``-t`` are three mandatory options which specify the names of sink variables, patterns and the trace to analysis respectively.
 	``-o`` option specified the output directory. ``-l`` specified the parsed trace redundancy level.
 	``0`` means only remove the line redundancy in same function and ``1`` means remove both the inner function and inter-function reduandancy.
+	
+	If you want to analyze variables on specific trace line, you may need ``-i`` option. For example: ``-i -1`` specifies the last line in ``trace.txt``, and ``-i -2`` specifies the line of last but one.
+	You can also use positive line number. For instance, ``-i 100`` means the 100 line in the ``trace.txt``. **Note that the lines we talk here are the lines in the parsed middle file: ``trace.txt``**.
+	The last line(``-i -1``) in ``trace.txt`` corresponds to the last none empty line above the error information ``Program receive ...`` in ``gdb.txt``.
+
 
 Macro Expansion
 ------------------

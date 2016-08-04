@@ -1,8 +1,8 @@
 digraph tiantgraph{
 rankdir="BT";
 "998#212	      int i,m=t->len>10?10:t->len;";
-"999#213	      for(i=-1;i<m;i++) \\{";
-"1000#214	        fprintf(stderr, \\"(%d)%02x \\", i, t->data[i]);";
+"999#213	      for(i=-1;i<m;i++) \{";
+"1000#214	        fprintf(stderr, \"(%d)%02x \", i, t->data[i]);";
 "201#1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);";
 "202#1203	  t = (TAG *)rfx_calloc(sizeof(TAG));";
 "210#1205	  t->len = len;";
@@ -17,9 +17,9 @@ rankdir="BT";
 "991#swf_GetBits (t=t@entry=0x80e6008, nbits=nbits@entry=1) at rfxswf.c:204"[shape="record"];
 edge [fontname = "Verdana", fontsize = 10, color="crimson", style="solid"];
 "998#212	      int i,m=t->len>10?10:t->len;"->"991#swf_GetBits (t=t@entry=0x80e6008, nbits=nbits@entry=1) at rfxswf.c:204"[label="t->len|t"];
-"999#213	      for(i=-1;i<m;i++) \\{"->"998#212	      int i,m=t->len>10?10:t->len;"[label="m"];
-"1000#214	        fprintf(stderr, \\"(%d)%02x \\", i, t->data[i]);"->"991#swf_GetBits (t=t@entry=0x80e6008, nbits=nbits@entry=1) at rfxswf.c:204"[label="*(t->data)|*t->data|t->data|t"];
-"1000#214	        fprintf(stderr, \\"(%d)%02x \\", i, t->data[i]);"->"999#213	      for(i=-1;i<m;i++) \\{"[label="i"];
+"999#213	      for(i=-1;i<m;i++) \{"->"998#212	      int i,m=t->len>10?10:t->len;"[label="m"];
+"1000#214	        fprintf(stderr, \"(%d)%02x \", i, t->data[i]);"->"991#swf_GetBits (t=t@entry=0x80e6008, nbits=nbits@entry=1) at rfxswf.c:204"[label="*(t->data)|*t->data|t->data|t"];
+"1000#214	        fprintf(stderr, \"(%d)%02x \", i, t->data[i]);"->"999#213	      for(i=-1;i<m;i++) \{"[label="i"];
 "942#1589		    handlePlaceObject(tag, myprefix);"->"441#1274	    tag = swf.firstTag;"[label="*(tag->data)|*tag->data|tag->data|tag"];
 "942#1589		    handlePlaceObject(tag, myprefix);"->"441#1274	    tag = swf.firstTag;"[label="tag->len|tag"];
 "210#1205	  t->len = len;"->"201#1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);"[label="len"];

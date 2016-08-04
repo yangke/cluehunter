@@ -125,10 +125,10 @@ class TaintGraph:
         #dep_style s->t
         return "\""+self.linenum2DotStr(s)+"\"->\""+self.linenum2DotStr(t)
     def handleDotKeywords(self,s):
+        s=s.replace('\\','\\\\')
         s=s.replace(r'"', r'\"')#.replace(r';', r'\;')
         s=s.replace(r'{', r'\{').replace(r'}', r'\}')
         #s=s.replace(r'<', r'\<').replace(r'>', r'\>')
-        s=s.replace('\\','\\\\')
         return s
     def linenum2DotStr(self,num):
         return self.handleDotKeywords(str(num+1)+"#"+str(self.l[num]).rstrip())

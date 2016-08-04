@@ -1,7 +1,7 @@
 digraph tiantgraph{
 rankdir="BT";
 "1#main (argc=4, argv=0xbfffe864) at speexenc.c:276"[shape="record"];
-"66#562	      fin = fopen(inFile, \\"rb\\");";
+"66#562	      fin = fopen(inFile, \"rb\");";
 "71#579	         if (read_wav_header(fin, &rate, &chan, &fmt, &size)==-1)";
 "82#107	   fread(&stmp, 2, 1, file);";
 "393#842	      nb_samples = read_samples(fin,frame_size,fmt,chan,lsb,input, NULL, &size);";
@@ -12,8 +12,8 @@ rankdir="BT";
 "84#109	   *channels = stmp;";
 "60#535	   inFile=argv[optind];";
 edge [fontname = "Verdana", fontsize = 10, color="crimson", style="solid"];
-"66#562	      fin = fopen(inFile, \\"rb\\");"->"60#535	   inFile=argv[optind];"[label="*(inFile)|*inFile|inFile"];
-"71#579	         if (read_wav_header(fin, &rate, &chan, &fmt, &size)==-1)"->"66#562	      fin = fopen(inFile, \\"rb\\");"[label="fin"];
+"66#562	      fin = fopen(inFile, \"rb\");"->"60#535	   inFile=argv[optind];"[label="*(inFile)|*inFile|inFile"];
+"71#579	         if (read_wav_header(fin, &rate, &chan, &fmt, &size)==-1)"->"66#562	      fin = fopen(inFile, \"rb\");"[label="fin"];
 "82#107	   fread(&stmp, 2, 1, file);"->"72#read_wav_header (file=file@entry=0x8057048, rate=rate@entry=0xbfffca48, channels=channels@entry=0xbfffca50, format=format@entry=0xbfffca54,size=size@entry=0xbfffca4c) at wav_io.c:43"[label="file"];
 "402#126	   nb_read /= bits/8*channels;"->"394#read_samples (fin=fin@entry=0x8057048, frame_size=160, bits=16, channels=0, lsb=lsb@entry=1, input=input@entry=0xbfffccd0, buff=0x0, size=0xbfffca4c) at speexenc.c:87"[label="channel"];
 "83#108	   stmp = le_short(stmp);"->"82#107	   fread(&stmp, 2, 1, file);"[label="stmp"];
