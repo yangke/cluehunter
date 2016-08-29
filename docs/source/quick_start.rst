@@ -144,6 +144,6 @@ Complete Usage
 		                with blanks. "N" means direct access, "*" means this
 		                is a pointer of the cared data.
 	  -vs VARIABLES [VARIABLES ...], --variables VARIABLES [VARIABLES ...]
-		                Specify the identifier name of the sink variable.
-		                Example:father->baby.toy
+		                Specify the identifier name of the sink variables.
+		                Example:"father->baby.toy"
 

@@ -70,7 +70,7 @@ class ClueHunter:
                 required=True,
                 nargs='+',
                 default=['length'],
-                help='Specify the identifier name of the sink variable. Example:father->baby.toy')
+                help='Specify the identifier name of the sink variables. Example:"father->baby.toy"')
         
         self.arg_parser.add_argument(
                 '-l', '--level',
