@@ -18,6 +18,7 @@ expect "Reading symbols from *done.\r
 (gdb) "
 send -- "set logging file ./gdb.txt\r"
 send -- "set logging on\r"
+send -- "set confirm off\r"
 
 send -- "start sndfile-infolog/exploit_0_0 >out\r"
 expect -re "start sndfile-infolog/exploit_0_0 >out\r\n\(.*\r\n)*\\(gdb\\) "
@@ -55,12 +56,26 @@ expect {
 	-re "$former$esc$latter" {send -- "n\r";exp_continue -continue_timer}
 	-re "$former.*\(?!The program|$esc\).*\r\n$latter" {send -- "s\r";exp_continue -continue_timer}
 }
+
+#send -- "q\r"
+#expect -exact "q\r
+#A debugging session is active.\r
+#\r
+#	Inferior 1 \[process 32213\] will be killed.\r
+#\r
+#Quit anyway? (y or n) "
+#send -- "y\r"
+#expect eof
+
+#send -- "signal 9\r"
+#expect -exact "signal 9\r
+#Continuing with signal SIGKILL.\r
+#\r
+#Program terminated with signal SIGKILL, Killed.\r
+#The program no longer exists.\r
+#(gdb) "
+#send -- "q\r"
+#expect eof
+
 send -- "q\r"
-expect -exact "q\r
-A debugging session is active.\r
-\r
-	Inferior 1 \[process 32213\] will be killed.\r
-\r
-Quit anyway? (y or n) "
-send -- "y\r"
 expect eof
