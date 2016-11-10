@@ -389,7 +389,7 @@ class Syntax(object):
         init_str=' '.join(init_str.split())
         inits=init_str.split(',')
         for init in inits:
-            match_init= re.search(v_access+Syntax.assign,init)
+            match_init= re.search(v_access+r"\s*"+Syntax.assign,init)
             if match_init:
                 left_var=match_init.group().rstrip("=")
                 rightstr=init[match_init.span()[1]:]
