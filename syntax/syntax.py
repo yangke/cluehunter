@@ -20,12 +20,14 @@ from utils.Filter import Filter
 from parse.FunctionCallInfo import FunctionCallInfo
 
 class Syntax(object):
-    RETURN_VALUE_ASSIGN=128
-    NORMAL_ASSIGN=64
-    OP_ASSIGN=32
-    REF_ASSIGN=16
-    INC=8
-    RAW_DEF=4
+    ARRAY_ASSIGN_RETURN_VALUE_ASSIGN=10
+    RETURN_VALUE_ASSIGN=9
+    NORMAL_ASSIGN=8
+    ARRAY_ASSIGN=7
+    OP_ASSIGN=6
+    REF_ASSIGN=5
+    INC=4
+    RAW_DEF=3
     SYS_LIB_DEF=2
     FOR=1
     NODEF=0
@@ -45,11 +47,12 @@ class Syntax(object):
     stdop="open|close|read|write|scanf|printf|stat|getc|gets"
     strop="atoi|strlen|strcat|strncat|strtol|strtok|strcmp|strncmp|strcpy|strncpy|strstr|strrchr|strchr|sprintf|snprintf|vsprintf|vsnprintf|sscanf"
     syscall="gettimeofday|fork|syscall|textdomain|setlocale|getopt_long|ENOENT|bindtextdomain|non_fatal|nonfatal|exit_status|sbrk|CONST_STRNEQ"
-    other="log|error|buildin"
-    lib_func_name=memop+'|'+fileop+'|'+stdop+'|'+strop+'|'+syscall+'|'+other
+    other="log|error|buildin|va_arg"
+    lib_func_name='^('+memop+'|'+fileop+'|'+stdop+'|'+strop+'|'+syscall+'|'+other+')$'
     @staticmethod
     def normal_assignment_pattern(accessstr):
-        return Syntax.lt+accessstr+Syntax.water+r"(\[[^\[\]]+\])?"+Syntax.water+Syntax.assign
+        return Syntax.lt+accessstr+Syntax.water+Syntax.assign
+        #return Syntax.lt+accessstr+Syntax.water+r"(\[[^\[\]]+\])?"+Syntax.water+Syntax.assign
     @staticmethod
     def op_assignment_pattern(accessstr):
         return Syntax.lt+accessstr+Syntax.water+r"(\[[^\[\]]+\])?"+Syntax.water+r"[\+\-\*\/%\^\|&]"+Syntax.water+Syntax.assign
@@ -263,14 +266,14 @@ class Syntax(object):
               
         return pos,i,var_name,func_name,j
     @staticmethod
-    def isPossibleArgumentDefinition(line,var):
+    def isPossibleArgumentDefinition(codestr,var):
         
+        codestr=codestr.strip()
         if var.pointerStr():
             access="("+var.pointerStr()+"|"+"&\s*"+var.accessStr()+")"
         else:
             access="&\s*"+var.accessStr()
-        pattern=re.compile(access)
-        codestr=line.codestr.strip()
+        pattern=re.compile(access)        
         for m in pattern.finditer(codestr):
             start,end=m.span()
             if codestr[end]=="." or codestr[end:end+2]=="->" :
@@ -327,21 +330,37 @@ class Syntax(object):
         return None
     @staticmethod
     def remove_left_type_coversion(callstr):
+        #side effect: remove out-most bracket
+        #1.callstr: "(struct areltdata *) _bfd_read_ar_hdr (abfd)" => return "_bfd_read_ar_hdr (abfd)"
+        #2.callstr: "(raw)" => return raw
+        #3.callstr: "raw" => return raw
+        #4.callstr: "raw)(" => return raw)(
+        #5.callstr: "(raw" => return None
         callstr=callstr.strip()
-        if callstr[0]=="(":
+        
+        if callstr[0]=="(" :
             i=1
-            while callstr[i]!=")":
-                i+=1;
-                if i==len(callstr):
-                    return None
-            if len(callstr[i+1:].strip())==0:
-                return None
-            return callstr[i+1:].strip()
+            stack=["("]
+            while len(stack)!=0 and i<len(callstr):
+                if callstr[i]=="(":
+                    stack.append("(")
+                elif callstr[i]==")":
+                    stack.pop()
+                i+=1
+            
+            if len(stack)!=0:
+                return None    
+            elif i==len(callstr):
+                #side effect: remove out-most bracket
+                return callstr.lstrip("(").rstrip(")")
+            else:
+                return callstr[i:].strip()
         else:
-            return None
+            return callstr
     @staticmethod
     def isUniqueNonLibCall(callstr):
-        callstr=' '.join(callstr.split()).rstrip(';')
+        callstr=callstr.strip().rstrip(';').strip()
+        #callstr=' '.join(callstr.split()).rstrip(';').rstrip()
         if callstr=='':return False
         if callstr[0]=="(":#callstr: (struct areltdata *) _bfd_read_ar_hdr (abfd)
             callstr=Syntax.remove_left_type_coversion(callstr)
@@ -358,6 +377,7 @@ class Syntax(object):
             print start,end,callstr
             start=end+1
             end,islast=ArgHandler.nextarg(callstr,start)
+        print    end,  len(callstr)-1
         if end is not None and end==len(callstr)-1:
             return True
         return False
@@ -411,20 +431,54 @@ class Syntax(object):
     def generate_for_jobs(num,codestr,v):
         v_access=v.accessStr()
         init,cond,change=Syntax.split_for(codestr)
+        # e.g "for (target = bfd_target_vector; *target != NULL; target++)"
+        # PostCond:
+        # init => "for (target = bfd_target_vector"
+        # cond => "*target != NULL"
+        # change => "target++)"
         #right vars in init part
         right_vars_in_change=Syntax.vars_in_for_change_part(v_access,change)
+        # change = "target++)"
+        # right_vars_in_change => "target"
         #bound vars in cond part
         bound_var_strs=[]
         if right_vars_in_change is not None:
+            print "%%%%%",cond
             bound_var_strs=Filter.expression2vars(cond)
-        bound_var_strs=[bv for bv in bound_var_strs if re.search(bv+r"\s*"+Syntax.assign,init) is None];
-        #right vars in change part
-        init_vars=Syntax.vars_in_for_init_part(v_access,init)
+            # cond = "*target != NULL"
+            # bound_var_strs => ["*target"] 
+            print "%%", bound_var_strs
+            print "%",init
+        # Pre : 
+        # init = "for (target = bfd_target_vector" 
+        # bound_var_strs = ["*target"]
+        # Post:
+        # bound_var_strs => ["*target"]
+        # FIX ME may cause "sre_constants.error: nothing to repeat"
+        bound_var_strs=[bv for bv in bound_var_strs if bv[-1]!='*' and re.search(TaintVar(bv,[]).accessStr()+r"\s*"+Syntax.assign,init) is None];
+         
+        # right vars in change part
+        init_vars=Syntax.vars_in_for_init_part(v_access,init)# e.g init ="for (target = bfd_target_vector" => init_vars = "target"
         right_var_strs_in_init=[]
         if init_vars is not None:
+            # e.g. 
+            # Pre: "target = bfd_target_vector"
+            # Post :
+            #     left_var => "target"
+            #     right_var_strs_in_init => "bfd_target_vector"
             left_var,right_var_strs_in_init=init_vars
-            if right_vars_in_change is not None and left_var in bound_var_strs:
-                bound_var_strs.remove(left_var)
+            # Pre : 
+            #     left_var = "target"
+            #     right_vars_in_change = "target"
+            #     bound_var_strs = ["*target"]
+            # Post: 
+            #     bound_var_strs = []
+            if right_vars_in_change is not None:#right_vars_in_change = "target"
+                for bv in bound_var_strs:
+                    if left_var in bv:#bound_var_strs = ["*target"]
+                        bound_var_strs.remove(left_var)#bound_var_strs = []
+                        break
+                    
         taint_vars=map(lambda x: TaintVar(x,[]),right_var_strs_in_init+bound_var_strs)#+right_vars_in_change) Now we discard right increvalue because it's usually a fix value.
         if init_vars is None and right_vars_in_change is not None:
             taint_vars.append(v)

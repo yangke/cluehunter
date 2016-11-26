@@ -24,6 +24,8 @@ from Test_speexenc_channel import Test_speexenc_channel
 from Test_speexdec_mode import Test_speexdec_mode
 from Test_speexdec_modeID import Test_speexdec_modeID
 from Test_catdvi_font import Test_catdvi_font
+from Test_shntool_info__rate import Test_shntool_info__rate
+
 import datetime
 class IntegrationTest:
 
@@ -70,9 +72,11 @@ class IntegrationTest:
         test=Test_speexdec_modeID()
         result_array.append(('speexdec_modeID',test.test()))
         test=Test_catdvi_font()
-        result_array.append(('catdvi_font',test.test()))
+        result_array.append(('catdvi_font[]',test.test()))
         #test=Test_objdump_addr()
         #result_array.append(('objdump_addr',test.test()))
+        test=Test_shntool_info__rate()
+        result_array.append(('shntool_info->rate',test.test()))
         
         for r in result_array:
             print r[0],":\t",r[1]

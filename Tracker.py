@@ -96,9 +96,9 @@ class Tracker:
     def macro_call_right_str(self,upperIndex):
         filename=self.l[upperIndex].get_func_call_info().get_file_name()
         linenum=self.l[upperIndex].get_linenum()
-        print filename,linenum
+        print "Now macro_call_right_str() expand macro find at:", filename,linenum
         expanded_str=self.macro_inspector.getExpanded(filename,linenum)
-        print "expanded str:",expanded_str
+        print "Expanded to:", expanded_str
         if "temp = (((abfd)->xvec->_bfd_check_format[(int) ((abfd)->format)]) (abfd));" in expanded_str:
             print "Find It!"
         call_patttern=Syntax.lt+Syntax.identifier+Syntax.water+r"[\)\]]*"+Syntax.water+r"\("
@@ -113,13 +113,20 @@ class Tracker:
         print 1/0
         
     def isMacroCall(self,callsite_index):
+        is_macro_call, expandedstr=self.is_macro_call(callsite_index)
+        if not is_macro_call and expandedstr:
+            if re.search(r"\{.*;.*;.*\}",expandedstr):
+                expandedstr=None 
+        return is_macro_call, expandedstr
+    def is_macro_call(self,callsite_index):
         if self.macro_inspector is None:
-            return False
+            return False, None
         if self.macro_inspector.project_dir is None:
-            return False
+            return False, None
         print "Checking Macro Call..."
         print "UPPER:",self.l[callsite_index]
         print "CALLINFO:",self.l[callsite_index+1]
+        expanded_str=None
         for m in re.finditer(Syntax.lt+Syntax.identifier+Syntax.water+r"\(",self.l[callsite_index].codestr):
             if re.search(r"(.*)\s*{.*}",self.l[callsite_index].codestr):
                 continue;
@@ -129,24 +136,28 @@ class Tracker:
             #Note that the second argument of getExpanded is the line_num of the call site code.
             #So should be callsite_index+1
             print "Find Macro Call:",self.l[callsite_index]
+            
             filename=self.l[callsite_index].get_func_call_info().get_file_name()
             linenum=self.l[callsite_index].get_linenum()
-            print filename,linenum
+            print "Now isMacroCall() expand macro find at:", filename,linenum
+            
             expanded_str=self.macro_inspector.getExpanded(filename,linenum)
             if expanded_str is None:
-                return False
+                return False, None
             print "expanded str:",expanded_str
             if "temp = (((abfd)->xvec->_bfd_check_format[(int) ((abfd)->format)]) (abfd));" in expanded_str:
+                print "Find IT!"
+            elif "if (!read_value_long(info->input,((void *)0),&info->samples_per_sec,((void *) 0))) {" in expanded_str:
                 print "Find IT!"
             call_patttern=Syntax.lt+Syntax.identifier+Syntax.water+r"[\)\]]*"+Syntax.water+r"\("
             for m in re.finditer(call_patttern,expanded_str):
                 if ']' in m.group():
-                    return True
+                    return True, expanded_str
                 cleaner=''.join(m.group().split())
                 clean=cleaner.rstrip('(').rstrip(')')
                 if not Syntax.isKeyWord(clean) and not Syntax.isLibFuncName(m.group(1)):
-                    return True
-        return False
+                    return True, expanded_str
+        return False, expanded_str
     def taintUp(self,jobs):
         if len(jobs) ==0 :return []
         P=[]
@@ -168,7 +179,7 @@ class Tracker:
             funcname=self.l[traceIndex].get_func_name().split("::")[-1].strip()
             if re.search(Syntax.lt+funcname+r"\s*\(",self.l[upperIndex].codestr):
                 rightstr,upperIndex=self.normal_right_str(upperIndex, funcInfo)
-            elif self.isMacroCall(upperIndex):
+            elif self.isMacroCall(upperIndex)[0]:
                 rightstr=self.macro_call_right_str(upperIndex)
             else:
                 print "Malformed call site! Cannot find the arglist of the call site!"
@@ -221,6 +232,8 @@ class Tracker:
         newjobs=set()
         for job in jobs:
             print job
+            if "158 le_header(?<![_A-Za-z0-9])((le_header\s*->mode)|(le_header))(?![_A-Za-z0-9])" in str(job):
+                print "$$$$$$$$$$$$$$$$$$$$$$$$$$"
             jbs=self.lastModification(job)
             print jbs
             newjobs=newjobs|set(jbs)
@@ -242,13 +255,15 @@ class Tracker:
                 if isinstance(self.l[i-1], LineOfCode):
                     if self.l[i].get_func_name().split("::")[-1] in self.l[i-1].codestr:
                         break
-                    elif self.isMacroCall(i-1):
+                    elif self.isMacroCall(i-1)[0]:
                         break
             i-=1
         return indexes
     def lastModification(self,job):
-        if job.trace_index==13050:#1293:
-            print "FInd you!"
+        if job.trace_index==11941:#1293:
+            print "Find you!"
+        if job.var.v=="buf":
+            print "Find you!"
         if job.trace_index==0:
             return []
         if isinstance(self.l[job.trace_index], FunctionCallInfo):
@@ -258,13 +273,29 @@ class Tracker:
                 self.TG.linkInnerEdges(job.trace_index,job.trace_index-1,job.var.simple_access_str())
             return []
         indexes=self.up_slice(job)
+        if indexes==[11843]:
+            print "^^^^",job.var.v
         if len(indexes)>0:
             pairs=self.findAllReferences(job.var,indexes,False)
             pairs.append((indexes[0]-1,job.var,False,0,len(indexes)))
-            #(aIndex,q,True,idx+1,lb)
+            #(aIndex,q,True,idx+1,lb)#see findAllReferences, lastModification, checkArgDef
+            #1.Assign index of this reference, e.g struct Memory *r=&x;
+            #2.Target_variable under this reference, e.g  r->blockinfo->size;
+            #3.Whether this reference is obtained by #left propagation# e.g.
+                #"struct Memory **r=&x;" => True
+                #"struct Memory *r=x;" => True
+                #"struct Memory *x=upper_ref->x;" => False
+            #4.Lower index bound, e.g. 
+                #0: specially for arg variable(a pointer which can be used to access concerned variable)
+                #idx+1: means begin with the next line of the assignment of reference
+            #5.Upper bound: the index referred with this value is ignored. So you can specify: len(indexes)
+            
             defs=self.getDefs(pairs,indexes)
             for d,v in defs:
+                if v.v=="":
+                    print "^^^^^^^"
                 print "In list definition:",d,self.l[d]
+            jobs=[]
             for d,v in defs:
                 def_type=self.matchDefinitionType(d,v)
                 if def_type==Syntax.FOR:
@@ -280,18 +311,30 @@ class Tracker:
                 elif def_type==Syntax.NORMAL_ASSIGN:
                     self.TG.linkInnerEdges(job.trace_index,d,v.simple_access_str())
                     assign_handler=AssignmentHandler(self.l,self.TG)
-                    jobs=assign_handler.getJobs(v,d,indexes)
+                    expanded_str=self.get_expanded_codestr_if_necessary(d)
+                    if "mapdata = (struct areltdata *) ((*((abfd)->xvec->_bfd_read_ar_hdr_fn)) (abfd));" in expanded_str:
+                        print "%%%%:", expanded_str
+                    jobs=assign_handler.getJobs(v,d,indexes,expanded_str)
                     return jobs
                 elif def_type==Syntax.OP_ASSIGN:
                     self.TG.linkInnerEdges(job.trace_index,d,v.simple_access_str())
                     assign_handler=AssignmentHandler(self.l,self.TG)
-                    jobs=assign_handler.getJobs(v,d,indexes)
+                    expanded_str=self.get_expanded_codestr_if_necessary(d)
+                    jobs=assign_handler.getJobs(v,d,indexes,expanded_str)
                     jobs.append(TaintJob(d, v))
                     return jobs
+                elif def_type==Syntax.ARRAY_ASSIGN:
+                    self.TG.linkInnerEdges(job.trace_index,d,v.simple_access_str())
+                    assign_handler=AssignmentHandler(self.l,self.TG)
+                    expanded_str=self.get_expanded_codestr_if_necessary(d)
+                    jobs+= assign_handler.getJobs(v,d,indexes,expanded_str)
                 elif def_type == Syntax.RETURN_VALUE_ASSIGN:
                     self.TG.linkInnerEdges(job.trace_index,d,v.simple_access_str())
                     jobs=self.handleReturnAssignDirect(job.trace_index,d,v)
                     return jobs
+                elif def_type == Syntax.ARRAY_ASSIGN_RETURN_VALUE_ASSIGN:
+                    self.TG.linkInnerEdges(job.trace_index,d,v.simple_access_str())
+                    jobs+=self.handleReturnAssignDirect(job.trace_index,d,v)
                 elif def_type==Syntax.SYS_LIB_DEF:
                     self.TG.linkInnerEdges(job.trace_index,d,v.simple_access_str())
                     jobs= Syntax.handle_sys_lib_def(d,v,self.l[d].codestr)
@@ -303,14 +346,26 @@ class Tracker:
                     #truncate the outter syntax (->q,*) minus ( ->q)= (*)
                     #use new syntax to checkArgDef----- var:t->q,syntax:*
                     #----------------
-                    result=Syntax.isPossibleArgumentDefinition(self.l[d],v)
+                    if self.isMacroCall(d)[0]:
+                        filename=self.l[d].get_func_call_info().get_file_name()
+                        linenum=self.l[d].get_linenum()
+                        print "Expand Macro find at:", filename,linenum
+                        expanded_str=self.macro_inspector.getExpanded(filename,linenum)
+                        print "Expanded to:", expanded_str
+                        codestr=expanded_str
+                    else:
+                        codestr=self.l[d].codestr
+                    result=Syntax.isPossibleArgumentDefinition(codestr,v)
                     if result is not None:
-                        rfl,p,childnum,callee,arg=result
+                        rfl,p,childnum,callee,arg = result
                         if "->headindex" in p and "header_read"==callee:
                             print callee
                         jobs,b=self.checkArgDef(d,job.trace_index,job.trace_index,p,rfl,childnum,callee)
                         if b:
                             return jobs
+            if jobs!=[]:
+                return jobs
+            
         if len(indexes)>0:
             i=indexes[0]-1
         else:
@@ -325,7 +380,7 @@ class Tracker:
                 self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
                 return [TaintJob(i,job.var)]
             return []
-        elif self.isMacroCall(i-1):
+        elif self.isMacroCall(i-1)[0]:
             if job.var.v in self.l[i].param_list:
                 self.TG.linkInnerEdges(job.trace_index,i,job.var.simple_access_str())
                 return [TaintJob(i,job.var)]
@@ -345,7 +400,7 @@ class Tracker:
                   
     def handleReturnAssgin(self,job_trace_index,i,accesspattern,var):
         if i+2+1<len(self.l) and isinstance(self.l[i+1],FunctionCallInfo) and isinstance(self.l[i+2],LineOfCode):
-            if self.l[i+1].get_func_name().split("::")[-1].strip() in self.l[i].codestr or self.isMacroCall(i):
+            if self.l[i+1].get_func_name().split("::")[-1].strip() in self.l[i].codestr or self.isMacroCall(i)[0]:
                 indexes=self.slice_same_func_lines(i+2, job_trace_index)
                 count=0
                 print "accesspattern:",accesspattern
@@ -372,8 +427,23 @@ class Tracker:
                     count+=1
                     if count == 3:break
                 return []
-        print "Fatal Error! the malformed call detail lines after return value assignment!"  
-        print 1/0            
+        print "Suspective Error Point!"
+        #print 1/0
+        m=re.search(Syntax.lt+Syntax.identifier+r'\s*(\[[^\[\]]+\]\s*)*\(',self.l[i].codestr)
+        if m:
+            rightstr=self.l[i].codestr[m.span()[1]:].rstrip(";")
+            argsstrs=ArgHandler.arglist(rightstr)
+            taintvars=[]
+            for argstr in argsstrs:
+                if re.search(argstr.replace('*','') +r'\s*\[',rightstr):
+                    taintvars.append(TaintVar(argstr, ['*']))
+                else:
+                    taintvars.append(TaintVar(argstr, []))
+            jobs=map(lambda x : TaintJob(i, x), taintvars)
+            return jobs
+        else:
+            print "Fatal Error! the malformed call detail lines after return value assignment!"  
+            print 1/0        
     
     def likeArgDef(self,v,codestr):
         if v.pointerStr():
@@ -395,6 +465,7 @@ class Tracker:
             for i in indexes[up:low][::-1]:
                 print "getDefs():Checking Def:",self.l[i]
                 access=v.accessStr()
+                print access, self.l[i].codestr
                 if re.search(access, self.l[i].codestr):
                     maybe_def=True
                 else:
@@ -410,18 +481,19 @@ class Tracker:
                     if def_type!=Syntax.NODEF:
                         defs.append((i,v))
                         print "Find the 100% definition."
-                        break
+                        if def_type!=Syntax.ARRAY_ASSIGN:
+                            break
                     elif self.likeArgDef(v,self.l[i].codestr):
                         print "Check Possible Definitions:",self.l[i]
                         if isinstance(self.l[i+1],FunctionCallInfo):
-                            if Syntax.isPossibleArgumentDefinition(self.l[i],v):
+                            if Syntax.isPossibleArgumentDefinition(self.l[i].codestr,v):
                                 defs.append((i,v))
                                 print "Yes,it is Possible Definitions."
                                 print "But just possible,maybe 10%. We should continue search at least another 100% definition for assurance."
                 elif self.likeArgDef(v,self.l[i].codestr):
                     print "Check Possible Definitions:",self.l[i]
                     if isinstance(self.l[i+1],FunctionCallInfo):
-                        if Syntax.isPossibleArgumentDefinition(self.l[i],v):
+                        if Syntax.isPossibleArgumentDefinition(self.l[i].codestr,v):
                             defs.append((i,v))
                             print "Yes,it is Possible Definitions."
                             print "But just possible,maybe 10%. We should continue search at least another 100% definition for assurance."
@@ -441,6 +513,7 @@ class Tracker:
                 return dp_m
             else:
                 return None
+
     def findAllReferences(self, var, indexrange, left_propa):
         visited=set()
         pairs=set()
@@ -454,7 +527,7 @@ class Tracker:
                 print temp_index,self.l[temp_index]
                 m=re.search(r'(?<![A-Za-z0-9_])'+var.pointerStr()+r"\s*=(?!=)",self.l[temp_index].codestr)
                 if m:
-                    result=Syntax.isPossibleArgumentDefinition(self.l[temp_index],var)
+                    result=Syntax.isPossibleArgumentDefinition(self.l[temp_index].codestr,var)
                     leftpart=m.group()[:-1].strip()
                     rfl,pat=var.matchAccessPattern(leftpart)
                     if rfl>0 or result is not None:
@@ -517,7 +590,7 @@ class Tracker:
                                     print q.pointerStr()
                                     print temp_index,self.l[temp_index]
                                     if re.search(q.pointerStr()+r"\s*[^=]=[^=]",self.l[temp_index].codestr):
-                                        result=Syntax.isPossibleArgumentDefinition(self.l[temp_index],q)
+                                        result=Syntax.isPossibleArgumentDefinition(self.l[temp_index].codestr,q)
                                         if result is not None:
                                             lb=temp_lb+1
                                         else:
@@ -640,9 +713,21 @@ class Tracker:
         
         pairs=self.findAllReferences(var,indexes,True)
         pairs.append((callsiteIndex+1,var,True,0,len(indexes)))
+        #(aIndex,q,True,idx+1,lb)#see findAllReferences, lastModification, checkArgDef
+        #1.Assign index of this reference, e.g struct Memory *r=&x;
+        #2.Target_variable under this reference, e.g  r->blockinfo->size;
+        #3.Whether this reference is obtained by #left propagation# e.g.
+            #"struct Memory **r=&x;" => True
+            #"struct Memory *r=x;" => True
+            #"struct Memory *x=upper_ref->x;" => False
+        #4.Lower index bound, e.g. 
+            #0: specially for arg variable(a pointer which can be used to access concerned variable)
+            #idx+1: means begin with the next line of the assignment of reference
+        #5.Upper bound: the index referred with this value is ignored. So you can specify: len(indexes)
         defs=self.getDefs(pairs,indexes)
         for d,v in defs:
-            print "%%%",self.l[d]
+            print "%%% FOUND DEF %%%:",self.l[d]
+        jobs=[]
         for d,v in defs:
             #BUG
             def_type=self.matchDefinitionType(d,v)
@@ -661,18 +746,28 @@ class Tracker:
             elif def_type==Syntax.NORMAL_ASSIGN:
                 self.TG.linkCrossEdges(beginIndex,d,v.simple_access_str())
                 assign_handler=AssignmentHandler(self.l,self.TG)
-                jobs=assign_handler.getJobs(v,d,indexes)
+                expanded_str=self.get_expanded_codestr_if_necessary(d)
+                jobs=assign_handler.getJobs(v,d,indexes,expanded_str)
                 return self.taintUp(jobs),True
             elif def_type==Syntax.OP_ASSIGN:
                 self.TG.linkCrossEdges(beginIndex,d,v.simple_access_str())
                 assign_handler=AssignmentHandler(self.l,self.TG)
-                jobs=assign_handler.getJobs(v,d,indexes)
+                expanded_str=self.get_expanded_codestr_if_necessary(d)
+                jobs=assign_handler.getJobs(v,d,indexes,expanded_str)
                 jobs.append(TaintJob(d, v))
                 return self.taintUp(jobs),True
+            elif def_type==Syntax.ARRAY_ASSIGN:
+                self.TG.linkCrossEdges(beginIndex,d,v.simple_access_str())
+                assign_handler=AssignmentHandler(self.l,self.TG)
+                expanded_str=self.get_expanded_codestr_if_necessary(d)
+                jobs+=assign_handler.getJobs(v,d,indexes,expanded_str)
             elif def_type == Syntax.RETURN_VALUE_ASSIGN:
                 self.TG.linkCrossEdges(beginIndex,d,v.simple_access_str())
                 jobs=self.handleReturnAssignDirect(beginIndex,d,v)
                 return jobs
+            elif def_type == Syntax.ARRAY_ASSIGN_RETURN_VALUE_ASSIGN:
+                self.TG.linkCrossEdges(beginIndex,d,v.simple_access_str())
+                jobs+=self.handleReturnAssignDirect(beginIndex,d,v)
             elif def_type==Syntax.SYS_LIB_DEF:
                 self.TG.linkCrossEdges(beginIndex,d,v.simple_access_str())
                 jobs= Syntax.handle_sys_lib_def(d,v,self.l[d].codestr)
@@ -684,18 +779,26 @@ class Tracker:
                 #truncate the outter syntax (->q,*) minus ( ->q)= (*)
                 #use new syntax to checkArgDef----- var:t->q,syntax:*
                 #----------------
-                result=Syntax.isPossibleArgumentDefinition(self.l[d],v)
+                result=Syntax.isPossibleArgumentDefinition(self.l[d].codestr,v)
                 if result is not None:
                     rfl,p,childnum,callee,arg=result
                     jobs,b=self.checkArgDef(d,beginIndex,lowerBound,p,rfl,childnum,callee)
                     if b:
                         return self.taintUp(jobs),True
-                            
+        if jobs!=[]:
+            return self.taintUp(jobs),True                    
         return [],False
+    
+    def get_expanded_codestr_if_necessary(self,i):
+        if isinstance(self.l[i+1],FunctionCallInfo):
+            is_macro_call, expanded_str=self.isMacroCall(i)
+            if expanded_str:
+                return expanded_str
+        return self.l[i].codestr
     
     def matchDefinitionType(self,i,var):
         codestr=self.l[i].codestr
-        if var.v=='i':
+        if var.v=='intptr':
             print "GotIt!!"
         access=var.accessStr()
         print "Checking Definition Type for:",access
@@ -711,18 +814,33 @@ class Tracker:
         #INC result must be returned as ForJobGenerator is only called in handle branch of INC operation
         #in "lastModification" and "CheckingArgDefinition" function.
         #This weird behavior need be fixed in future. 
-        
+        if isinstance(self.l[i+1],FunctionCallInfo):
+            is_macro_call, expanded_str=self.isMacroCall(i)
+            if expanded_str:
+                codestr=expanded_str
         normal_assginment=Syntax.normal_assignment_pattern(access)
         match=re.search(normal_assginment,codestr)
         if match:
             rightstr=codestr[match.span()[1]:].rstrip(';')
+            # check the "va_arg" condition : "va_arg" => "__builtin_va_arg"
+            #FIX ME: put "var_arg" handler logic to  NORMAL_ASSIGN  is an ugly choice
+            if re.search('^__builtin_va_arg\s*\(',rightstr.lstrip()):
+                return Syntax.NORMAL_ASSIGN #FIX ME : this is a ugly design
+            print "%%%rightstr%%%:", rightstr                  
             if Syntax.isUniqueNonLibCall(rightstr):
                 if i+2+1<len(self.l) and isinstance(self.l[i+1],FunctionCallInfo) and isinstance(self.l[i+2],LineOfCode):
-                    if self.l[i+1].get_func_name().split("::")[-1].strip() in self.l[i].codestr:
-                        return Syntax.RETURN_VALUE_ASSIGN
-                    elif self.isMacroCall(i):
-                        return Syntax.RETURN_VALUE_ASSIGN
+                    func_name=self.l[i+1].get_func_name().split("::")[-1].strip()
+                    if func_name in self.l[i].codestr or is_macro_call:
+                        if re.search(access+r'\s*\[',codestr):
+                            return Syntax.ARRAY_ASSIGN_RETURN_VALUE_ASSIGN
+                        else:
+                            return Syntax.RETURN_VALUE_ASSIGN
+                    #BUG: when handling incomplete condition:
+                    # buf[index] = callA(...);
+            elif re.search(access+r'\s*\[',codestr):# array assignment like buf[0]=NULL;
+                return Syntax.ARRAY_ASSIGN
             return Syntax.NORMAL_ASSIGN
+        
         op_assignment=Syntax.op_assignment_pattern(access)
         if re.search(op_assignment,codestr):
             return Syntax.OP_ASSIGN

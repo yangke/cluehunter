@@ -12,7 +12,7 @@ class Test_mcrypt_salt_size:
         answer_path='answers/mcrypt/mcrypt-2.6.5/'
         name='mcrypt-2.6.5_salt_size'
         logfile_path="gdb_logs/mcrypt/mcrypt-2.6.5/gdb-mcrypt-2.6.5_salt_size.txt"
-        c_proj_path='gdb_logs/mcrypt-2.6.5/mcrypt-2.6.5'
+        c_proj_path='gdb_logs/mcrypt/mcrypt-2.6.5/mcrypt-2.6.5'
         taintVars=[TaintVar("salt_size",['*'])]
         test=TraceTrackTest(answer_path,name,logfile_path,taintVars,passed_message,not_pass_message)
         test.set_c_proj_path(c_proj_path)

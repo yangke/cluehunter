@@ -33,7 +33,7 @@ class TaintVar:
     def make_match_easier(self,varpart_ref):
         t=self.v
         while re.search(r"&|\*|\.|\->|\(|\)",t):
-            if t[0]=="(":
+            if t[0]=="(" and t[-1]==")":
                 t=t[1:len(t)-1]
             elif t[0]=="&":
                 t=t[1:]
@@ -46,6 +46,7 @@ class TaintVar:
                 while re.search(r"[_A-Za-z0-9]",t[i]):
                     i-=1
                 if t[i]==")":
+                    print self.v
                     print "BUUUUUUUUUG! bracket missmatch!",1/0
                 elif t[i]==">":
                     self.p.append("->"+t[i+1:])
@@ -59,6 +60,8 @@ class TaintVar:
                     # if varpart_ref:
                     #     self.ref_len+=1
                     #===========================================================
+        if t.strip()=='':
+            print 1/0
         self.v=t             
     def sandwitch(self,astr):
         return r'(?<![_A-Za-z0-9])'+astr+r'(?![_A-Za-z0-9])'
@@ -101,9 +104,9 @@ class TaintVar:
                 A=[]
                 for s in S:
                     if ("->" in x or "." in x) and s[0]==r"*":
-                        A.append(r"("+s+r")"+x)#(*a->b,->c)=>(*a->b)->c
+                        A.append(r"\("+s+r"\)"+x)#(*a->b,->c)=>(*a->b)->c
                     elif x == "*":
-                        A.append(r"*("+s+r")")#(*a->b,*)=>*(*a->b)
+                        A.append(r"*\("+s+r"\)")#(*a->b,*)=>*(*a->b)
                         A.append(r"*"+s)      #(*a->b,*)=>**a->b
                     else:
                         A.append(s+x)
@@ -138,6 +141,7 @@ class TaintVar:
                     elif x == "*":
                         A.append(r"\*\s*\(\s*"+s+r"\s*\)")#(*a->b,*)=>*(*a->b)
                         A.append(r"\*\s*"+s)              #(*a->b,*)=>**a->b
+                        A.append(s+r"\s*\[[^\[\]]+\]")
                     else:
                         A.append(s+r"\s*"+x)
                 S=A

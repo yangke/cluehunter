@@ -5,7 +5,7 @@
 
 Welcome to ClueHunter's documentation!
 ======================================
-`ClueHunter <http://github.com/yangke/cluehunter/>`_ is an auxiliary tool for crash point reverse data flow analysis. It generate data flow graph according to the gdb debug log(C program source code level). It receives manually specified sink variables that cause the last line crash and perform interprocedural analysis on the log trace. For obtaining the auto-debug trace, the tool `robot_dbg.exp` in ClueHunter requires the program under debug to be compiled with profiled code information (gcc **-g -save-temp** operation). During the current develop stage, only command line program is supported. 
+`ClueHunter <http://github.com/yangke/cluehunter/>`_ is an auxiliary tool for crash point reverse data flow analysis. It generate data flow graph according to the gdb debug log(C program source code level). It receives manually specified sink variables that cause the last line crash and perform interprocedural analysis on the log trace. For obtaining the auto-debug trace, the tool `robot_dbg.exp` in ClueHunter requires the program under debug to be compiled with profiled code information (gcc **-g -save-temps** operation). During the current develop stage, only command line program is supported. 
 
 Target Problem: Where is the bad data come from? And how?
 ---------------------------------------------------------

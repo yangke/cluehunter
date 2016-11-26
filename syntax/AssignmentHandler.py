@@ -21,19 +21,28 @@ class AssignmentHandler(object):
         self.l=l
         self.TG=TG
         
-    def getJobs(self, var, index,sliced_indexes):
+    def getJobs(self, var, index,sliced_indexes,expanded_str):
         line =self.l[index]
-        codestr=line.codestr
+        if expanded_str:
+            codestr=expanded_str
+        else:
+            codestr=line.codestr
         str_pat=var.accessStr()+r"\s*(\[[^\[\]]+\])*\s*[\+\-\*/%&\|]?\s*=(?!=)"
         print "CHECKING CODE:",codestr
-        m=re.search(str_pat,codestr)
+        m=re.search(str_pat,codestr)#const bfd_byte *addr = (const bfd_byte *) p;
         if m:
             span=m.span()
-            left=m.group()
+            it=m.group()#left="*addr ="
             i=0
-            while re.search(r"[A-Za-z0-9_\.\*\->\s]",left[i]):
+            while re.search(r"[A-Za-z0-9_\.\*\->\s]",it[i]):
                 i+=1
-            name="".join(left[:i].split())
+            name="".join(it[:i].split())
+            left_type = codestr[:span[0]].strip()#"const bfd_byte "
+            is_type_conv=False
+            is_type_declare=False
+            if len(left_type)>0 and re.sub(r"[_A-Za-z\s\(\)]","",left_type)=="": #type declaration:  "const bfd_byte "
+                name=re.sub(r"[\*&\s]","",name)
+                is_type_declare=True
             rfl,pp=var.matchAccessPattern(name)
             right=codestr[span[1]:]
             right=right.split(';')[0].strip() #strip out ";"
@@ -55,14 +64,23 @@ class AssignmentHandler(object):
                 jobs=map(lambda x : TaintJob(index, x), taintvars)
                 return jobs
             elif cond_exp.match():
-                symbols=cond_exp.generate_candidate_vars()
+                symbols=cond_exp.generate_candidate_vars()#BUG when: const bfd_bye *addr= b>0 ? mm->addr1:mm->addr2;
             elif type_conv.match():
                 symbols=type_conv.generate_candidate_vars()
+                is_type_conv=True
             else:    
                 symbols=Filter.expression2vars(right)
             print symbols
             varstrs=Filter.filterOutFuncNames(symbols,line.codestr)
             print "Right variables in assignment:",varstrs
-            taintvars=set(map(lambda x : TaintVar(x, []), varstrs))
+            taintvars=[]
+            for v in varstrs:
+                if re.search(v.replace('*','') +r'\s*\[',line.codestr):
+                    taintvars.append(TaintVar(v, ['*']))
+                elif is_type_declare and is_type_conv:
+                    taintvars.append(TaintVar(v, pp))
+                else:
+                    taintvars.append(TaintVar(v, []))
+                    
             jobs=map(lambda x : TaintJob(index, x), taintvars)
             return jobs
