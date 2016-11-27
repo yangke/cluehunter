@@ -9,10 +9,56 @@ class MacroInspector(object):
     '''
     Finde the macro expanded result of one line of C code.
     '''
-    def __init__(self,project_dir):
+    filename2paths=dict()
+    '''
+    WARNING!WARNING!WARNING!
+    if you run in multiple project_dir :
+        be sure to first clear the  MacroInspector.filename2paths before each run
+        or you will mess up MacroInspector.filename2paths with multiple filename2paths information
+    '''
+    def __init__(self,project_dir,clear_filename2path=False):
         self.project_dir=project_dir
+        if clear_filename2path:
+            MacroInspector.filename2paths=dict()
         
     def search(self,dstDir,fileName):
+        return self.fast_index_search(dstDir,fileName)
+        #return self.slow_search(dstDir,fileName)
+        
+    def fast_index_search(self,dstDir,fileName):
+        
+        if len(MacroInspector.filename2paths) == 0:
+            self.creat_index_for_dot_i_files(dstDir)
+        if fileName in MacroInspector.filename2paths:
+            return MacroInspector.filename2paths[fileName]
+        else:
+            return []
+        
+    def creat_index_for_dot_i_files(self,dstDir):
+        #=======================================================================
+        # if MacroInspector.filename2paths==None:
+        #     MacroInspector.filename2paths=dict()
+        #=======================================================================
+        for y in os.listdir(dstDir):
+            absPath = os.path.join(dstDir,y)
+            if os.path.isdir(absPath):
+                try:
+                    self.creat_index_for_dot_i_files(absPath)
+                except BaseException, e:
+                    continue
+            elif os.path.isfile(absPath):
+                filename = os.path.split(absPath)[1]
+                if filename[-2:]==".i":
+                    if filename not in MacroInspector.filename2paths:
+                        MacroInspector.filename2paths[filename]=[]
+                    MacroInspector.filename2paths[filename].append(absPath)
+                    #print('found %s '%absPath.decode('gbk').encode('utf-8'))
+        #return MacroInspector.filename2paths
+        
+    '''
+    THIS SLOW SEARCH IS DEPRECATED
+    '''
+    def slow_search(self,dstDir,fileName):
         founded_file_paths=[]
         for y in os.listdir(dstDir):
             absPath = os.path.join(dstDir,y)
@@ -25,8 +71,8 @@ class MacroInspector(object):
             elif (os.path.isfile(absPath) and os.path.split(absPath)[1]==fileName):
                 founded_file_paths.append(absPath)
                 #print('found %s '%absPath.decode('gbk').encode('utf-8'))
-        return founded_file_paths
-    
+        return founded_file_paths 
+       
     def getExpanded(self,c_cpp_file_name, line_num):
         i_file_name=self.removeSuffix(c_cpp_file_name).strip()+".i"
         i_file_paths=self.search(self.project_dir,i_file_name)

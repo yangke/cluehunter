@@ -233,7 +233,7 @@ class Tracker:
         for job in jobs:
             print job
             if "158 le_header(?<![_A-Za-z0-9])((le_header\s*->mode)|(le_header))(?![_A-Za-z0-9])" in str(job):
-                print "$$$$$$$$$$$$$$$$$$$$$$$$$$"
+                print "$ERROR_CHECK_POINT(le_header->mode)"
             jbs=self.lastModification(job)
             print jbs
             newjobs=newjobs|set(jbs)
@@ -260,10 +260,10 @@ class Tracker:
             i-=1
         return indexes
     def lastModification(self,job):
-        if job.trace_index==11941:#1293:
-            print "Find you!"
+        if job.trace_index==209:#1293:
+            print "ERROR_CHECK_POINT(${specific line})"
         if job.var.v=="buf":
-            print "Find you!"
+            print "ERROR_CHECK_POINT(${specific variable})"
         if job.trace_index==0:
             return []
         if isinstance(self.l[job.trace_index], FunctionCallInfo):
@@ -274,7 +274,8 @@ class Tracker:
             return []
         indexes=self.up_slice(job)
         if indexes==[11843]:
-            print "^^^^",job.var.v
+            print "ERROR_CHECK_POINT(${check point for up_slice result with a specific index array.})"
+            print "variable here:",job.var.v
         if len(indexes)>0:
             pairs=self.findAllReferences(job.var,indexes,False)
             pairs.append((indexes[0]-1,job.var,False,0,len(indexes)))
@@ -291,10 +292,12 @@ class Tracker:
             #5.Upper bound: the index referred with this value is ignored. So you can specify: len(indexes)
             
             defs=self.getDefs(pairs,indexes)
+            print "defs returned by getDefs():"
             for d,v in defs:
                 if v.v=="":
-                    print "^^^^^^^"
-                print "In list definition:",d,self.l[d]
+                    print "ERROR(${'' variable returned by getDefs()})"
+                    print 1/0
+                print "defs returned by getDefs():",d,self.l[d]
             jobs=[]
             for d,v in defs:
                 def_type=self.matchDefinitionType(d,v)
@@ -313,7 +316,8 @@ class Tracker:
                     assign_handler=AssignmentHandler(self.l,self.TG)
                     expanded_str=self.get_expanded_codestr_if_necessary(d)
                     if "mapdata = (struct areltdata *) ((*((abfd)->xvec->_bfd_read_ar_hdr_fn)) (abfd));" in expanded_str:
-                        print "%%%%:", expanded_str
+                        print "ERROR_CHECK_POINT(${expanded_str in NORMAL_ASSIGN in lastModification()})"
+                        print "%%%:", expanded_str
                     jobs=assign_handler.getJobs(v,d,indexes,expanded_str)
                     return jobs
                 elif def_type==Syntax.OP_ASSIGN:
@@ -799,7 +803,7 @@ class Tracker:
     def matchDefinitionType(self,i,var):
         codestr=self.l[i].codestr
         if var.v=='intptr':
-            print "GotIt!!"
+            print "ERROR_CHECK_POINT(${matchDefinitionType() for specific variable job line matching.})"
         access=var.accessStr()
         print "Checking Definition Type for:",access
         print "codestr:",codestr

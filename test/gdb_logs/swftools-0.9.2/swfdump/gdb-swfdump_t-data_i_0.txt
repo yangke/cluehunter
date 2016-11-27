@@ -298,7 +298,7 @@ swf_ReadTag (reader=reader@entry=0xbfffe4b4, prev=prev@entry=0xbfffe43c)
 1192	  len = raw&0x3f;
 1193	  id  = raw>>6;
 1195	  if (len==0x3f)
-1200	  if (id==ST_DEFINESPRITE) len = 2*sizeof(U16);
+1200	  if (id==ST_DEFINESPRITE) //len = 2*sizeof(U16);
 1203	  t = (TAG *)rfx_calloc(sizeof(TAG));
 rfx_calloc (size=size@entry=32) at mem.c:61
 61	{

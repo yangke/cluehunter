@@ -459,6 +459,7 @@ class Syntax(object):
          
         # right vars in change part
         init_vars=Syntax.vars_in_for_init_part(v_access,init)# e.g init ="for (target = bfd_target_vector" => init_vars = "target"
+        print "ERROR_CHECK_POINT(${parsing 'for statement' during 'for' job generation})"
         right_var_strs_in_init=[]
         if init_vars is not None:
             # e.g. 

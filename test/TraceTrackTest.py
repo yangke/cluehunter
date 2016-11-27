@@ -65,7 +65,7 @@ class TraceTrackTest(object):
         start = datetime.datetime.now()#time.clock()
         l=self.parse_list()
         t1 = datetime.datetime.now()
-        macro_inspector=MacroInspector(self.c_proj_dir)
+        macro_inspector=MacroInspector(self.c_proj_dir,True)
         tracker=Tracker(l,macro_inspector)
         traceIndex=startindex % len(l)
         passed=self.test_tracker(tracker,traceIndex)
