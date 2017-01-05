@@ -260,7 +260,7 @@ class Tracker:
             i-=1
         return indexes
     def lastModification(self,job):
-        if job.trace_index==209:#1293:
+        if job.trace_index==20:#1293:
             print "ERROR_CHECK_POINT(${specific line})"
         if job.var.v=="buf":
             print "ERROR_CHECK_POINT(${specific variable})"
@@ -823,8 +823,11 @@ class Tracker:
             if expanded_str:
                 codestr=expanded_str
         normal_assginment=Syntax.normal_assignment_pattern(access)
-        match=re.search(normal_assginment,codestr)
-        if match:
+        for match in re.finditer(normal_assginment,codestr):
+            if match.span()[0]>1 and  codestr[match.span()[0]-2]=='-' and codestr[match.span()[0]-1]=='>':
+                continue
+            if match.span()[0]>0 and  codestr[match.span()[0]-1]=='.':
+                continue    
             rightstr=codestr[match.span()[1]:].rstrip(';')
             # check the "va_arg" condition : "va_arg" => "__builtin_va_arg"
             #FIX ME: put "var_arg" handler logic to  NORMAL_ASSIGN  is an ugly choice

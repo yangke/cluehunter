@@ -5,15 +5,7 @@ Created on Sep 6, 2015
 '''
 import re
 class LineOfCode:
-    
-    #===========================================================================
-    # def __init__(self, numStr, codeStr,func_call_info):
-    #     self.linenum = int(numStr)
-    #     self.codestr = codeStr
-    #     self.sub_code_list = None
-    #     self.func_call_info=func_call_info
-    #===========================================================================
-        
+
     def __init__(self, line, func_call_info):
         
         lineNumPattern = re.compile(r'^[1-9][0-9]*')

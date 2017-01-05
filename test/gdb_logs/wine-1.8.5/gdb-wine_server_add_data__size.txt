@@ -1,0 +1,29 @@
+bla!bla!bla!.....
+
+Breakpoint 1, NtAddAtom (name=0x7e2cdee0, length=32, atom=0x33f5fe) at atom.c:315
+315	{
+318	    status = is_integral_atom( name, length / sizeof(WCHAR), atom );
+is_integral_atom (atomstr=0x7e2cdee0, len=16, pAtom=0x33f5fe) at atom.c:55
+55	    if (!IS_INTATOM( atomstr ))
+57	        const WCHAR* ptr = atomstr;
+58	        if (!len) return STATUS_OBJECT_NAME_INVALID;
+60	        if (*ptr++ == '#')
+69	        if (len > MAX_ATOM_LEN) return STATUS_INVALID_PARAMETER;
+70	        return STATUS_MORE_ENTRIES;
+77	}
+NtAddAtom (name=0x7e2cdee0, length=32, atom=0x33f5fe) at atom.c:319
+319	    if (status == STATUS_MORE_ENTRIES)
+321	        SERVER_START_REQ( add_atom )
+323	            wine_server_add_data( req, name, length );
+wine_server_add_data (req_ptr=0x33f54c, ptr=0x7e2cdee0, size=32) at ../../include/wine/server.h:75
+75	    struct __server_request_info * const req = req_ptr;
+76	    if (size)
+78	        req->data[req->data_count].ptr = ptr;
+79	        req->data[req->data_count++].size = size;
+80	        req->u.req.request_header.request_size += size;
+
+82	}
+NtAddAtom (name=0x7e2cdee0, length=32, atom=0x33f5fe) at atom.c:324
+324	            req->table = 0;
+325	            status = wine_server_call( req );
+[Inferior 1 (Remote target) exited normally]

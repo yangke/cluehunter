@@ -51,6 +51,8 @@ class Syntax(object):
     lib_func_name='^('+memop+'|'+fileop+'|'+stdop+'|'+strop+'|'+syscall+'|'+other+')$'
     @staticmethod
     def normal_assignment_pattern(accessstr):
+        if len(accessstr) > 4 and '(?<!' == accessstr[0:4]: # already have $lt
+            return accessstr+Syntax.water+Syntax.assign
         return Syntax.lt+accessstr+Syntax.water+Syntax.assign
         #return Syntax.lt+accessstr+Syntax.water+r"(\[[^\[\]]+\])?"+Syntax.water+Syntax.assign
     @staticmethod

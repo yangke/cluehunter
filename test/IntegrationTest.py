@@ -25,6 +25,7 @@ from Test_speexdec_mode import Test_speexdec_mode
 from Test_speexdec_modeID import Test_speexdec_modeID
 from Test_catdvi_font import Test_catdvi_font
 from Test_shntool_info__rate import Test_shntool_info__rate
+from Test_wine_server_add_data__size import Test_wine_server_add_data__size
 
 import datetime
 class IntegrationTest:
@@ -77,6 +78,8 @@ class IntegrationTest:
         #result_array.append(('objdump_addr',test.test()))
         test=Test_shntool_info__rate()
         result_array.append(('shntool_info->rate',test.test()))
+        test=Test_wine_server_add_data__size()
+        result_array.append(('wine-1.8.5 wine_server_add_data() size',test.test()))
         
         for r in result_array:
             print r[0],":\t",r[1]
